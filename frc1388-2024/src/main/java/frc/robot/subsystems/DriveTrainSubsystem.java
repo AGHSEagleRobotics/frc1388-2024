@@ -46,24 +46,24 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_swerveTranslation2d);
   private SwerveDriveOdometry m_odometry;
 
-  private final ADIS16470_IMU m_gyro;
-  // private final AHRS m_navxGyro;
+  // private final ADIS16470_IMU m_gyro;
+  private final AHRS m_navxGyro;
 
   private ChassisSpeeds m_robotRelativeSpeeds = new ChassisSpeeds();
 
-  public DriveTrainSubsystem(SwerveModule frontRight, SwerveModule frontLeft, SwerveModule backLeft, SwerveModule backRight, /*AHRS*/ ADIS16470_IMU gyro) {
+  public DriveTrainSubsystem(SwerveModule frontRight, SwerveModule frontLeft, SwerveModule backLeft, SwerveModule backRight, AHRS gyro) {
     m_frontRight = frontRight;
     m_frontLeft = frontLeft;
     m_backLeft = backLeft;
     m_backRight = backRight;
 
-    // m_navxGyro = gyro;
-    m_gyro = gyro;
+    m_navxGyro = gyro;
+    // m_gyro = gyro;
     
     new Thread(() -> {
       try {
         Thread.sleep(1000);
-        /*m_navxGyro*/ m_gyro.reset();
+        m_navxGyro.reset();
         m_odometry = new SwerveDriveOdometry(
             m_kinematics,
             getGyroHeading(),
@@ -114,25 +114,27 @@ public class DriveTrainSubsystem extends SubsystemBase {
           m_backRight.getPosition()
       });
   }
-/* 
+
   private Rotation2d getGyroHeading() {
-    if (!m_gyro.isCalibrating()) {
-      m_lastRotation2d = new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_gyro.getAngle(), 360)));
+    if (!m_navxGyro.isCalibrating()) {
+      m_lastRotation2d = new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_navxGyro.getAngle(), 360)));
       return m_lastRotation2d;
     } else {
       return m_lastRotation2d;
     }
   }
-*/
+
 
 // for adis delete later
+/* 
 private Rotation2d getGyroHeading() {
   return new Rotation2d(Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(IMUAxis.kZ), 360)));
 }
+*/
 // replace with above code when we get the navX on 
 
   public void resetGyroHeading() {
-    /*m_navxGyro*/m_gyro.reset();
+    m_navxGyro.reset();
   }
 
   public void resetPose(Pose2d pose) {

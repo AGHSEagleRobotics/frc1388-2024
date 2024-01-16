@@ -54,8 +54,8 @@ public class RobotContainer {
           new TalonFX(8),
           new CANcoder(12),
           167),
-      // new AHRS(SerialPort.Port.kUSB)
-      new ADIS16470_IMU()
+      new AHRS(SerialPort.Port.kUSB)
+      // new ADIS16470_IMU()
     );
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
