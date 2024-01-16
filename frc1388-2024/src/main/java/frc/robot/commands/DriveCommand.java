@@ -8,11 +8,11 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class DriveCommand extends Command {
 
-  private final DriveTrain m_driveTrain;
+  private final DriveTrainSubsystem m_driveTrain;
 
   private final Supplier<Double> m_leftY;
   private final Supplier<Double> m_leftX;
@@ -20,7 +20,7 @@ public class DriveCommand extends Command {
 
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrain driveTrain, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX) {
     m_driveTrain = driveTrain;
 
     m_leftY = leftY;
@@ -40,7 +40,7 @@ public class DriveCommand extends Command {
     double xVelocity = -3.0 * scale(MathUtil.applyDeadband(m_leftY.get(), 0.1), 2.5);
     double yVelocity = -3.0 * scale(MathUtil.applyDeadband(m_leftX.get(), 0.1), 2.5);
     double omega = 2 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), 0.1), 5);
-
+    //lots of magic numbers check what the names should be
     m_driveTrain.drive(-xVelocity, -yVelocity, -omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }
 
