@@ -4,11 +4,23 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.DriveTrainSubsystem;
+
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.commands.DriveCommand;
+
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -19,11 +31,34 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+
+  private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
+      new SwerveModule(
+          new TalonFX(1),
+          new TalonFX(5),
+          new CANcoder(9),
+          282), 
+      new SwerveModule(
+          new TalonFX(2),
+          new TalonFX(6),
+          new CANcoder(10),
+          203),
+      new SwerveModule(
+          new TalonFX(3),
+          new TalonFX(7),
+          new CANcoder(11),
+          36),
+      new SwerveModule(
+          new TalonFX(4),
+          new TalonFX(8),
+          new CANcoder(12),
+          167),
+      // new AHRS(SerialPort.Port.kUSB)
+      new ADIS16470_IMU()
+    );
+// all those numbers should be constants review what the names should be
+  private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -42,13 +77,19 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    DriveCommand m_driveCommand = new DriveCommand(
+      m_driveTrain, 
+      () -> m_driverController.getLeftY(), 
+      () -> m_driverController.getLeftX(), 
+      () -> m_driverController.getRightX()
+    );
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    m_driveTrain.setDefaultCommand(m_driveCommand);
+
+    
+    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+
   }
 
   /**
@@ -58,6 +99,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+
+    // V Auto code V
+    return new WaitCommand(5);
+    // ^ Auto code ^
   }
 }
