@@ -62,4 +62,11 @@ public final class Constants {
   public static final double ROBOT_WIDTH = 0.508; // in meters, with bumpers? find out
   public static final double ROBOT_LENGTH = 0.508; // in meters, with bumpers? find out
   }
+
+  public static class DriveCommandConstants {
+    public static final double CONTROLLER_DEADBAND = 0.1;
+    public static final double LEFT_STICK_SCALE = 2.5;
+    public static final double RIGHT_STICK_SCALE = 5;
+
+  }
 }
