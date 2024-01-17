@@ -25,11 +25,10 @@ public class SwerveModule {
         m_driveMotor = driveMotor;
         m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
         Slot0Configs driveConfig = new Slot0Configs();
-        driveConfig.kP = 0.001;
-        driveConfig.kI = 0;
-        driveConfig.kD = 0;
+        driveConfig.kP = Constants.SwerveModuleConstants.kDriveMotorP;
+        driveConfig.kI = Constants.SwerveModuleConstants.kDriveMotorI;
+        driveConfig.kD = Constants.SwerveModuleConstants.kDriveMotorD;
         m_driveMotor.getConfigurator().apply(driveConfig);
-        // put pids in costants maybe?
 
         m_rotationMotor = rotationMotor;
         m_rotationMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -37,10 +36,12 @@ public class SwerveModule {
 
         m_encoderOffset = encoderOffset;
 
-        m_rotationPID = new PIDController(0.007, 0, 0);
-        m_rotationPID.setTolerance(5);
+        m_rotationPID = new PIDController(Constants.SwerveModuleConstants.kRotationP,
+                                          Constants.SwerveModuleConstants.kRotationI,
+                                          Constants.SwerveModuleConstants.kRotationD);
+        m_rotationPID.setTolerance(Constants.SwerveModuleConstants.kRotationTolerance);
         m_rotationPID.enableContinuousInput(0, 360);
-        // put pids in constants maybe?
+        
 
         m_cancoder = cancoder;
         
@@ -64,7 +65,7 @@ public class SwerveModule {
 
     public void setDriveSpeed(double inputSpeed) {
         // because the robot's max speed is 3 m/s, deviding the speed by 3 results in a power [-1, 1] we can set the motor to 
-        m_driveMotor.set(inputSpeed / 3.0); // probably should be done outside of swerve module
+        m_driveMotor.set(inputSpeed / Constants.DriveTrainConstants.ROBOT_MAX_SPEED); // probably should be done outside of swerve module
     }
 
     public void setRotationPosition(double angle) {

@@ -12,6 +12,7 @@ import frc.robot.commands.DriveCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
@@ -35,27 +36,27 @@ public class RobotContainer {
 
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
-          new TalonFX(1),
-          new TalonFX(5),
-          new CANcoder(9),
-          282), 
+          new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID), 
+          new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.FRONT_RIGHT_CANCODER),
+                       Constants.DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET), 
       new SwerveModule(
-          new TalonFX(2),
-          new TalonFX(6),
-          new CANcoder(10),
-          203),
+          new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_DRIVE_MOTOR_CANID),  
+          new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.FRONT_LEFT_CANCODER),
+                       Constants.DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET),
       new SwerveModule(
-          new TalonFX(3),
-          new TalonFX(7),
-          new CANcoder(11),
-          36),
+          new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_DRIVE_MOTOR_CANID), 
+          new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.BACK_LEFT_CANCODER),
+                       Constants.DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET),
       new SwerveModule(
-          new TalonFX(4),
-          new TalonFX(8),
-          new CANcoder(12),
-          167),
+          new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_DRIVE_MOTOR_CANID),  
+          new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.BACK_RIGHT_CANCODER),
+                       Constants.DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET),
       new AHRS(SerialPort.Port.kUSB)
-      // new ADIS16470_IMU()
+      //new ADIS16470_IMU()  
     );
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 

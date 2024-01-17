@@ -27,14 +27,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
 
-  private final Translation2d m_frontRightTranslation = new Translation2d(
-      Constants.FieldConstants.ROBOT_LENGTH / 2, -Constants.FieldConstants.ROBOT_WIDTH / 2);
-  private final Translation2d m_frontLeftTranslation = new Translation2d(Constants.FieldConstants.ROBOT_LENGTH / 2,
-      Constants.FieldConstants.ROBOT_WIDTH / 2);
-  private final Translation2d m_backLeftTranslation = new Translation2d(-Constants.FieldConstants.ROBOT_LENGTH / 2,
-      Constants.FieldConstants.ROBOT_WIDTH / 2);
-  private final Translation2d m_backRightTranslation = new Translation2d(
-      -Constants.FieldConstants.ROBOT_LENGTH / 2, -Constants.FieldConstants.ROBOT_WIDTH / 2);
+  private final double ROBOT_LENGTH = Constants.FieldConstants.ROBOT_LENGTH;
+  private final double ROBOT_WIDTH = Constants.FieldConstants.ROBOT_WIDTH;
+
+  private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
+  private final Translation2d m_frontLeftTranslation = new Translation2d(ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
+  private final Translation2d m_backLeftTranslation = new Translation2d(-ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
+  private final Translation2d m_backRightTranslation = new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
 
   private final Translation2d[] m_swerveTranslation2d = {
     m_frontRightTranslation,
@@ -97,7 +96,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   public void drive(double xVelocity, double yVelocity, double omega) {
     ChassisSpeeds m_robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_robotRelativeSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
     // ask what name the desaturate wheels for constants should be
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
@@ -160,8 +159,8 @@ private Rotation2d getGyroHeading() {
   // auto stuff
   private void driveRobotRelative(ChassisSpeeds speeds) {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
-    //check destatureate constants
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
+    //check desaturate constants
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);

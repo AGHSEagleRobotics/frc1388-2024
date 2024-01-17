@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class DriveCommand extends Command {
@@ -37,9 +38,9 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xVelocity = -3.0 * scale(MathUtil.applyDeadband(m_leftY.get(), 0.1), 2.5);
-    double yVelocity = -3.0 * scale(MathUtil.applyDeadband(m_leftX.get(), 0.1), 2.5);
-    double omega = 2 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), 0.1), 5);
+    double xVelocity = -3.0 * scale(MathUtil.applyDeadband(m_leftY.get(), Constants.DriveCommandConstants.CONTROLLER_DEADBAND), Constants.DriveCommandConstants.LEFT_STICK_SCALE);
+    double yVelocity = -3.0 * scale(MathUtil.applyDeadband(m_leftX.get(), Constants.DriveCommandConstants.CONTROLLER_DEADBAND), Constants.DriveCommandConstants.LEFT_STICK_SCALE);
+    double omega = 2 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), Constants.DriveCommandConstants.CONTROLLER_DEADBAND), Constants.DriveCommandConstants.RIGHT_STICK_SCALE);
     //lots of magic numbers check what the names should be
     m_driveTrain.drive(-xVelocity, -yVelocity, -omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }
