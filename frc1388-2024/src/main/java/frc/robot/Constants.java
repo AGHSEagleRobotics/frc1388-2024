@@ -16,4 +16,14 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class SwerveModuleConstants { 
+    public static final double DIST_PER_TICK = (1.0 / 6.75) * (0.3192); // ask calvin about the math
+  }
+
+  public static class FieldConstants {
+    // XXX I think this is right, but if the robot drives funny, check these numbers
+  public static final double ROBOT_WIDTH = 0.508; // in meters, with bumpers? find out
+  public static final double ROBOT_LENGTH = 0.508; // in meters, with bumpers? find out
+  }
 }

@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.DriveTrainSubsystem;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
@@ -13,6 +13,7 @@ import frc.robot.commands.DriveCommand;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -32,12 +33,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
 
-  private final DriveTrain m_driveTrain = new DriveTrain(
+  private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(1),
           new TalonFX(5),
           new CANcoder(9),
-          282),
+          282), 
       new SwerveModule(
           new TalonFX(2),
           new TalonFX(6),
@@ -53,9 +54,10 @@ public class RobotContainer {
           new TalonFX(8),
           new CANcoder(12),
           167),
-      new AHRS(SerialPort.Port.kUSB)
+      // new AHRS(SerialPort.Port.kUSB)
+      new ADIS16470_IMU()
     );
-
+// all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
