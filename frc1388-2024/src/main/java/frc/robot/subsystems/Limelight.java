@@ -92,14 +92,19 @@ public class Limelight extends SubsystemBase {
 
 
   public static double calculateDistance() {
-    double[] camtran = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camtran").getDoubleArray(new double[]{});
+    double[] camtran = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace")
+        .getDoubleArray(new double[] {});
     // finds distance in meters (needs callibration from limelight) needs to see the
     // april tag (needs testing)
-    double distance = Math.sqrt(camtran[0] * camtran[0] + camtran[1] * camtran[1] + camtran[2] * camtran[2]);
-    SmartDashboard.putNumber("Distance to April Tag: ", distance); // it calculates in meters
-    return distance;
+    if (camtran.length >= 3) {
+      if (camtran[0] != 0 && camtran[1] != 0 && camtran[2] != 0) {
+        double distance = Math.sqrt(camtran[0] * camtran[0] + camtran[1] * camtran[1] + camtran[2] * camtran[2]);
+        SmartDashboard.putNumber("Distance to April Tag: ", distance); // it calculates in meters
+        return distance;
+      }
+    }
+    return 0;
   }
-
   @Override
   public void periodic() {
 
