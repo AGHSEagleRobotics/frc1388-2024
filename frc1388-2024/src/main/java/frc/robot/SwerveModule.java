@@ -1,9 +1,12 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,12 +44,13 @@ public class SwerveModule {
                                           Constants.SwerveModuleConstants.kRotationD);
         m_rotationPID.setTolerance(Constants.SwerveModuleConstants.kRotationTolerance);
         m_rotationPID.enableContinuousInput(0, 360);
-        
 
         m_cancoder = cancoder;
-        
-
-
+        MagnetSensorConfigs cancoderConfig = new MagnetSensorConfigs();
+        cancoderConfig.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        cancoderConfig.MagnetOffset = 0;
+        cancoderConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        m_cancoder.getConfigurator().apply(cancoderConfig);
     }
     
     public void setSwerveModuleStates(SwerveModuleState inputState) {
