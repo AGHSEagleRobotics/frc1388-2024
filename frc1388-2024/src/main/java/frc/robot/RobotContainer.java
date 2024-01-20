@@ -7,18 +7,14 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
