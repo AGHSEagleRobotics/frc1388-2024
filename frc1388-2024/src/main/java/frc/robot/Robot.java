@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.DriveTrainSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,7 +21,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
+  private boolean m_lastUserButton = false;
+  private int m_userButtonCounter = 0;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -44,6 +48,26 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+        // Actions to perform when user button on RoboRio is pressed
+    if (RobotController.getUserButton() & !m_lastUserButton) {
+      DataLogManager.log("### UserButtonPressed");
+      //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
+    }
+    m_lastUserButton = RobotController.getUserButton();
+
+    if(RobotController.getUserButton()){
+      m_userButtonCounter += 1;
+      if(m_userButtonCounter >= 100){
+        DataLogManager.log("### UserButtonHeld");
+        m_robotContainer.m_driveTrain.setAllEncoderOffsets();
+        m_userButtonCounter = 0;
+      }
+    }
+    else{
+      m_userButtonCounter = 0;
+    }
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

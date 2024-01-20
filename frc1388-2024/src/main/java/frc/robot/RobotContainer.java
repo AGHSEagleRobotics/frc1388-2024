@@ -15,7 +15,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,27 +34,27 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
 
-  private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
+  public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID), 
           new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_ROTATION_MOTOR_CANID),
           new CANcoder(Constants.DriveTrainConstants.FRONT_RIGHT_CANCODER),
-                       Constants.DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET), 
+                       Preferences.getDouble(Constants.DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET_KEY, 0)), 
       new SwerveModule(
           new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_DRIVE_MOTOR_CANID),  
           new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_ROTATION_MOTOR_CANID),
           new CANcoder(Constants.DriveTrainConstants.FRONT_LEFT_CANCODER),
-                       Constants.DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET),
+                        Preferences.getDouble(Constants.DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)),
       new SwerveModule(
           new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_DRIVE_MOTOR_CANID), 
           new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_ROTATION_MOTOR_CANID),
           new CANcoder(Constants.DriveTrainConstants.BACK_LEFT_CANCODER),
-                       Constants.DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET),
+                        Preferences.getDouble(Constants.DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)),
       new SwerveModule(
           new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_DRIVE_MOTOR_CANID),  
           new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_ROTATION_MOTOR_CANID),
           new CANcoder(Constants.DriveTrainConstants.BACK_RIGHT_CANCODER),
-                       Constants.DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET),
+                        Preferences.getDouble(Constants.DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
       new AHRS(SerialPort.Port.kUSB)
       //new ADIS16470_IMU()  
     );

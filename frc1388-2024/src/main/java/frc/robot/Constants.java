@@ -37,22 +37,22 @@ public final class Constants {
     public static final int FRONT_RIGHT_DRIVE_MOTOR_CANID = 1;
     public static final int FRONT_RIGHT_ROTATION_MOTOR_CANID = 5;
     public static final int FRONT_RIGHT_CANCODER = 9;
-    public static final int FRONT_RIGHT_ENCODER_OFFSET = 282;
+    public static final String FRONT_RIGHT_ENCODER_OFFSET_KEY = "2024/frontRightEncoderOffset";
 
     public static final int FRONT_LEFT_DRIVE_MOTOR_CANID = 2;
     public static final int FRONT_LEFT_ROTATION_MOTOR_CANID = 6;
     public static final int FRONT_LEFT_CANCODER = 10;
-    public static final int FRONT_LEFT_ENCODER_OFFSET = 203;
+    public static final String FRONT_LEFT_ENCODER_OFFSET_KEY = "2024/frontLeftEncoderOffset";
 
     public static final int BACK_LEFT_DRIVE_MOTOR_CANID = 3;
     public static final int BACK_LEFT_ROTATION_MOTOR_CANID = 7;
     public static final int BACK_LEFT_CANCODER = 11;
-    public static final int BACK_LEFT_ENCODER_OFFSET = 36;
+    public static final String BACK_LEFT_ENCODER_OFFSET_KEY = "2024/backLeftEncoderOffset";
 
     public static final int BACK_RIGHT_DRIVE_MOTOR_CANID = 4;
     public static final int BACK_RIGHT_ROTATION_MOTOR_CANID = 8;
     public static final int BACK_RIGHT_CANCODER = 12;
-    public static final int BACK_RIGHT_ENCODER_OFFSET = 167;
+    public static final String BACK_RIGHT_ENCODER_OFFSET_KEY = "2024/backRightEncoderOffset";
 
     
   }

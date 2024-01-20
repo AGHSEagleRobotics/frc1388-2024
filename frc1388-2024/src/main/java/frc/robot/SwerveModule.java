@@ -19,7 +19,7 @@ public class SwerveModule {
     
 
     private final CANcoder m_cancoder;
-    private final double m_encoderOffset;
+    private double m_encoderOffset;
 
     private final TalonFX m_rotationMotor;
     private final PIDController m_rotationPID;
@@ -51,6 +51,7 @@ public class SwerveModule {
         cancoderConfig.MagnetOffset = 0;
         cancoderConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         m_cancoder.getConfigurator().apply(cancoderConfig);
+
     }
     
     public void setSwerveModuleStates(SwerveModuleState inputState) {
@@ -76,8 +77,32 @@ public class SwerveModule {
         m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), angle));
     }
 
+    // public double getRotationAngle() {
+    //     return (m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset + 36000) % 360 - 90; // math should be reviewed and ask what they do for constants
+    // }
+
+    /**
+     * Determines the encoder offset from the swerve module.
+     *<p>
+     * Applies this offset to the swerve module.
+     * <p>
+     * Wheels MUST be pointed to 0 degrees relative to robot to use this method
+     * @return new encoder offset
+     */
+    public double setEncoderOffset(){ 
+       double rotationAngle = m_cancoder.getAbsolutePosition().getValue() * 360; 
+       m_encoderOffset = rotationAngle;
+       return m_encoderOffset;
+    }
+
     public double getRotationAngle() {
-        return (m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset + 36000) % 360 - 90; // math should be reviewed and ask what they do for constants
+        double rotationAngle;
+        rotationAngle = m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset;
+        rotationAngle = rotationAngle % 360;
+        if(rotationAngle < 0){
+            rotationAngle += 360;
+        }
+        return rotationAngle;        
     }
 
     public void periodic() {
