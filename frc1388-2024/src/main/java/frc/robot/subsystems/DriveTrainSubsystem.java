@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,12 +20,20 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrainConstants;
 
 public class DriveTrainSubsystem extends SubsystemBase {
+
+  private Field2d field = new Field2d();
+
+  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
 
   private Rotation2d m_lastRotation2d = new Rotation2d();
 
@@ -77,7 +87,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             },
             new Pose2d(0, 0, new Rotation2d()));
       } catch (Exception e) {
-
+        // e.printStackTrace();
+        System.out.println(e.toString());
       }
     }).start();
 
@@ -86,6 +97,26 @@ public class DriveTrainSubsystem extends SubsystemBase {
         + "  fl: " + Preferences.getDouble(DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)
         + "  bl: " + Preferences.getDouble(DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)
         + "  br: " + Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0));
+    AutoBuilder.configureHolonomic(
+      this::getPose, 
+      this::resetPose, 
+      this::getRobotRelativeSpeeds, 
+      this::driveRobotRelative, 
+      Constants.Swerve.pathFollowerConfig,
+      () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+      },
+      this
+    );
+
   }
 
   public SwerveDriveKinematics getKinematics() {
@@ -103,14 +134,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.setSwerveModuleStates(states[3]);
     // do the divide by 3 speed here 
 
-    m_odometry.update(
-      getGyroHeading(),
-      new SwerveModulePosition[] {
-          m_frontRight.getPosition(),
-          m_frontLeft.getPosition(),
-          m_backLeft.getPosition(),
-          m_backRight.getPosition()
-      });
+    if (m_odometry != null) {
+      m_odometry.update(
+        getGyroHeading(),
+        new SwerveModulePosition[] {
+            m_frontRight.getPosition(),
+            m_frontLeft.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        });
+        System.out.println("odo is being updated");
+    }
   }
     /**
      * Applies offset to ALL swerve modules.
@@ -157,6 +191,7 @@ private Rotation2d getGyroHeading() {
     m_navxGyro.reset();
   }
 
+    // XXX test me
   public void resetPose(Pose2d pose) {
     m_odometry.resetPosition(getGyroHeading(), 
     new SwerveModulePosition[] {
@@ -168,17 +203,27 @@ private Rotation2d getGyroHeading() {
     pose);
   }
 
+  // XXX test me
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    if (m_odometry != null) {
+      return m_odometry.getPoseMeters();
+    }
+
+    return new Pose2d(123, 432, m_lastRotation2d);
   }
 
-  // auto stuff
-  private ChassisSpeeds getM_robotRelativeSpeeds() {
-    return m_robotRelativeSpeeds;
+
+  // XXX test me (while testing other method with this note)
+  // temporarily made public
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return chassisSpeeds;
   }
-  
-  // auto stuff
-  private void driveRobotRelative(ChassisSpeeds speeds) {
+
+  // XXX test me (while testing other method with this note)
+  // temporarily made public
+  public void driveRobotRelative(ChassisSpeeds speeds) {
+
+    chassisSpeeds = speeds;
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
     //check desaturate constants
@@ -186,6 +231,19 @@ private Rotation2d getGyroHeading() {
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);
     m_backRight.setSwerveModuleStates(states[3]);
+
+
+    if (m_odometry != null) {
+      m_odometry.update(
+        getGyroHeading(),
+        new SwerveModulePosition[] {
+            m_frontRight.getPosition(),
+            m_frontLeft.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        });
+        System.out.println("odo is being updated");
+    }
   }
 
   @Override
@@ -195,5 +253,12 @@ private Rotation2d getGyroHeading() {
     m_frontLeft.periodic();
     m_backLeft.periodic();
     m_backRight.periodic();
+    SmartDashboard.putNumber("odo x", getPose().getX());
+    SmartDashboard.putNumber("odo y", getPose().getY());
+
+    
+    SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
+
+    System.out.println("is odo null?" + (m_odometry == null));
   }
 }

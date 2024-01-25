@@ -8,6 +8,7 @@ import frc.robot.subsystems.DriveTrainSubsystem;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.SwerveAutoTesting;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,7 +16,21 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,6 +43,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private final SendableChooser<Command> autoChooser;
+  // autoChooser = AutoBuilder.buildAutoChooser;
 
 
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
@@ -60,6 +78,14 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+      NamedCommands.registerCommand("a", Commands.print("Passed marker 1"));
+      autoChooser = AutoBuilder.buildAutoChooser();
+      Shuffleboard.getTab("Tab 1").add(autoChooser);
+      autoChooser.addOption("a", getAutonomousCommand());
+
+
+
     // Configure the trigger bindings
     configureBindings();
   }
@@ -81,12 +107,19 @@ public class RobotContainer {
       () -> m_driverController.getRightX()
     );
 
+    SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
+      m_driveTrain, 
+      () -> m_driverController.getLeftY(), 
+      () -> m_driverController.getLeftX(), 
+      () -> m_driverController.getRightX()
+    );
+
     m_driveTrain.setDefaultCommand(m_driveCommand);
+    // m_driveTrain.setDefaultCommand(m_swerveAutoTesting);
 
     
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-
   }
 
   /**
@@ -95,10 +128,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-
-    // V Auto code V
-    return new WaitCommand(5);
-    // ^ Auto code ^
+    // return autoChooser.getSelected();
+    // return PathPlannerPath.fromPathFile("a");
+    return AutoBuilder.followPath(PathPlannerPath.fromPathFile("a"));
+    // return new PathPlannerAuto("c");
+    // return PathPlannerAuto("b");
+    // return null;
   }
 }
