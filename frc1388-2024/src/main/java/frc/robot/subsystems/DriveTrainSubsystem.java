@@ -148,6 +148,12 @@ private Rotation2d getGyroHeading() {
     pose);
   }
 
+  public void turnToSpeaker() {
+    if (Limelight.getAngleFromSpeaker() != 0) {
+      drive(0, 0, 0.2);
+    }
+  }
+
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
   }

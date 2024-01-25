@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,16 +27,12 @@ public class Limelight extends SubsystemBase {
   private final NetworkTableEntry m_thor;
   private final NetworkTableEntry m_tvert;
   private final NetworkTableEntry m_botpos;
-  private final double m_xOffset;
-  private final double m_yOffset;
-  private final double m_zOffset;
   private int tick = 0;
 
   private final NetworkTable m_table;
 
   /** Creates a new Limelight. */
   public Limelight() {
-
     m_table = NetworkTableInstance.getDefault().getTable("limelight");
     m_tx = m_table.getEntry("tx");
     m_ty = m_table.getEntry("ty");
@@ -48,27 +46,11 @@ public class Limelight extends SubsystemBase {
     m_thor = m_table.getEntry("thor");
     m_tvert = m_table.getEntry("tvert");
     m_botpos = m_table.getEntry("botpose");
-    m_xOffset = m_table.getEntry("camtran").getDoubleArray(new double[]{0.0 , 0.0})[0];
-    m_yOffset = m_table.getEntry("camtran").getDoubleArray(new double[]{0.0 , 0.0})[3];
-    m_zOffset = m_table.getEntry("camtran").getDoubleArray(new double[]{0.0 , 0.0})[2];
    
-
-
     // double rz = (bot_pose_blue[5] + 360) % 360; (test what this does later)
 
   }
 	
-  public double getXOffset() {
-    return m_xOffset;
-  }
-
-  public double getYOffset() {
-    return m_yOffset;
-  }
-
-  public double getZOffset() {
-    return m_zOffset;
-  }
 
   public double getTx() {
     return m_tx.getDouble(0.0);
@@ -90,64 +72,58 @@ public class Limelight extends SubsystemBase {
     return m_tv.getDouble(0.0);
   }
 
-
   public static double calculateDistance() {
-    double[] camtran = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace")
+    double[] targetSpace = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace")
+        .getDoubleArray(new double[] {});
+
+    double[] camerapose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace")
+        .getDoubleArray(new double[] {});
+
+    double[] robotspace = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_robotspace")
         .getDoubleArray(new double[] {});
     // finds distance in meters (needs callibration from limelight) needs to see the
     // april tag (needs testing)
-    if (camtran.length >= 3) {
-      if (camtran[0] != 0 && camtran[1] != 0 && camtran[2] != 0) {
-        double distance = Math.sqrt(camtran[0] * camtran[0] + camtran[1] * camtran[1] + camtran[2] * camtran[2]);
+    if (targetSpace.length >= 3) {
+      if (targetSpace[0] != 0 && targetSpace[1] != 0 && targetSpace[2] != 0) {
+        double distance = Math.sqrt(targetSpace[0] * targetSpace[0] + targetSpace[1] * targetSpace[1] + targetSpace[2] * targetSpace[2]);
         SmartDashboard.putNumber("Distance to April Tag: ", distance); // it calculates in meters
+        SmartDashboard.putNumber("Target Space 1", targetSpace[1]);
+        SmartDashboard.putNumber("Target Space 2", targetSpace[2]);
+        SmartDashboard.putNumber("Target Space 3", targetSpace[3]);
+        SmartDashboard.putNumber("Target Space 4", targetSpace[4]);
+        SmartDashboard.putNumber("Target Space 5", targetSpace[5]);
+        SmartDashboard.putNumber("Target Space 6", targetSpace[6]);
+
+        SmartDashboard.putNumber("camera Space 1", camerapose[1]);
+        SmartDashboard.putNumber("camera Space 2", camerapose[2]);
+        SmartDashboard.putNumber("camera Space 3", camerapose[3]);
+        SmartDashboard.putNumber("camera Space 4", camerapose[4]);
+        SmartDashboard.putNumber("camera Space 5", camerapose[5]);
+        SmartDashboard.putNumber("camera Space 6", camerapose[6]);
+
+        SmartDashboard.putNumber("Robot Space 1", robotspace[1]);
+        SmartDashboard.putNumber("Robot Space 2", robotspace[2]);
+        SmartDashboard.putNumber("Robot Space 3", robotspace[3]);
+        SmartDashboard.putNumber("Robot Space 4", robotspace[4]);
+        SmartDashboard.putNumber("Robot Space 5", robotspace[5]);
+        SmartDashboard.putNumber("Robot Space 6", robotspace[6]);
         return distance;
       }
     }
     return 0;
   }
+
+  public static double getAngleFromSpeaker() {
+    double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+    return tx; // might be angle need to test
+  }
+
+
+
   @Override
-  public void periodic() {
-
-    // double[] bot_pose_blue = m_table
-    // .getEntry("botpose_wpiblue")
-    // .getDoubleArray(new double[1]);
-
-    // double tx = bot_pose_blue[0];
-    // double ty = bot_pose_blue[1];
-    // double tz = bot_pose_blue[2];
-    // double rx = bot_pose_blue[3];
-    // double ry = bot_pose_blue[4];
-    
-    
-    
-    // SmartDashboard.putNumber("Tx", tx);  //tx x axis left right 
-    // SmartDashboard.putNumber("Ty", ty);  //ty y axis up and down
-    // SmartDashboard.putNumber("Tz", tz);  //tz forwards and backwards in meters
-    // SmartDashboard.putNumber("Rx", rx);
-    // SmartDashboard.putNumber("Ry", ry);
-    // // This method will be called once per scheduler run
-    // PowerDistribution pdh = new PowerDistribution();
-    // System.out.println("pdh 0: " + pdh.getCurrent(0) + " pdh 2: " +
-    // pdh.getCurrent(2));
-    // System.out.println("ts: " + m_ts.getDouble(0.0));
-    // System.out.println(m_tp.getDouble(0.0));
+  public void periodic() {    
+    SmartDashboard.putNumber("Tx: " , getAngleFromSpeaker());
     SmartDashboard.putNumber("Distance From AprilTag:", calculateDistance());
-    SmartDashboard.putNumber("target area", getTv());
-    SmartDashboard.putNumber("target x", getTx());
-    SmartDashboard.putNumber("target y", getTy());
-    SmartDashboard.putNumber("target z", getTz());
-    SmartDashboard.putNumber("target short", m_tshort.getDouble(0.0));
-    SmartDashboard.putNumber("target long", m_tlong.getDouble(0.0));
-    SmartDashboard.putNumber("target hor", m_thor.getDouble(0.0));
-    SmartDashboard.putNumber("target vert", m_tvert.getDouble(0.0));
-    SmartDashboard.putNumber("camtran[0]", getXOffset());
-    SmartDashboard.putNumber("camtran[1]", getYOffset());
-    SmartDashboard.putNumber("camtran[2]", getZOffset());
-    double[] camtran = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camtran").getDoubleArray(new double[]{});
-    SmartDashboard.putNumber("camtran[0]0", camtran[0]);
-    SmartDashboard.putNumber("camtran[1]1", camtran[1]);
-    SmartDashboard.putNumber("camtran[2]2", camtran[2]);
     
-
   }
 }
