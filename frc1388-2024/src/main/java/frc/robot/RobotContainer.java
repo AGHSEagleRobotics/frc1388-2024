@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
+  private final Dashboard m_dashboard = new Dashboard();
 
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
