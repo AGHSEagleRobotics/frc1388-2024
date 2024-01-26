@@ -222,6 +222,11 @@ private Rotation2d getGyroHeading() {
   // XXX test me (while testing other method with this note)
   // temporarily made public
   public void driveRobotRelative(ChassisSpeeds speeds) {
+    // double xvel = speeds.vxMetersPerSecond;
+    // double yvel = speeds.vyMetersPerSecond;
+
+    // speeds.vxMetersPerSecond = yvel;
+    // speeds.vyMetersPerSecond = -xvel;
 
     chassisSpeeds = speeds;
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrainSubsystem;
@@ -43,6 +44,7 @@ public class DriveCommand extends Command {
     double omega = -2 * Math.PI * scale(MathUtil.applyDeadband(m_rightX.get(), 0.1), 5);
     //lots of magic numbers check what the names should be
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
+    // m_driveTrain.driveRobotRelative(new ChassisSpeeds(xVelocity, yVelocity, omega));
 
   }
 
