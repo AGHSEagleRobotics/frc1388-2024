@@ -56,6 +56,12 @@ public final class Constants {
 
     
   }
+  public static class IntakeConstants {
+    public static final int ROLLER_MOTOR_CANID = 15;
+    public static final int LIFTER_MOTOR_CANID = 20;
+    public static final int LOWER_LIMIT_DIO = 3;
+    public static final int UPPER_LIMIT_DIO = 2;
+  }
 
   public static class FieldConstants {
     // XXX I think this is right, but if the robot drives funny, check these numbers

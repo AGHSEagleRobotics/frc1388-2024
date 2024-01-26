@@ -5,13 +5,17 @@
 package frc.robot;
 
 import frc.robot.subsystems.DriveTrainSubsystem;
-
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -54,6 +58,13 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB)
       //new ADIS16470_IMU()  
     );
+    
+  public final IntakeSubsystem m_intake = new IntakeSubsystem(
+    new CANSparkMax(Constants.IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless), 
+    new CANSparkMax(Constants.IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless), 
+    new DigitalInput(Constants.IntakeConstants.LOWER_LIMIT_DIO),  
+    new DigitalInput(Constants.IntakeConstants.UPPER_LIMIT_DIO));
+
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
