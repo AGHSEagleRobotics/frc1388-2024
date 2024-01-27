@@ -53,8 +53,12 @@ public final class Constants {
     public static final int BACK_RIGHT_ROTATION_MOTOR_CANID = 8;
     public static final int BACK_RIGHT_CANCODER = 12;
     public static final String BACK_RIGHT_ENCODER_OFFSET_KEY = "2024/backRightEncoderOffset";
+  }
 
-    
+  public static class ShooterCommandConstants {
+    public static final double kInitialMotorSpeed = 0.3;
+    public static final double kShooterTimer = 10;
+
   }
 
   public static class FieldConstants {
@@ -69,4 +73,5 @@ public final class Constants {
     public static final double RIGHT_STICK_SCALE = 5;
 
   }
+
 }
