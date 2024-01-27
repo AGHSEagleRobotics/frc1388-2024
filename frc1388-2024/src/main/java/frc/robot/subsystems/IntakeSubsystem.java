@@ -12,17 +12,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private final CANSparkMax m_rollerMotor; 
+  private final CANSparkMax m_rollerMotor;
   private final CANSparkMax m_lifterMotor;
   private final DigitalInput m_lowerLimit;
   private final DigitalInput m_upperLimit;
 
   /** Creates a new IntakeSubsystem. */
-  public IntakeSubsystem(CANSparkMax rollerMotor, 
-                          CANSparkMax lifterMotor, 
-                         DigitalInput lowerLimit,
-                         DigitalInput upperLimit) {
-    
+  public IntakeSubsystem(CANSparkMax rollerMotor,
+      CANSparkMax lifterMotor,
+      DigitalInput lowerLimit,
+      DigitalInput upperLimit) {
+
     m_rollerMotor = rollerMotor;
     m_lifterMotor = lifterMotor;
     m_lowerLimit = lowerLimit;
@@ -34,13 +34,12 @@ public class IntakeSubsystem extends SubsystemBase {
     m_lifterMotor.setIdleMode(IdleMode.kBrake);
     m_lifterMotor.setInverted(true);
 
-
-
   }
 
   /**
    * sets power to intake roller motor
-   * @param power value of -1.0 to 1.0, positive is intake 
+   * 
+   * @param power value of -1.0 to 1.0, positive is intake
    */
 
   public void setRollerMotor(double power) {
@@ -51,21 +50,38 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /**
    * sets power to lifter motor
+   * when either switch is pressed the motor stops
+   * 
    * @param power value of -1.0 to 1.0, positive is up
    */
-  public void setLifterMotor(double power){
+  public void setLifterMotor(double power) {
+
+    if ((getUpperLimit() == true) && (power > 0)) {
+      power = 0;
+    }
+
+    if ((getLowerLimit() == true) && (power < 0)) {
+      power = 0;
+    }
 
     m_lifterMotor.set(power);
+  }
+
+  /**
+   * 
+   * @return true if upper limit switch is pressed
+   */
+  public boolean getUpperLimit() {
+
+    return m_upperLimit.get();
 
   }
 
-  public boolean getUpperLimit(){
-    
-    return m_upperLimit.get();
-
-  } 
-
-  public boolean getLowerLimit(){
+  /**
+   * 
+   * @return true if lower limit switch is pressed
+   */
+  public boolean getLowerLimit() {
 
     return m_lowerLimit.get();
 
@@ -74,8 +90,6 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
-
 
   }
 }
