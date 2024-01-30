@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,13 +15,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,23 +26,24 @@ import frc.robot.Constants.DriveTrainConstants;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
-  private Field2d field = new Field2d();
-
+  /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
 
-  private Rotation2d m_lastRotation2d = new Rotation2d();
-
-  
+  /** the SwerveModule objects we created for this class */
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
 
-  private final double ROBOT_LENGTH = Constants.FieldConstants.ROBOT_LENGTH;
-  private final double ROBOT_WIDTH = Constants.FieldConstants.ROBOT_WIDTH;
+  /** The distance in <strong>meters</strong> from the center of rotation of the front wheel to the center of rotation of the back wheel */
+  private final double ROBOT_WHEEL_BASE = Constants.FieldConstants.ROBOT_LENGTH;
+  /** The distance in <strong>meters</strong> from the center of rotation of the left wheel to the center of rotation of the right wheel */
+  private final double ROBOT_TRACK_WIDTH = Constants.FieldConstants.ROBOT_WIDTH;
 
-  private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
-  private final Translation2d m_frontLeftTranslation = new Translation2d(ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
-  private final Translation2d m_backLeftTranslation = new Translation2d(-ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
-  private final Translation2d m_backRightTranslation = new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
+  // these are the translations from the center of rotation of the robot to the center of rotation of each swerve module
+  private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, -ROBOT_TRACK_WIDTH / 2);
+  private final Translation2d m_frontLeftTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, ROBOT_TRACK_WIDTH / 2);
+  private final Translation2d m_backLeftTranslation = new Translation2d(-ROBOT_WHEEL_BASE / 2, ROBOT_TRACK_WIDTH / 2);
+  private final Translation2d m_backRightTranslation = new Translation2d(-ROBOT_WHEEL_BASE / 2, -ROBOT_TRACK_WIDTH / 2);
 
+  /** Translating array for all the swerve modules */
   private final Translation2d[] m_swerveTranslation2d = {
     m_frontRightTranslation,
     m_frontLeftTranslation,
@@ -55,15 +51,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRightTranslation
   };
 
+  /** The kinematics object does all the swerve math */
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_swerveTranslation2d);
+  /** The odometry object keeps track of the robots position */
   private SwerveDriveOdometry m_odometry;
 
-  // private final ADIS16470_IMU m_gyro;
+  /** gyro for detecting rotation angle */
   private final AHRS m_navxGyro;
 
-  private ChassisSpeeds m_robotRelativeSpeeds = new ChassisSpeeds();
-
   public DriveTrainSubsystem(SwerveModule frontRight, SwerveModule frontLeft, SwerveModule backLeft, SwerveModule backRight, AHRS gyro) {
+
     m_frontRight = frontRight;
     m_frontLeft = frontLeft;
     m_backLeft = backLeft;
@@ -72,6 +69,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_navxGyro = gyro;
     // m_gyro = gyro;
     
+    //gyro and odometry setup code I copied from a youtube video <br> https://www.youtube.com/watch?v=0Xi9yb1IMyA
     new Thread(() -> {
       try {
         Thread.sleep(1000);
@@ -97,6 +95,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         + "  fl: " + Preferences.getDouble(DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)
         + "  bl: " + Preferences.getDouble(DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)
         + "  br: " + Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0));
+      
+    // auto builder pathplanner code that we aren't using.
     AutoBuilder.configureHolonomic(
       this::getPose, 
       this::resetPose, 
@@ -119,21 +119,25 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   }
 
+  /** returns the kinematics object */
   public SwerveDriveKinematics getKinematics() {
     return m_kinematics;
   }
 
+  /** the drive method takes in an x and y velocity in meters / second, and a rotation rate in radians / second */
   public void drive(double xVelocity, double yVelocity, double omega) {
-    ChassisSpeeds m_robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_robotRelativeSpeeds);
+    ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(robotRelativeSpeeds);
+
+    // optimises wheel heading direction changes.
     SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
-    // ask what name the desaturate wheels for constants should be
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);
     m_backRight.setSwerveModuleStates(states[3]);
     // do the divide by 3 speed here 
 
+    // odometry updating
     if (m_odometry != null) {
       m_odometry.update(
         getGyroHeading(),
@@ -169,13 +173,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
         + "  br: " + backRightOffset);
   }
 
-  private Rotation2d getGyroHeading() {
+  // XXX this changed
+  public Rotation2d getGyroHeading() {
     if (!m_navxGyro.isCalibrating()) {
-      m_lastRotation2d = new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_navxGyro.getAngle(), 360)));
-      return m_lastRotation2d;
-    } else {
-      return m_lastRotation2d;
+      return new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_navxGyro.getAngle(), 360)));
     }
+    return new Rotation2d();
   }
 
 
@@ -209,7 +212,8 @@ private Rotation2d getGyroHeading() {
       return m_odometry.getPoseMeters();
     }
 
-    return new Pose2d(123, 432, m_lastRotation2d);
+    // return new Pose2d(123, 432, m_lastRotation2D);
+    return new Pose2d(123, 432, getGyroHeading());
   }
 
 
@@ -227,6 +231,9 @@ private Rotation2d getGyroHeading() {
 
     // speeds.vxMetersPerSecond = yvel;
     // speeds.vyMetersPerSecond = -xvel;
+
+    SmartDashboard.putNumber("auto y speed", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("auto x speed", speeds.vxMetersPerSecond);
 
     chassisSpeeds = speeds;
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
@@ -251,6 +258,40 @@ private Rotation2d getGyroHeading() {
     }
   }
 
+  public double getDistTraveled() {
+    return m_frontRight.getPosition().distanceMeters;
+  }
+
+  public double getAngle() {
+    if (!m_navxGyro.isCalibrating()) {
+      return (-m_navxGyro.getAngle() + 36000) % 360;
+    }
+    return 0;
+  }
+
+  public void setWheelAngle(double angle) {
+    m_frontRight.setRotationPosition(angle);
+    m_frontLeft.setRotationPosition(angle);
+    m_backLeft.setRotationPosition(angle);
+    m_backRight.setRotationPosition(angle);
+  }
+
+  public void differentialDrive(double speed, double rotation) {
+    m_frontRight.setRotationPosition(0);
+    m_frontLeft.setRotationPosition(0);
+    m_backLeft.setRotationPosition(0);
+    m_backRight.setRotationPosition(0);
+
+    double left = speed - rotation;
+    double right = speed + rotation;
+
+    m_frontLeft.setDriveSpeed(left);
+    m_backLeft.setDriveSpeed(left);
+
+    m_frontRight.setDriveSpeed(right);
+    m_backRight.setDriveSpeed(right);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -265,5 +306,8 @@ private Rotation2d getGyroHeading() {
     SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
 
     System.out.println("is odo null?" + (m_odometry == null));
+
+    SmartDashboard.putNumber("gyro angle", getAngle());
+
   }
 }

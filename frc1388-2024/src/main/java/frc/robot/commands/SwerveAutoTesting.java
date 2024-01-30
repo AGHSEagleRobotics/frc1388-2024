@@ -45,11 +45,11 @@ public class SwerveAutoTesting extends Command {
     double yVelocity = -Constants.DriveTrainConstants.ROBOT_MAX_SPEED * scale(MathUtil.applyDeadband(m_leftX.get(), 0.1), 2.5);
     double omega = -2 * Math.PI * scale(MathUtil.applyDeadband(m_rightX.get(), 0.1), 5);
     //lots of magic numbers check what the names should be
-    m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
+    // m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
 
     // auto driving test
-    // m_driveTrain.driveRobotRelative(new ChassisSpeeds(xVelocity, yVelocity, omega));
-    // SmartDashboard.putNumber("input x", xVelocity);
+    m_driveTrain.driveRobotRelative(new ChassisSpeeds(xVelocity, yVelocity, omega));
+    SmartDashboard.putNumber("input y", yVelocity);
     SmartDashboard.putNumber("relative omega", m_driveTrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     SmartDashboard.putNumber("relative x vel", m_driveTrain.getRobotRelativeSpeeds().vxMetersPerSecond);
     SmartDashboard.putNumber("relative y vel", m_driveTrain.getRobotRelativeSpeeds().vyMetersPerSecond);

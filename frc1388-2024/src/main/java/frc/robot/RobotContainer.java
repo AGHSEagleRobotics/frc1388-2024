@@ -7,13 +7,17 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SwerveAutoTesting;
+import frc.robot.commands.AutoTurn.RotationDirection;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -130,8 +134,28 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
     // return PathPlannerPath.fromPathFile("a");
-    return AutoBuilder.followPath(PathPlannerPath.fromPathFile("a"));
-    // return new PathPlannerAuto("c");
+    // return AutoBuilder.followPath(PathPlannerPat.h.fromPathFile("a"));
+
+    return new AutoDrive(m_driveTrain, 2);
+    // return new AutoDrive(m_driveTrain, 1)
+    // .andThen(new AutoTurn(m_driveTrain, 90, RotationDirection.ccw))
+    // .andThen(new AutoDrive(m_driveTrain, 0.5))
+    // .andThen(new AutoTurn(m_driveTrain, 0, RotationDirection.cw));
+
+
+    // .andThen(new AutoDrive(m_driveTrain, 2))
+    // .andThen(new AutoDrive(m_driveTrain, -2))
+    // .andThen(new AutoDrive(m_driveTrain, 2))
+    // .andThen(new AutoDrive(m_driveTrain, -2))
+    // .andThen(new AutoDrive(m_driveTrain, 2))
+    // .andThen(new AutoDrive(m_driveTrain, -2))
+    // .andThen(new AutoDrive(m_driveTrain, 2));
+    // .andThen(new AutoTurn(m_driveTrain, 90, RotationDirection.ccw))
+    // .andThen(new AutoDrive(m_driveTrain, 0.5))
+    // .andThen(new AutoTurn(m_driveTrain, 0, RotationDirection.cw));
+
+    // .andThen(new AutoTurn(m_driveTrain, 90))
+    // return new PathPlannerAuto("a");
     // return PathPlannerAuto("b");
     // return null;
   }
