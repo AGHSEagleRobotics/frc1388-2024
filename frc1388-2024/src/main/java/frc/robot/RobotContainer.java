@@ -7,11 +7,11 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoTurn;
+// import frc.robot.commands.AutoDrive;
+// import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SwerveAutoTesting;
-import frc.robot.commands.AutoTurn.RotationDirection;
+// import frc.robot.commands.AutoTurn.RotationDirection;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -132,11 +132,14 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    // return PathPlannerPath.fromPathFile("a");
-    // return AutoBuilder.followPath(PathPlannerPat.h.fromPathFile("a"));
 
-    return new AutoDrive(m_driveTrain, 2);
+    // return new PathPlannerAuto("b");
+    // return new WaitCommand(4);
+
+    // return autoChooser.getSelected();
+    return AutoBuilder.followPath(PathPlannerPath.fromPathFile("a"));
+
+    // return new AutoDrive(m_driveTrain, 2);
     // return new AutoDrive(m_driveTrain, 1)
     // .andThen(new AutoTurn(m_driveTrain, 90, RotationDirection.ccw))
     // .andThen(new AutoDrive(m_driveTrain, 0.5))

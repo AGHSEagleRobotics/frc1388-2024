@@ -36,11 +36,11 @@ public final class Constants {
   public static class SwerveModuleConstants { 
     public static final double DIST_PER_TICK = (1.0 / 6.75) * (0.3192); // ask calvin about the math
 
-    public static final double kDriveMotorP = 0.001;
+    public static final double kDriveMotorP = 5;
     public static final double kDriveMotorI = 0;
     public static final double kDriveMotorD = 0;
 
-    public static final double kRotationP = 0.007;
+    public static final double kRotationP = 5;
     public static final double kRotationI = 0;
     public static final double kRotationD = 0;
 
