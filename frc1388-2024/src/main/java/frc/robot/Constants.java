@@ -61,6 +61,17 @@ public final class Constants {
 
   }
 
+  public static class ShooterSubsystemConstants {
+    public static final double kShooterP = 0.00025;
+    public static final double kShooterI = 0; //change later as needed
+    public static final double kShooterD = 0;
+    public static final double kShooterFF = 0;
+
+    public static final int kShooterMotor1CANID = 0;
+    public static final int kShooterMotor2CANID = 0;
+
+  }
+
   public static class FieldConstants {
     // XXX I think this is right, but if the robot drives funny, check these numbers
   public static final double ROBOT_WIDTH = 0.508; // in meters, with bumpers? find out
