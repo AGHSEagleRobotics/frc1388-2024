@@ -22,7 +22,11 @@ public class RetractIntakeCommand extends Command {
   @Override
   public void initialize() {
     m_intakeSubsystem.setRollerMotor(0);
-    m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
+    if (m_intakeSubsystem.getUpperLimit()) {
+      m_intakeSubsystem.setLifterMotor(0);  
+    }
+    else { m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);}
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -23,15 +23,18 @@ public class DeployIntakeCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED);
-    m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED);
+    if (m_intakeSubsystem.getLowerLimit()) {
+      m_intakeSubsystem.setLifterMotor(0);
+    } else {
+      m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -42,6 +45,6 @@ public class DeployIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.getLowerLimit();
+    return false;
   }
 }
