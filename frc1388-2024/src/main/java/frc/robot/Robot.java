@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
 
     // Actions to perform when user button on RoboRio is pressed
     if (RobotController.getUserButton()) {
+      // User button is pressed
       m_userButtonCounter += 1;
 
       if (m_userButtonCounter == 1) {
@@ -76,11 +77,14 @@ public class Robot extends TimedRobot {
         m_robotContainer.m_driveTrain.setAllEncoderOffsets();
       }
     }
-    else if (m_userButtonCounter > 0) {
-      m_userButtonCounter = 0;
-      RobotController.setRadioLEDState(RadioLEDState.kOff);
+    else {
+      // User button is not pressed
+      if (m_userButtonCounter > 0) {
+        // button has just been released
+        m_userButtonCounter = 0;
+        RobotController.setRadioLEDState(RadioLEDState.kOff);
+      }
     }
-
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
