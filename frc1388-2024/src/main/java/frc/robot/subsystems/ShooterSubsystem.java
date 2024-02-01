@@ -5,13 +5,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ShooterSubsystemConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   private final CANSparkMax m_motor1;
@@ -33,18 +32,17 @@ public class ShooterSubsystem extends SubsystemBase {
     m_motor1PidController = m_motor1.getPIDController();
     m_motor2PidController = m_motor2.getPIDController();
 
-    m_motor1PidController.setP(Constants.ShooterSubsystemConstants.kShooterP);
-    m_motor1PidController.setI(Constants.ShooterSubsystemConstants.kShooterI);
-    m_motor1PidController.setD(Constants.ShooterSubsystemConstants.kShooterD);
-    m_motor1PidController.setFF(Constants.ShooterSubsystemConstants.kShooterFF);
+    m_motor1PidController.setP(ShooterSubsystemConstants.kShooterP);
+    m_motor1PidController.setI(ShooterSubsystemConstants.kShooterI);
+    m_motor1PidController.setD(ShooterSubsystemConstants.kShooterD);
+    m_motor1PidController.setFF(ShooterSubsystemConstants.kShooterFF);
   
-    m_motor2PidController.setP(Constants.ShooterSubsystemConstants.kShooterP);
-    m_motor2PidController.setI(Constants.ShooterSubsystemConstants.kShooterI);
-    m_motor2PidController.setD(Constants.ShooterSubsystemConstants.kShooterD);
-    m_motor2PidController.setFF(Constants.ShooterSubsystemConstants.kShooterFF);
+    m_motor2PidController.setP(ShooterSubsystemConstants.kShooterP);
+    m_motor2PidController.setI(ShooterSubsystemConstants.kShooterI);
+    m_motor2PidController.setD(ShooterSubsystemConstants.kShooterD);
+    m_motor2PidController.setFF(ShooterSubsystemConstants.kShooterFF);
   }
     
-
   public void setPower(double power) {
     m_motor1.set(power);
     m_motor2.set(power);
