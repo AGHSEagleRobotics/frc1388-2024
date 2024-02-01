@@ -60,23 +60,25 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-        // Actions to perform when user button on RoboRio is pressed
-    if (RobotController.getUserButton() & !m_lastUserButton) {
-      DataLogManager.log("### UserButtonPressed");
-      //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
-    }
-    m_lastUserButton = RobotController.getUserButton();
 
-    if(RobotController.getUserButton()){
+    // Actions to perform when user button on RoboRio is pressed
+    if (RobotController.getUserButton()) {
       m_userButtonCounter += 1;
-      if(m_userButtonCounter >= 100){
-        DataLogManager.log("### UserButtonHeld");
+
+      if (m_userButtonCounter == 1) {
+        DataLogManager.log("### User Button Pressed");
+        RobotController.setRadioLEDState(RadioLEDState.kGreen);
+        //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
+      }
+      else if (m_userButtonCounter == 100) {
+        DataLogManager.log("### User Button Held");
+        RobotController.setRadioLEDState(RadioLEDState.kOrange);
         m_robotContainer.m_driveTrain.setAllEncoderOffsets();
-        m_userButtonCounter = 0;
       }
     }
-    else{
+    else if (m_userButtonCounter > 0) {
       m_userButtonCounter = 0;
+      RobotController.setRadioLEDState(RadioLEDState.kOff);
     }
 
   }
