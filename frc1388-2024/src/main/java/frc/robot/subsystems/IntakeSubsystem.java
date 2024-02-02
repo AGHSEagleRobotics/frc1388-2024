@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -56,11 +57,11 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void setLifterMotor(double power) {
 
-    if ((getUpperLimit() == true) && (power > 0)) {
+    if ((getUpperLimit()) && (power > 0)) {
       power = 0;
     }
 
-    if ((getLowerLimit() == true) && (power < 0)) {
+    if ((getLowerLimit()) && (power < 0)) {
       power = 0;
     }
 
@@ -73,7 +74,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public boolean getUpperLimit() {
 
-    return m_upperLimit.get();
+    return !m_upperLimit.get();
 
   }
 
@@ -83,13 +84,15 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public boolean getLowerLimit() {
 
-    return m_lowerLimit.get();
+    return !m_lowerLimit.get();
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    SmartDashboard.putBoolean("upper limit", getUpperLimit());
+    SmartDashboard.putBoolean("lower limit", getLowerLimit());
+    m_rollerMotor.set(0.0);
   }
 }

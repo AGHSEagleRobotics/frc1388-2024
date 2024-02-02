@@ -29,13 +29,9 @@ public class DeployIntakeCommand extends Command {
   @Override
   public void execute() {
     m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED);
-    if (m_intakeSubsystem.getLowerLimit()) {
-      m_intakeSubsystem.setLifterMotor(0);
-    } else {
-      m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
-    }
+    m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
   }
-
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

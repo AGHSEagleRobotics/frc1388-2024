@@ -104,13 +104,13 @@ public class RobotContainer {
     
     /* driver and operator button binds for left bumper */
 
-    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intake));
-    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intake));
+    m_driverController.leftBumper().onTrue(new RetractIntakeCommand(m_intake));
+    m_operatorController.leftBumper().onTrue(new RetractIntakeCommand(m_intake));
 
     /** driver and operator button bindings for left trigger */
 
-    m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
-    m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
+    m_driverController.leftTrigger().onTrue(new DeployIntakeCommand(m_intake));
+    m_operatorController.leftTrigger().onTrue(new DeployIntakeCommand(m_intake));
 
 
   }
