@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,13 +20,20 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import frc.robot.vision.Limelight;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
   private Rotation2d m_lastRotation2d = new Rotation2d();
 
   
-  private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
+  private final SwerveModule m_frontRight, m_frontLeft;
+
+
+  private final SwerveModule m_backLeft;
+
+
+  private final SwerveModule m_backRight;
 
   private final Translation2d m_frontRightTranslation = new Translation2d(
       Constants.FieldConstants.ROBOT_LENGTH / 2, -Constants.FieldConstants.ROBOT_WIDTH / 2);
@@ -124,6 +132,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
   }
 
+  
+
 
 // for adis delete later
 /* 
@@ -148,11 +158,7 @@ private Rotation2d getGyroHeading() {
     pose);
   }
 
-  public void turnToSpeaker() {
-    if (Limelight.getAngleFromSpeaker() != 0) {
-      drive(0, 0, 0.2);
-    }
-  }
+
 
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();

@@ -26,4 +26,16 @@ public final class Constants {
   public static final double ROBOT_WIDTH = 0.508; // in meters, with bumpers? find out
   public static final double ROBOT_LENGTH = 0.508; // in meters, with bumpers? find out
   }
+
+  public static class LimelightConstants {
+    
+  }
+
+  public static class AutoConstants
+  {
+    public static final double TURN_P_VALUE = 0.0125;
+    public static final double TURN_P_TOLERANCE = 1.25;
+    public static final double MOVE_P_VALUE = 0.045;
+    public static final double MOVE_P_TOLERANCE = 0.5;
+  }
 }

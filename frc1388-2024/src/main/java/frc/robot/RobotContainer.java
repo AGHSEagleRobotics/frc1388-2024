@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.DriveTrainSubsystem;
-import frc.robot.subsystems.Limelight;
+import frc.robot.vision.Limelight;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -59,14 +60,14 @@ public class RobotContainer {
       // new ADIS16470_IMU()
       
     );
-    private final Limelight m_Limelight = new Limelight();
+    private final Limelight m_limelight = new Limelight(m_driveTrain);
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    SmartDashboard.putNumber("Calculate Distance", Limelight.calculateDistance());
+
     // Configure the trigger bindings
     configureBindings();
   }
@@ -93,7 +94,8 @@ public class RobotContainer {
     
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-    m_driverController.rightBumper().onTrue(new InstantCommand(() -> m_driveTrain.turnToSpeaker()));
+    m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
+    m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.goToSpeaker()));
 
   }
 
