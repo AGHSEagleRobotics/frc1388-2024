@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.Constants.OperatorConstants;
@@ -33,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
+  
 
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -60,7 +61,8 @@ public class RobotContainer {
       // new ADIS16470_IMU()
       
     );
-    private final Limelight m_limelight = new Limelight(m_driveTrain);
+  private AHRS m_navxGyro;
+    Limelight m_limelight = new Limelight(m_driveTrain, m_navxGyro);
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);

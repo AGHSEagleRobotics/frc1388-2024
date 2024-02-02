@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import frc.robot.commands.AutoTurn;
+import com.kauailabs.navx.frc.AHRS;
+
+import frc.robot.commands.AutoTurnTo;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +28,7 @@ public class Limelight extends SubsystemBase {
 
 
   private final DriveTrainSubsystem m_driveTrain;
-
+  private final AHRS m_navxGyro;
   private static NetworkTable m_table;
 
   private static class CameraInfo {
@@ -55,9 +57,10 @@ public class Limelight extends SubsystemBase {
   }
 
   /** Creates a new Limelight. */
-  public Limelight(DriveTrainSubsystem driveTrain) {
+  public Limelight(DriveTrainSubsystem driveTrain, AHRS navxGyro) {
     m_table = NetworkTableInstance.getDefault().getTable("limelight");
     m_driveTrain = driveTrain;  
+    m_navxGyro = navxGyro;
     // double rz = (bot_pose_blue[5] + 360) % 360; (test what this does later)
 
   }
@@ -240,15 +243,15 @@ public class Limelight extends SubsystemBase {
 
   public void turnToSpeaker() {
     if (getdegRotationToTarget() > 0) {
-      if (getAngleFromSpeaker() != 0) {
-        new AutoTurn(0, 0, null, m_driveTrain);
+      if (getAngleFromSpeaker() > 1) {
+        new AutoTurnTo(getdegRotationToTarget(), 0.2, m_driveTrain, m_navxGyro);
       }
     }
     if(getdegRotationToTarget() < 0)
     {
-      if(getAngleFromSpeaker() != 0)
+      if(getAngleFromSpeaker() < 1)
       {
-        m_driveTrain.drive(0, 0, 0.2);
+        new AutoTurnTo(getdegRotationToTarget(), -0.2, m_driveTrain, m_navxGyro);
       }
     }
   }
