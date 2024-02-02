@@ -147,7 +147,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
             m_backLeft.getPosition(),
             m_backRight.getPosition()
         });
-        System.out.println("odo is being updated");
+        // System.out.println("odo is being updated");
     }
   }
     /**
@@ -254,7 +254,7 @@ private Rotation2d getGyroHeading() {
             m_backLeft.getPosition(),
             m_backRight.getPosition()
         });
-        System.out.println("odo is being updated");
+        // System.out.println("odo is being updated");
     }
   }
 
@@ -276,20 +276,16 @@ private Rotation2d getGyroHeading() {
     m_backRight.setRotationPosition(angle);
   }
 
-  public void differentialDrive(double speed, double rotation) {
+  public void differentialDrive(double speed) {
     m_frontRight.setRotationPosition(0);
     m_frontLeft.setRotationPosition(0);
     m_backLeft.setRotationPosition(0);
     m_backRight.setRotationPosition(0);
 
-    double left = speed - rotation;
-    double right = speed + rotation;
-
-    m_frontLeft.setDriveSpeed(left);
-    m_backLeft.setDriveSpeed(left);
-
-    m_frontRight.setDriveSpeed(right);
-    m_backRight.setDriveSpeed(right);
+    m_frontLeft.setDriveSpeed(speed);
+    m_backLeft.setDriveSpeed(speed);
+    m_frontRight.setDriveSpeed(speed);
+    m_backRight.setDriveSpeed(speed);
   }
 
   @Override
@@ -305,7 +301,7 @@ private Rotation2d getGyroHeading() {
     
     SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
 
-    System.out.println("is odo null?" + (m_odometry == null));
+    // System.out.println("is odo null?" + (m_odometry == null));
 
     SmartDashboard.putNumber("gyro angle", getAngle());
 

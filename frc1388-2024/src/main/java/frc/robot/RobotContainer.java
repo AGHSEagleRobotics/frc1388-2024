@@ -11,7 +11,6 @@ import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SwerveAutoTesting;
-import frc.robot.commands.AutoTurn.RotationDirection;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -36,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -76,6 +76,8 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB)
       //new ADIS16470_IMU()  
     );
+
+    
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -108,7 +110,13 @@ public class RobotContainer {
       m_driveTrain, 
       () -> m_driverController.getLeftY(), 
       () -> m_driverController.getLeftX(), 
-      () -> m_driverController.getRightX()
+      () -> m_driverController.getRightX(),
+      // () -> getDPad()
+      () -> m_driverController.getHID().getAButton(),
+      () -> m_driverController.getHID().getBButton(),
+      () -> m_driverController.getHID().getXButton(),
+      () -> m_driverController.getHID().getYButton()
+
     );
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
@@ -122,8 +130,8 @@ public class RobotContainer {
     // m_driveTrain.setDefaultCommand(m_swerveAutoTesting);
 
     
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
   }
 
   /**
@@ -132,11 +140,24 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return new AutoDrive(m_driveTrain, -1);
+    // .andThen(new AutoDrive(m_driveTrain, -1));
+    // return new AutoTurn(90, m_driveTrain)
+    // .andThen(new AutoDrive(m_driveTrain, 1))
+
+    // .andThen(new AutoTurn(180, m_driveTrain))
+    // .andThen(new AutoDrive(m_driveTrain, 1))
+
+    // .andThen(new AutoTurn(270, m_driveTrain))
+    // .andThen(new AutoDrive(m_driveTrain, 1))
+
+    // .andThen(new AutoTurn(0, m_driveTrain))
+    // .andThen(new AutoDrive(m_driveTrain, 1));
+
     // return autoChooser.getSelected();
     // return PathPlannerPath.fromPathFile("a");
     // return AutoBuilder.followPath(PathPlannerPat.h.fromPathFile("a"));
 
-    return new AutoDrive(m_driveTrain, 2);
     // return new AutoDrive(m_driveTrain, 1)
     // .andThen(new AutoTurn(m_driveTrain, 90, RotationDirection.ccw))
     // .andThen(new AutoDrive(m_driveTrain, 0.5))
@@ -158,5 +179,9 @@ public class RobotContainer {
     // return new PathPlannerAuto("a");
     // return PathPlannerAuto("b");
     // return null;
+  }
+
+  public int getDPad() {
+    return m_driverController.getHID().getPOV();
   }
 }
