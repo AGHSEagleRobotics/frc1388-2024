@@ -5,11 +5,13 @@
 package frc.robot;
 
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.LoggingSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterSubsystemConstants;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ShooterCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -37,6 +39,8 @@ public class RobotContainer {
     new CANSparkMax(ShooterSubsystemConstants.kShooterMotor1CANID, MotorType.kBrushless),
     new CANSparkMax(ShooterSubsystemConstants.kShooterMotor2CANID, MotorType.kBrushless)
     );
+
+    public final LoggingSubsystem m_logger = new LoggingSubsystem();
     
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -95,6 +99,7 @@ public class RobotContainer {
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
+    m_driverController.rightTrigger().onTrue(new ShooterCommand(m_shooter));
   }
 
   /**

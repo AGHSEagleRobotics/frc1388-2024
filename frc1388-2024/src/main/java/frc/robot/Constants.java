@@ -67,8 +67,8 @@ public final class Constants {
     public static final double kShooterD = 0;
     public static final double kShooterFF = 0;
 
-    public static final int kShooterMotor1CANID = 0;
-    public static final int kShooterMotor2CANID = 0;
+    public static final int kShooterMotor1CANID = 13;
+    public static final int kShooterMotor2CANID = 14;
 
   }
 
