@@ -97,7 +97,8 @@ public class RobotContainer {
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
     m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.goToSpeaker()));
+    m_driverController.leftBumper().whileTrue(new RunCommand(() -> m_limelight.goToSpeaker()));
+    m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
   }
 

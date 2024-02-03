@@ -26,40 +26,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight extends SubsystemBase {
 
-
   private final DriveTrainSubsystem m_driveTrain;
   private final AHRS m_navxGyro;
   private static NetworkTable m_table;
 
-  private static class CameraInfo {
-    /** ID of tag */
-    public final int tag_id;
-
-    /** Position of that tag on field */
-    public final Pose2d tag_position;
-
-    /** Relative position of tag as seen by camera */
-    public final Pose2d tag_view;
-
-    public CameraInfo(int tag_id, Pose2d tag_position, Pose2d tag_view) {
-      this.tag_id = tag_id;
-      this.tag_position = tag_position;
-      this.tag_view = tag_view;
-    }
-
-    @Override
-    public String toString() {
-      return String.format("#%d (%s) seen as %s",
-          tag_id,
-          FieldInfo.format(tag_position),
-          FieldInfo.format(tag_view));
-    }
-  }
-
   /** Creates a new Limelight. */
   public Limelight(DriveTrainSubsystem driveTrain, AHRS navxGyro) {
     m_table = NetworkTableInstance.getDefault().getTable("limelight");
-    m_driveTrain = driveTrain;  
+    m_driveTrain = driveTrain;
     m_navxGyro = navxGyro;
     // double rz = (bot_pose_blue[5] + 360) % 360; (test what this does later)
 
@@ -213,7 +187,8 @@ public class Limelight extends SubsystemBase {
 
       double distance;
       distance = Math
-          .sqrt((targetSpace[0] * targetSpace[0]) + (targetSpace[1] * targetSpace[1]) + (targetSpace[2] * targetSpace[2]));
+          .sqrt((targetSpace[0] * targetSpace[0]) + (targetSpace[1] * targetSpace[1])
+              + (targetSpace[2] * targetSpace[2]));
 
       // SmartDashboard.putNumber("Target Space 1", targetSpace[1]);
       // SmartDashboard.putNumber("Target Space 2", targetSpace[2]);
@@ -242,33 +217,57 @@ public class Limelight extends SubsystemBase {
   }
 
   public void turnToSpeaker() {
-    if (getdegRotationToTarget() > 0) {
-      if (getAngleFromSpeaker() > 1) {
-        new AutoTurnTo(getdegRotationToTarget(), 0.2, m_driveTrain, m_navxGyro);
+
+    CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
+    CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
+
+    if (m_cameraInfo1.tag_id == 3) {
+      if (getdegRotationToTarget() > 0) {
+        if (getAngleFromSpeaker() > 7) {
+          m_driveTrain.drive(0, 0, 0.3);
+        }
       }
-    }
-    if(getdegRotationToTarget() < 0)
-    {
-      if(getAngleFromSpeaker() < 1)
-      {
-        new AutoTurnTo(getdegRotationToTarget(), -0.2, m_driveTrain, m_navxGyro);
+      if (getdegRotationToTarget() < 0) {
+        if (getAngleFromSpeaker() < -7) {
+          m_driveTrain.drive(0, 0, -0.3);
+        }
+      } else if (getdegRotationToTarget() >= 5 && getdegRotationToTarget() <= -5) {
+        m_driveTrain.drive(0, 0, 0);
       }
     }
   }
 
-  public void goToSpeaker()
-  {
-    if(getDistance() > 5)
-    {
-      m_driveTrain.drive(0.2, 0, 0);
+  public void goToSpeaker() {
+    CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
+    CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
+
+    if (m_cameraInfo2.tag_id == 4) {
+      if (getDistance() > 1.5) {
+        m_driveTrain.drive(-0.3, 0, 0);
+      } else if (getDistance() < 2) {
+        m_driveTrain.drive(0.3, 0, 0);
+      } else if (getDistance() >= 1.5 && getDistance() <= 2) {
+        m_driveTrain.drive(0, 0, 0);
+      }
     }
-    else if (getDistance() < 5)
-    {
-      m_driveTrain.drive(-0.2, 0, 0);
-    }
-    else {
-      m_driveTrain.drive(0, 0, 0);
-    }
+  }
+
+  public void goToCenterOfSpeaker() {
+    CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
+    CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
+
+    if (m_cameraInfo2.tag_id == 4) {
+
+        if(getAngleFromSpeaker() > 5)
+        {
+          m_driveTrain.drive(0, 0.5, 0.2);
+        }
+        if(getAngleFromSpeaker() < -5)
+        {
+          m_driveTrain.drive(0, -0.5, -0.2);
+        }
+
+      }
   }
 
   public double getAngleFromSpeaker() {
