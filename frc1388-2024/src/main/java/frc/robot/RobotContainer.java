@@ -9,7 +9,16 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.FeedShooter;
 import frc.robot.commands.RetractIntakeCommand;
+import frc.robot.subsystems.LoggingSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ShooterSubsystemConstants;
+import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ShooterCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -35,29 +44,34 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  public final ShooterSubsystem m_shooter = new ShooterSubsystem(
+    new CANSparkMax(ShooterSubsystemConstants.kShooterMotor1CANID, MotorType.kBrushless),
+    new CANSparkMax(ShooterSubsystemConstants.kShooterMotor2CANID, MotorType.kBrushless)
+    );
 
-
+    public final LoggingSubsystem m_logger = new LoggingSubsystem();
+    
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
-          new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID), 
-          new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_ROTATION_MOTOR_CANID),
-          new CANcoder(Constants.DriveTrainConstants.FRONT_RIGHT_CANCODER),
-                       Preferences.getDouble(Constants.DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET_KEY, 0)), 
+          new TalonFX(DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID), 
+          new TalonFX(DriveTrainConstants.FRONT_RIGHT_ROTATION_MOTOR_CANID),
+          new CANcoder(DriveTrainConstants.FRONT_RIGHT_CANCODER),
+                       Preferences.getDouble(DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET_KEY, 0)), 
       new SwerveModule(
-          new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_DRIVE_MOTOR_CANID),  
-          new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_ROTATION_MOTOR_CANID),
-          new CANcoder(Constants.DriveTrainConstants.FRONT_LEFT_CANCODER),
-                        Preferences.getDouble(Constants.DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)),
+          new TalonFX(DriveTrainConstants.FRONT_LEFT_DRIVE_MOTOR_CANID),  
+          new TalonFX(DriveTrainConstants.FRONT_LEFT_ROTATION_MOTOR_CANID),
+          new CANcoder(DriveTrainConstants.FRONT_LEFT_CANCODER),
+                        Preferences.getDouble(DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)),
       new SwerveModule(
-          new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_DRIVE_MOTOR_CANID), 
-          new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_ROTATION_MOTOR_CANID),
-          new CANcoder(Constants.DriveTrainConstants.BACK_LEFT_CANCODER),
-                        Preferences.getDouble(Constants.DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)),
+          new TalonFX(DriveTrainConstants.BACK_LEFT_DRIVE_MOTOR_CANID), 
+          new TalonFX(DriveTrainConstants.BACK_LEFT_ROTATION_MOTOR_CANID),
+          new CANcoder(DriveTrainConstants.BACK_LEFT_CANCODER),
+                        Preferences.getDouble(DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)),
       new SwerveModule(
-          new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_DRIVE_MOTOR_CANID),  
-          new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_ROTATION_MOTOR_CANID),
-          new CANcoder(Constants.DriveTrainConstants.BACK_RIGHT_CANCODER),
-                        Preferences.getDouble(Constants.DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
+          new TalonFX(DriveTrainConstants.BACK_RIGHT_DRIVE_MOTOR_CANID),  
+          new TalonFX(DriveTrainConstants.BACK_RIGHT_ROTATION_MOTOR_CANID),
+          new CANcoder(DriveTrainConstants.BACK_RIGHT_CANCODER),
+                        Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
       new AHRS(SerialPort.Port.kUSB)
       //new ADIS16470_IMU()  
     );
@@ -67,7 +81,10 @@ public class RobotContainer {
     new CANSparkMax(Constants.IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless), 
     new DigitalInput(Constants.IntakeConstants.LOWER_LIMIT_DIO),  
     new DigitalInput(Constants.IntakeConstants.UPPER_LIMIT_DIO),
-    new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO));
+    new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO)
+  );
+
+  private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(new CANSparkMax(21, MotorType.kBrushed));
 
   // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = new CommandXboxController(
@@ -114,6 +131,13 @@ public class RobotContainer {
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
 
 
+    m_driverController.rightTrigger().whileTrue(
+      new RetractIntakeCommand(m_intake)
+      .andThen(
+        new ShooterCommand(m_shooter)
+        .alongWith(new FeedShooter(null, m_intake))
+      )
+    );
   }
 
   /**

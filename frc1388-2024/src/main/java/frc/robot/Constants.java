@@ -54,8 +54,23 @@ public final class Constants {
     public static final int BACK_RIGHT_ROTATION_MOTOR_CANID = 8;
     public static final int BACK_RIGHT_CANCODER = 12;
     public static final String BACK_RIGHT_ENCODER_OFFSET_KEY = "2024/backRightEncoderOffset";
+  }
 
-    
+  public static class ShooterCommandConstants {
+    public static final double kInitialMotorSpeed = 0.3;
+    public static final double kShooterTimer = 10;
+
+  }
+
+  public static class ShooterSubsystemConstants {
+    public static final double kShooterP = 0.00025;
+    public static final double kShooterI = 0; //change later as needed
+    public static final double kShooterD = 0;
+    public static final double kShooterFF = 0;
+
+    public static final int kShooterMotor1CANID = 13;
+    public static final int kShooterMotor2CANID = 14;
+
   }
   public static class IntakeConstants {
     public static final int ROLLER_MOTOR_CANID = 19;
@@ -80,4 +95,5 @@ public final class Constants {
     public static final double RIGHT_STICK_SCALE = 5;
 
   }
+
 }
