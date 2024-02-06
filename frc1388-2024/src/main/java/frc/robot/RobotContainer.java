@@ -66,7 +66,8 @@ public class RobotContainer {
     new CANSparkMax(Constants.IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless), 
     new CANSparkMax(Constants.IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless), 
     new DigitalInput(Constants.IntakeConstants.LOWER_LIMIT_DIO),  
-    new DigitalInput(Constants.IntakeConstants.UPPER_LIMIT_DIO));
+    new DigitalInput(Constants.IntakeConstants.UPPER_LIMIT_DIO),
+    new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO));
 
   // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = new CommandXboxController(
@@ -104,13 +105,13 @@ public class RobotContainer {
     
     /* driver and operator button binds for left bumper */
 
-    m_driverController.leftBumper().onTrue(new RetractIntakeCommand(m_intake));
-    m_operatorController.leftBumper().onTrue(new RetractIntakeCommand(m_intake));
+    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intake));
+    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intake));
 
     /** driver and operator button bindings for left trigger */
 
-    m_driverController.leftTrigger().onTrue(new DeployIntakeCommand(m_intake));
-    m_operatorController.leftTrigger().onTrue(new DeployIntakeCommand(m_intake));
+    m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
+    m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
 
 
   }

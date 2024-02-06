@@ -17,17 +17,20 @@ public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkMax m_lifterMotor;
   private final DigitalInput m_lowerLimit;
   private final DigitalInput m_upperLimit;
+  private final DigitalInput m_beamBreak;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem(CANSparkMax rollerMotor,
       CANSparkMax lifterMotor,
       DigitalInput lowerLimit,
-      DigitalInput upperLimit) {
+      DigitalInput upperLimit,
+      DigitalInput beamBreak) {
 
     m_rollerMotor = rollerMotor;
     m_lifterMotor = lifterMotor;
     m_lowerLimit = lowerLimit;
     m_upperLimit = upperLimit;
+    m_beamBreak = beamBreak;
 
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setInverted(true);
@@ -86,6 +89,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     return !m_lowerLimit.get();
 
+  }
+
+  /** gets beam break */
+  public boolean getBeamBreak() {
+    return m_beamBreak.get();
   }
 
   @Override

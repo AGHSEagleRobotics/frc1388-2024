@@ -28,6 +28,7 @@ public class RetractIntakeCommand extends Command {
   @Override
   public void execute() {
     m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
+    m_intakeSubsystem.setRollerMotor(0);
   }
 
   // Called once the command ends or is interrupted.
