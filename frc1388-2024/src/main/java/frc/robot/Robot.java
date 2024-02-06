@@ -9,6 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -60,25 +61,31 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-        // Actions to perform when user button on RoboRio is pressed
-    if (RobotController.getUserButton() & !m_lastUserButton) {
-      DataLogManager.log("### UserButtonPressed");
-      //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
-    }
-    m_lastUserButton = RobotController.getUserButton();
 
-    if(RobotController.getUserButton()){
+    // Actions to perform when user button on RoboRio is pressed
+    if (RobotController.getUserButton()) {
+      // User button is pressed
       m_userButtonCounter += 1;
-      if(m_userButtonCounter >= 100){
-        DataLogManager.log("### UserButtonHeld");
+
+      if (m_userButtonCounter == 1) {
+        DataLogManager.log("### User Button Pressed");
+        RobotController.setRadioLEDState(RadioLEDState.kGreen);
+        //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
+      }
+      else if (m_userButtonCounter == 100) {
+        DataLogManager.log("### User Button Held");
+        RobotController.setRadioLEDState(RadioLEDState.kOrange);
         m_robotContainer.m_driveTrain.setAllEncoderOffsets();
-        m_userButtonCounter = 0;
       }
     }
-    else{
-      m_userButtonCounter = 0;
+    else {
+      // User button is not pressed
+      if (m_userButtonCounter > 0) {
+        // button has just been released
+        m_userButtonCounter = 0;
+        RobotController.setRadioLEDState(RadioLEDState.kOff);
+      }
     }
-
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
