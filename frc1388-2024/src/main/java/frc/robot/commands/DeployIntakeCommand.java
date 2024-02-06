@@ -36,7 +36,9 @@ public class DeployIntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    new RetractIntakeCommand(m_intakeSubsystem).schedule();
+    if (!interrupted) {
+      new RetractIntakeCommand(m_intakeSubsystem).schedule();
+    }
     // m_intakeSubsystem.setLifterMotor(0);
   }
 
