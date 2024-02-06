@@ -18,7 +18,7 @@ import frc.robot.Constants.DriveTrainConstants;
 public class Dashboard {
     private final ShuffleboardTab m_shuffleboardTab;
     private final String SHUFFLEBOARD_TAB_NAME = "Competition";
-
+    private final GenericEntry m_canYouShoot;
 
 
     
@@ -30,9 +30,18 @@ public class Dashboard {
         CameraServer.addCamera(limelightCamera);
         Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightCamera)
         .withPosition(0, 0)
-        .withSize(12, 11);
+        .withSize(20, 14);
+
+        m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(6, 8)
+        .withPosition(20, 0)
+        .getEntry();
 
 
     } //end constructor
 
+    public void setIfCanShoot(boolean isReset) {
+        m_canYouShoot.setBoolean(isReset);
+    }
 }
