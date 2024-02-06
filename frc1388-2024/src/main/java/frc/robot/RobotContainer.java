@@ -140,7 +140,16 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoDrive(m_driveTrain, -1);
+
+    return new AutoDrive(4, m_driveTrain)
+    .andThen(new AutoTurn(90, m_driveTrain))
+    .andThen(new AutoDrive(1, m_driveTrain))
+    .andThen(new AutoTurn(90, m_driveTrain))
+    .andThen(new AutoDrive(4, m_driveTrain))
+    .andThen(new AutoTurn(90, m_driveTrain))
+    .andThen(new AutoDrive(1, m_driveTrain));
+
+    // .andThen(new AutoDrive(m_driveTrain, 1));
     // .andThen(new AutoDrive(m_driveTrain, -1));
     // return new AutoTurn(90, m_driveTrain)
     // .andThen(new AutoDrive(m_driveTrain, 1))
