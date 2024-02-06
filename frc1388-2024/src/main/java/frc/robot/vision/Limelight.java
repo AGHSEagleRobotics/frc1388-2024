@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import frc.robot.commands.AutoTurnTo;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +16,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.ConstantTurnToAprilTag;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import edu.wpi.first.math.util.Units;
@@ -27,14 +26,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Limelight extends SubsystemBase {
 
   private final DriveTrainSubsystem m_driveTrain;
-  private final AHRS m_navxGyro;
   private static NetworkTable m_table;
 
   /** Creates a new Limelight. */
-  public Limelight(DriveTrainSubsystem driveTrain, AHRS navxGyro) {
+  public Limelight(DriveTrainSubsystem driveTrain) {
     m_table = NetworkTableInstance.getDefault().getTable("limelight");
     m_driveTrain = driveTrain;
-    m_navxGyro = navxGyro;
     // double rz = (bot_pose_blue[5] + 360) % 360; (test what this does later)
 
   }
@@ -77,6 +74,12 @@ public class Limelight extends SubsystemBase {
    * @return
    */
 
+   public double getAprilTagID() {
+    NetworkTableEntry tid = m_table.getEntry("tid");
+    double m_tid = tid.getDouble(0);
+    return m_tid;
+   }
+
   public boolean getIsTargetFound() {
     NetworkTableEntry tv = m_table.getEntry("tv");
     double m_tv = tv.getDouble(0);
@@ -89,7 +92,7 @@ public class Limelight extends SubsystemBase {
 
   /**
    * ty Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
-   * 
+   * can go higher than that
    * @return
    */
   public double getdegVerticalToTarget() {
@@ -218,57 +221,53 @@ public class Limelight extends SubsystemBase {
 
   public void turnToSpeaker() {
 
-    CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
-    CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
-
-    if (m_cameraInfo1.tag_id == 3) {
+    if (getAprilTagID() == 4) {
       if (getdegRotationToTarget() > 0) {
-        if (getAngleFromSpeaker() > 7) {
+        if (getAngleFromSpeaker() > 4) {
           m_driveTrain.drive(0, 0, 0.3);
         }
       }
       if (getdegRotationToTarget() < 0) {
-        if (getAngleFromSpeaker() < -7) {
+        if (getAngleFromSpeaker() < -4) {
           m_driveTrain.drive(0, 0, -0.3);
         }
-      } else if (getdegRotationToTarget() >= 5 && getdegRotationToTarget() <= -5) {
+      } else if (getdegRotationToTarget() >= 4 && getdegRotationToTarget() <= -4) {
         m_driveTrain.drive(0, 0, 0);
       }
     }
   }
 
   public void goToSpeaker() {
-    CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
-    CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
 
-    if (m_cameraInfo2.tag_id == 4) {
-      if (getDistance() > 1.5) {
-        m_driveTrain.drive(-0.3, 0, 0);
-      } else if (getDistance() < 2) {
-        m_driveTrain.drive(0.3, 0, 0);
-      } else if (getDistance() >= 1.5 && getDistance() <= 2) {
+    if (getAprilTagID() == 4) {
+      if (getDistance() > 3) {
+        new ConstantTurnToAprilTag(m_driveTrain, null, 0.5, null);
+      } else if (getDistance() < 3.5) {
+        new ConstantTurnToAprilTag(m_driveTrain, null, 0.5, null);
+      } else if (getDistance() >= 3 && getDistance() <= 3.5) {
         m_driveTrain.drive(0, 0, 0);
       }
     }
   }
 
   public void goToCenterOfSpeaker() {
-    CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
-    CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
+    double[] targetSpace = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace")
+        .getDoubleArray(new double[] {});
 
-    if (m_cameraInfo2.tag_id == 4) {
+    if (getAprilTagID() == 4) {
 
-        if(getAngleFromSpeaker() > 5)
+        if(targetSpace[0] >= 0.5)
         {
-          m_driveTrain.drive(0, 0.5, 0.2);
+          m_driveTrain.drive(0, -0.5, 0);
         }
-        if(getAngleFromSpeaker() < -5)
+  
+        if(targetSpace[0] <= -0.5)
         {
-          m_driveTrain.drive(0, -0.5, -0.2);
+          m_driveTrain.drive(0, 0.5, 0);
         }
-
       }
-  }
+    }
+  
 
   public double getAngleFromSpeaker() {
     return getdegRotationToTarget();
@@ -284,15 +283,13 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Skew Degree", getSkew_Rotation());
 
       SmartDashboard.putNumber("Get Vertical Degree", getdegRotationToTarget());
-      CameraInfo m_cameraInfo1 = new CameraInfo(3, null, null);
-      CameraInfo m_cameraInfo2 = new CameraInfo(4, null, null);
 
-      SmartDashboard.putNumber("Camera Info Tag", m_cameraInfo1.tag_id);
-      if (m_cameraInfo1.tag_id == 3) {
+      SmartDashboard.putNumber("Camera Info Tag", getAprilTagID());
+      if (getAprilTagID() == 3) {
         SmartDashboard.putNumber("Get apriltag 3", getDistance());
       }
 
-      if (m_cameraInfo2.tag_id == 4) {
+      if (getAprilTagID() == 4) {
         SmartDashboard.putNumber("Get apriltag 4", getDistance());
       }
 

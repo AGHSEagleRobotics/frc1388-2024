@@ -9,6 +9,7 @@ import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ConstantTurnToAprilTag;
 import frc.robot.commands.DriveCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -34,8 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  
-
+private final AHRS m_navxGyro = new AHRS();
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(1),
@@ -61,15 +61,13 @@ public class RobotContainer {
       // new ADIS16470_IMU()
       
     );
-  private AHRS m_navxGyro;
-    Limelight m_limelight = new Limelight(m_driveTrain, m_navxGyro);
+    Limelight m_limelight = new Limelight(m_driveTrain);
 // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
     // Configure the trigger bindings
     configureBindings();
   }
@@ -97,7 +95,7 @@ public class RobotContainer {
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
     m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    m_driverController.leftBumper().whileTrue(new RunCommand(() -> m_limelight.goToSpeaker()));
+    m_driverController.x().onTrue(new ConstantTurnToAprilTag(m_driveTrain, m_limelight, 0.5, m_navxGyro));
     m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
   }
