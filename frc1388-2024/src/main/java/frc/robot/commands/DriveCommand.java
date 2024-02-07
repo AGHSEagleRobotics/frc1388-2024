@@ -78,7 +78,7 @@ public class DriveCommand extends Command {
     if (m_a.get()) {
       setAngle = 180;
     } else if (m_b.get()) {
-      setAngle = 240;;
+      setAngle = 240;
     } else if (m_x.get()) {
       setAngle = 120;
     } else if (m_y.get()) {
