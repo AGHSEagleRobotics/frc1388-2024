@@ -51,6 +51,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   // autoChooser = AutoBuilder.buildAutoChooser;
 
+  private final Dashboard m_dashboard = new Dashboard();
 
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(

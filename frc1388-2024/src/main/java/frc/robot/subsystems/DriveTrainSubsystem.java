@@ -223,19 +223,22 @@ private Rotation2d getGyroHeading() {
     return chassisSpeeds;
   }
 
-  // XXX test me (while testing other method with this note)
-  // temporarily made public
+  // // XXX test me (while testing other method with this note)
+  // // temporarily made public
+  // public void driveRobotRelative(ChassisSpeeds speeds) {
+  //   // double xvel = speeds.vxMetersPerSecond;
+  //   // double yvel = speeds.vyMetersPerSecond;
+
+  //   // speeds.vxMetersPerSecond = yvel;
+  //   // speeds.vyMetersPerSecond = -xvel;
+
+  //   SmartDashboard.putNumber("auto y speed", speeds.vyMetersPerSecond);
+  //   SmartDashboard.putNumber("auto x speed", speeds.vxMetersPerSecond);
+
+  //   chassisSpeeds = speeds;
+  
+  // auto stuff
   public void driveRobotRelative(ChassisSpeeds speeds) {
-    // double xvel = speeds.vxMetersPerSecond;
-    // double yvel = speeds.vyMetersPerSecond;
-
-    // speeds.vxMetersPerSecond = yvel;
-    // speeds.vyMetersPerSecond = -xvel;
-
-    SmartDashboard.putNumber("auto y speed", speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("auto x speed", speeds.vxMetersPerSecond);
-
-    chassisSpeeds = speeds;
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
     //check desaturate constants
