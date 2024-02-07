@@ -101,6 +101,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("upper limit", getUpperLimit());
     SmartDashboard.putBoolean("lower limit", getLowerLimit());
+    SmartDashboard.putBoolean("beam break", getBeamBreak());
     m_rollerMotor.set(0.0);
   }
 }

@@ -44,10 +44,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  public final ShooterSubsystem m_shooter = new ShooterSubsystem(
-    new CANSparkMax(ShooterSubsystemConstants.kShooterMotor1CANID, MotorType.kBrushless),
-    new CANSparkMax(ShooterSubsystemConstants.kShooterMotor2CANID, MotorType.kBrushless)
-    );
+  // public final ShooterSubsystem m_shooter = new ShooterSubsystem(
+  //   new CANSparkMax(ShooterSubsystemConstants.kShooterMotor1CANID, MotorType.kBrushless),
+  //   new CANSparkMax(ShooterSubsystemConstants.kShooterMotor2CANID, MotorType.kBrushless)
+  //   );
 
     public final LoggingSubsystem m_logger = new LoggingSubsystem();
     
@@ -84,7 +84,7 @@ public class RobotContainer {
     new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO)
   );
 
-  private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(new CANSparkMax(21, MotorType.kBrushed));
+  // private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(new CANSparkMax(21, MotorType.kBrushed));
 
   // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = new CommandXboxController(
@@ -131,13 +131,13 @@ public class RobotContainer {
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
 
 
-    m_driverController.rightTrigger().whileTrue(
-      new RetractIntakeCommand(m_intake)
-      .andThen(
-        new ShooterCommand(m_shooter)
-        .alongWith(new FeedShooter(null, m_intake))
-      )
-    );
+    // m_driverController.rightTrigger().whileTrue(
+    //   new RetractIntakeCommand(m_intake)
+    //   .andThen(
+    //     new ShooterCommand(m_shooter)
+    //     .alongWith(new FeedShooter(null, m_intake))
+    //   )
+    // );
   }
 
   /**
