@@ -33,8 +33,10 @@ public final class Constants {
 
   public static class AutoConstants
   {
-    public static final double TURN_P_VALUE = 0.0125;
+    public static final double TURN_P_VALUE = 0.062;
     public static final double TURN_P_TOLERANCE = 1.25;
+    public static final double TURN_I_VALUE = 0.005;
+    public static final double TURN_D_VALUE = 0.002;
     public static final double MOVE_P_VALUE = 0.045;
     public static final double MOVE_P_TOLERANCE = 0.5;
 
@@ -42,7 +44,7 @@ public final class Constants {
     public static final double CURVE_MAX = 0.25;
 
     public static final double TURN_MIN_SPEED_STOPPED = 0.12;
-    public static final double TURN_MIN_SPEED_MOVING = 0.075;
+    public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
   }
 }

@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.commands.ConstantTurnToAprilTag;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import edu.wpi.first.math.util.Units;
@@ -70,6 +69,7 @@ public class Limelight extends SubsystemBase {
 
   /**
    * tx Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+   * @param i 
    * 
    * @return
    */
@@ -221,40 +221,35 @@ public class Limelight extends SubsystemBase {
 
   public void turnToSpeaker() {
 
-    if (getAprilTagID() == 4) {
       if (getdegRotationToTarget() > 0) {
         if (getAngleFromSpeaker() > 4) {
-          m_driveTrain.drive(0, 0, 0.3);
+          m_driveTrain.drive(0, 0, 0.5);
         }
       }
       if (getdegRotationToTarget() < 0) {
         if (getAngleFromSpeaker() < -4) {
-          m_driveTrain.drive(0, 0, -0.3);
+          m_driveTrain.drive(0, 0, -0.5);
         }
       } else if (getdegRotationToTarget() >= 4 && getdegRotationToTarget() <= -4) {
         m_driveTrain.drive(0, 0, 0);
-      }
+
     }
   }
 
   public void goToSpeaker() {
 
-    if (getAprilTagID() == 4) {
       if (getDistance() > 3) {
-        new ConstantTurnToAprilTag(m_driveTrain, null, 0.5, null);
+        
       } else if (getDistance() < 3.5) {
-        new ConstantTurnToAprilTag(m_driveTrain, null, 0.5, null);
+        
       } else if (getDistance() >= 3 && getDistance() <= 3.5) {
         m_driveTrain.drive(0, 0, 0);
       }
-    }
   }
 
   public void goToCenterOfSpeaker() {
     double[] targetSpace = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace")
         .getDoubleArray(new double[] {});
-
-    if (getAprilTagID() == 4) {
 
         if(targetSpace[0] >= 0.5)
         {
@@ -265,7 +260,6 @@ public class Limelight extends SubsystemBase {
         {
           m_driveTrain.drive(0, 0.5, 0);
         }
-      }
     }
   
 
@@ -284,15 +278,7 @@ public class Limelight extends SubsystemBase {
 
       SmartDashboard.putNumber("Get Vertical Degree", getdegRotationToTarget());
 
-      SmartDashboard.putNumber("Camera Info Tag", getAprilTagID());
-      if (getAprilTagID() == 3) {
-        SmartDashboard.putNumber("Get apriltag 3", getDistance());
-      }
-
-      if (getAprilTagID() == 4) {
-        SmartDashboard.putNumber("Get apriltag 4", getDistance());
-      }
-
+      SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
     }
   }
 }
