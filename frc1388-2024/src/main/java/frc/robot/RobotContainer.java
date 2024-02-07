@@ -51,6 +51,8 @@ public class RobotContainer {
 
     public final LoggingSubsystem m_logger = new LoggingSubsystem();
     
+  private final Dashboard m_dashboard = new Dashboard();
+
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID), 
