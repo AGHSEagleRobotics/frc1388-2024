@@ -16,11 +16,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.vision.Limelight;
+import frc.robot.Constants.DriveTrainConstants;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
@@ -35,14 +38,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   private final SwerveModule m_backRight;
 
-  private final Translation2d m_frontRightTranslation = new Translation2d(
-      Constants.FieldConstants.ROBOT_LENGTH / 2, -Constants.FieldConstants.ROBOT_WIDTH / 2);
-  private final Translation2d m_frontLeftTranslation = new Translation2d(Constants.FieldConstants.ROBOT_LENGTH / 2,
-      Constants.FieldConstants.ROBOT_WIDTH / 2);
-  private final Translation2d m_backLeftTranslation = new Translation2d(-Constants.FieldConstants.ROBOT_LENGTH / 2,
-      Constants.FieldConstants.ROBOT_WIDTH / 2);
-  private final Translation2d m_backRightTranslation = new Translation2d(
-      -Constants.FieldConstants.ROBOT_LENGTH / 2, -Constants.FieldConstants.ROBOT_WIDTH / 2);
+  private final double ROBOT_LENGTH = Constants.FieldConstants.ROBOT_LENGTH;
+  private final double ROBOT_WIDTH = Constants.FieldConstants.ROBOT_WIDTH;
+
+  private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
+  private final Translation2d m_frontLeftTranslation = new Translation2d(ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
+  private final Translation2d m_backLeftTranslation = new Translation2d(-ROBOT_LENGTH / 2, ROBOT_WIDTH / 2);
+  private final Translation2d m_backRightTranslation = new Translation2d(-ROBOT_LENGTH / 2, -ROBOT_WIDTH / 2);
 
   private final Translation2d[] m_swerveTranslation2d = {
     m_frontRightTranslation,
@@ -86,26 +88,22 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
       }
     }).start();
+
+    DataLogManager.log("SwerveModuleOffsets: "
+        + "  fr: " + Preferences.getDouble(DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET_KEY, 0)
+        + "  fl: " + Preferences.getDouble(DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)
+        + "  bl: " + Preferences.getDouble(DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)
+        + "  br: " + Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0));
   }
 
   public SwerveDriveKinematics getKinematics() {
     return m_kinematics;
   }
-  // XXX ask Calvin what this is used for
-/* 
-  public void setModuleState(SwerveModuleState[] states) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
 
-    m_frontRight.setSwerveModuleStates(states[0]);
-    m_frontLeft.setSwerveModuleStates(states[1]);
-    m_backLeft.setSwerveModuleStates(states[2]);
-    m_backRight.setSwerveModuleStates(states[3]);
-  }
-*/
   public void drive(double xVelocity, double yVelocity, double omega) {
     ChassisSpeeds m_robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_robotRelativeSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
     // ask what name the desaturate wheels for constants should be
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
@@ -121,6 +119,28 @@ public class DriveTrainSubsystem extends SubsystemBase {
           m_backLeft.getPosition(),
           m_backRight.getPosition()
       });
+  }
+    /**
+     * Applies offset to ALL swerve modules.
+     * <p>
+     * Wheels MUST be pointed to 0 degrees relative to robot to use this method
+     */
+  public void setAllEncoderOffsets(){
+    double frontRightOffset = m_frontRight.setEncoderOffset();
+    double frontLeftOffset = m_frontLeft.setEncoderOffset();
+    double backLeftOffset = m_backLeft.setEncoderOffset();
+    double backRightOffset = m_backRight.setEncoderOffset();
+
+    Preferences.setDouble(DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET_KEY, frontRightOffset);
+    Preferences.setDouble(DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, frontLeftOffset);
+    Preferences.setDouble(DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, backLeftOffset);
+    Preferences.setDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, backRightOffset);
+
+    DataLogManager.log("SwerveModuleUpdatedOffsets: " + "setting offsets: "
+        + "  fr: " + frontRightOffset
+        + "  fl: " + frontLeftOffset
+        + "  bl: " + backLeftOffset
+        + "  br: " + backRightOffset);
   }
 
   private Rotation2d getGyroHeading() {
@@ -170,10 +190,10 @@ private Rotation2d getGyroHeading() {
   }
   
   // auto stuff
-  private void driveRobotRelative(ChassisSpeeds speeds) {
+  public void driveRobotRelative(ChassisSpeeds speeds) {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, 3.0);
-    //check destatureate constants
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
+    //check desaturate constants
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);

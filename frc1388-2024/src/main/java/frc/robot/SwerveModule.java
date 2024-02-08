@@ -1,9 +1,12 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,7 +19,7 @@ public class SwerveModule {
     
 
     private final CANcoder m_cancoder;
-    private final double m_encoderOffset;
+    private double m_encoderOffset;
 
     private final TalonFX m_rotationMotor;
     private final PIDController m_rotationPID;
@@ -25,11 +28,10 @@ public class SwerveModule {
         m_driveMotor = driveMotor;
         m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
         Slot0Configs driveConfig = new Slot0Configs();
-        driveConfig.kP = 0.001;
-        driveConfig.kI = 0;
-        driveConfig.kD = 0;
+        driveConfig.kP = Constants.SwerveModuleConstants.kDriveMotorP;
+        driveConfig.kI = Constants.SwerveModuleConstants.kDriveMotorI;
+        driveConfig.kD = Constants.SwerveModuleConstants.kDriveMotorD;
         m_driveMotor.getConfigurator().apply(driveConfig);
-        // put pids in costants maybe?
 
         m_rotationMotor = rotationMotor;
         m_rotationMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -37,14 +39,18 @@ public class SwerveModule {
 
         m_encoderOffset = encoderOffset;
 
-        m_rotationPID = new PIDController(0.007, 0, 0);
-        m_rotationPID.setTolerance(5);
+        m_rotationPID = new PIDController(Constants.SwerveModuleConstants.kRotationP,
+                                          Constants.SwerveModuleConstants.kRotationI,
+                                          Constants.SwerveModuleConstants.kRotationD);
+        m_rotationPID.setTolerance(Constants.SwerveModuleConstants.kRotationTolerance);
         m_rotationPID.enableContinuousInput(0, 360);
-        // put pids in constants maybe?
 
         m_cancoder = cancoder;
-        
-
+        MagnetSensorConfigs cancoderConfig = new MagnetSensorConfigs();
+        cancoderConfig.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        cancoderConfig.MagnetOffset = 0;
+        cancoderConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        m_cancoder.getConfigurator().apply(cancoderConfig);
 
     }
     
@@ -64,15 +70,39 @@ public class SwerveModule {
 
     public void setDriveSpeed(double inputSpeed) {
         // because the robot's max speed is 3 m/s, deviding the speed by 3 results in a power [-1, 1] we can set the motor to 
-        m_driveMotor.set(inputSpeed / 3.0); // probably should be done outside of swerve module
+        m_driveMotor.set(inputSpeed / Constants.DriveTrainConstants.ROBOT_MAX_SPEED); // probably should be done outside of swerve module
     }
 
     public void setRotationPosition(double angle) {
         m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), angle));
     }
 
+    // public double getRotationAngle() {
+    //     return (m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset + 36000) % 360 - 90; // math should be reviewed and ask what they do for constants
+    // }
+
+    /**
+     * Determines the encoder offset from the swerve module.
+     *<p>
+     * Applies this offset to the swerve module.
+     * <p>
+     * Wheels MUST be pointed to 0 degrees relative to robot to use this method
+     * @return new encoder offset
+     */
+    public double setEncoderOffset(){ 
+       double rotationAngle = m_cancoder.getAbsolutePosition().getValue() * 360; 
+       m_encoderOffset = rotationAngle;
+       return m_encoderOffset;
+    }
+
     public double getRotationAngle() {
-        return (m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset + 36000) % 360 - 90; // math should be reviewed and ask what they do for constants
+        double rotationAngle;
+        rotationAngle = m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset;
+        rotationAngle = rotationAngle % 360;
+        if(rotationAngle < 0){
+            rotationAngle += 360;
+        }
+        return rotationAngle;        
     }
 
     public void periodic() {

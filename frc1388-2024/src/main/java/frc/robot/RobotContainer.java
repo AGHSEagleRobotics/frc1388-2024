@@ -8,14 +8,12 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
-
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,31 +32,31 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-private final AHRS m_navxGyro = new AHRS();
-  private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
+  private final Dashboard m_dashboard = new Dashboard();
+
+  public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
-          new TalonFX(1),
-          new TalonFX(5),
-          new CANcoder(9),
-          282), 
+          new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID), 
+          new TalonFX(Constants.DriveTrainConstants.FRONT_RIGHT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.FRONT_RIGHT_CANCODER),
+                       Preferences.getDouble(Constants.DriveTrainConstants.FRONT_RIGHT_ENCODER_OFFSET_KEY, 0)), 
       new SwerveModule(
-          new TalonFX(2),
-          new TalonFX(6),
-          new CANcoder(10),
-          203),
+          new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_DRIVE_MOTOR_CANID),  
+          new TalonFX(Constants.DriveTrainConstants.FRONT_LEFT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.FRONT_LEFT_CANCODER),
+                        Preferences.getDouble(Constants.DriveTrainConstants.FRONT_LEFT_ENCODER_OFFSET_KEY, 0)),
       new SwerveModule(
-          new TalonFX(3),
-          new TalonFX(7),
-          new CANcoder(11),
-          36),
+          new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_DRIVE_MOTOR_CANID), 
+          new TalonFX(Constants.DriveTrainConstants.BACK_LEFT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.BACK_LEFT_CANCODER),
+                        Preferences.getDouble(Constants.DriveTrainConstants.BACK_LEFT_ENCODER_OFFSET_KEY, 0)),
       new SwerveModule(
-          new TalonFX(4),
-          new TalonFX(8),
-          new CANcoder(12),
-          167),
+          new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_DRIVE_MOTOR_CANID),  
+          new TalonFX(Constants.DriveTrainConstants.BACK_RIGHT_ROTATION_MOTOR_CANID),
+          new CANcoder(Constants.DriveTrainConstants.BACK_RIGHT_CANCODER),
+                        Preferences.getDouble(Constants.DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
       new AHRS(SerialPort.Port.kUSB)
-      // new ADIS16470_IMU()
-      
+      //new ADIS16470_IMU()  
     );
     Limelight m_limelight = new Limelight(m_driveTrain);
 // all those numbers should be constants review what the names should be
