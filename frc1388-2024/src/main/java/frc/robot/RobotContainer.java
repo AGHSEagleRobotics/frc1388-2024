@@ -176,7 +176,7 @@ public class RobotContainer {
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intake));
 
 
-    m_driverController.rightBumper().whileTrue(
+    m_driverController.rightTrigger().whileTrue(
       new RetractIntakeCommand(m_intake)
       .andThen(
         // new ShooterCommand(m_shooter)
@@ -203,46 +203,6 @@ public class RobotContainer {
     .andThen(new AutoDrive(4, m_driveTrain))
     .andThen(new AutoTurn(90, m_driveTrain))
     .andThen(new AutoDrive(1, m_driveTrain));
-
-    // .andThen(new AutoDrive(m_driveTrain, 1));
-    // .andThen(new AutoDrive(m_driveTrain, -1));
-    // return new AutoTurn(90, m_driveTrain)
-    // .andThen(new AutoDrive(m_driveTrain, 1))
-
-    // .andThen(new AutoTurn(180, m_driveTrain))
-    // .andThen(new AutoDrive(m_driveTrain, 1))
-
-    // .andThen(new AutoTurn(270, m_driveTrain))
-    // .andThen(new AutoDrive(m_driveTrain, 1))
-
-    // .andThen(new AutoTurn(0, m_driveTrain))
-    // .andThen(new AutoDrive(m_driveTrain, 1));
-
-    // return autoChooser.getSelected();
-    // return PathPlannerPath.fromPathFile("a");
-    // return AutoBuilder.followPath(PathPlannerPat.h.fromPathFile("a"));
-
-    // return new AutoDrive(m_driveTrain, 1)
-    // .andThen(new AutoTurn(m_driveTrain, 90, RotationDirection.ccw))
-    // .andThen(new AutoDrive(m_driveTrain, 0.5))
-    // .andThen(new AutoTurn(m_driveTrain, 0, RotationDirection.cw));
-
-
-    // .andThen(new AutoDrive(m_driveTrain, 2))
-    // .andThen(new AutoDrive(m_driveTrain, -2))
-    // .andThen(new AutoDrive(m_driveTrain, 2))
-    // .andThen(new AutoDrive(m_driveTrain, -2))
-    // .andThen(new AutoDrive(m_driveTrain, 2))
-    // .andThen(new AutoDrive(m_driveTrain, -2))
-    // .andThen(new AutoDrive(m_driveTrain, 2));
-    // .andThen(new AutoTurn(m_driveTrain, 90, RotationDirection.ccw))
-    // .andThen(new AutoDrive(m_driveTrain, 0.5))
-    // .andThen(new AutoTurn(m_driveTrain, 0, RotationDirection.cw));
-
-    // .andThen(new AutoTurn(m_driveTrain, 90))
-    // return new PathPlannerAuto("a");
-    // return PathPlannerAuto("b");
-    // return null;
   }
 
   public int getDPad() {
