@@ -5,13 +5,16 @@
 package frc.robot;
 
 import frc.robot.subsystems.DriveTrainSubsystem;
-
+import frc.robot.subsystems.Intake;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommand;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -29,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   private final Dashboard m_dashboard = new Dashboard();
+  
 
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -54,7 +58,9 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB)
       //new ADIS16470_IMU()  
     );
-// all those numbers should be constants review what the names should be
+    private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard);
+
+  // all those numbers should be constants review what the names should be
   private final CommandXboxController m_driverController = 
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
@@ -98,7 +104,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
 
     // V Auto code V
-    return new WaitCommand(5);
+    return m_autoMethod.getAutonomousCommand();   
     // ^ Auto code ^
   }
 }

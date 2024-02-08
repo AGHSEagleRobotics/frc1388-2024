@@ -69,4 +69,42 @@ public final class Constants {
     public static final double RIGHT_STICK_SCALE = 5;
 
   }
+
+  public static class AutoConstants {
+    // where all the constants used for Auto will be
+
+      public enum Objective{
+        SITSTILL ("LookPretty"),
+        LEAVEZONE ("LeaveZone");
+
+      public static final Objective Default = SITSTILL;
+
+      private String m_dashboardDescript; //This is what will show on dashboard
+      private Objective ( String dashboardDescript ) {
+        m_dashboardDescript = dashboardDescript;
+      }
+
+      public String getDashboardDescript() {
+        return m_dashboardDescript;
+      }  
+      }
+
+      public enum Position {
+        CLOSE("CLOSE"), //need to rename this
+        MID("MID"),
+        FAR("FAR");
+    
+        public static final Position Default = CLOSE;
+    
+        private String m_dashboardDescript; //This is what will show on dashboard
+        private Position ( String dashboardDescript ) {
+          m_dashboardDescript = dashboardDescript;
+        }
+    
+        public String getDashboardDescript() {
+          return m_dashboardDescript;
+        }
+      }
+
+  }
 }
