@@ -69,10 +69,10 @@ public final class Constants {
 
   public static class AutoConstants
   {
-    public static final double TURN_P_VALUE = 0.062;
+    public static final double TURN_P_VALUE = 0.08;
     public static final double TURN_P_TOLERANCE = 1.25;
-    public static final double TURN_I_VALUE = 0.005;
-    public static final double TURN_D_VALUE = 0.002;
+    public static final double TURN_I_VALUE = 0.003;
+    public static final double TURN_D_VALUE = 0.004;
     public static final double MOVE_P_VALUE = 0.045;
     public static final double MOVE_P_TOLERANCE = 0.5;
 

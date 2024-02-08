@@ -85,10 +85,10 @@ public class RobotContainer {
       () -> m_driverController.getLeftY(), 
       () -> m_driverController.getLeftX(), 
       () -> m_driverController.getRightX(),
-      () -> m_driverController.getHID().getStartButton()
+      () -> m_driverController.getHID().getStartButton() // test button
     );
 
-    m_driveTrain.setDefaultCommand(m_driveCommand);
+    m_driveTrain.setDefaultCommand(m_driveCommand); 
 
     
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
