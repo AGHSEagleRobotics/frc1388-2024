@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;

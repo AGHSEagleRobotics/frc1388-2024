@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static class Swerve {
@@ -69,8 +70,33 @@ public final class Constants {
     public static final int BACK_RIGHT_ROTATION_MOTOR_CANID = 8;
     public static final int BACK_RIGHT_CANCODER = 12;
     public static final String BACK_RIGHT_ENCODER_OFFSET_KEY = "2024/backRightEncoderOffset";
+  }
 
-    
+  public static class ShooterCommandConstants {
+    public static final double kInitialMotorSpeed = 0.3;
+    public static final double kShooterTimer = 10;
+
+  }
+
+  public static class ShooterSubsystemConstants {
+    public static final double kShooterP = 0.00025;
+    public static final double kShooterI = 0; //change later as needed
+    public static final double kShooterD = 0;
+    public static final double kShooterFF = 0;
+
+    public static final int kShooterMotor1CANID = 13;
+    public static final int kShooterMotor2CANID = 14;
+
+  }
+  public static class IntakeConstants {
+    public static final int ROLLER_MOTOR_CANID = 19;
+    public static final int LIFTER_MOTOR_CANID = 20;
+    public static final int LOWER_LIMIT_DIO = 3;
+    public static final int UPPER_LIMIT_DIO = 2;
+    public static final int BEAM_BREAK_DIO = 1;
+    public static final double ROLLER_MOTOR_SPEED = 0.7;
+    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.1; //XXX -0.2 for final desing
+    public static final double LIFTER_MOTOR_SPEED_UP = 0.2; //XXX 0.4 for final design
   }
 
   public static class FieldConstants {
@@ -105,5 +131,6 @@ public final class Constants {
     public static final double RIGHT_STICK_SCALE = 5;
 
   }
+
 }
 

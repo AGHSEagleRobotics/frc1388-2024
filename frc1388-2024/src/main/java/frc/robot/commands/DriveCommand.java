@@ -69,7 +69,7 @@ public class DriveCommand extends Command {
     m_rotationController.enableContinuousInput(0, 360);
 >>>>>>> dev
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_driveTrain);  
+    addRequirements(m_driveTrain);
   }
 
   // Called when the command is initially scheduled.
