@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.DriveTrainSubsystem;
-
+import frc.robot.subsystems.LinearActuator;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
 
@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
+  public final LinearActuator m_LinearActuator = new LinearActuator();
 
   public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -87,6 +89,8 @@ public class RobotContainer {
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
+    m_driverController.y().whileTrue(new RunCommand(() -> m_LinearActuator.setMotor(1)));
+    m_driverController.x().whileTrue(new RunCommand(() -> m_LinearActuator.setMotor(-1)));
   }
 
   /**
