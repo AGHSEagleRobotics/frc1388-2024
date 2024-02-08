@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.geometry.Translation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -16,6 +22,16 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
+  }
+
+  public static class Swerve {
+        public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
+      new PIDConstants(0.05, 0, 0), // Translation constants 
+      new PIDConstants(0.05, 0, 0), // Rotation constants 
+      4.5, 
+      new Translation2d(FieldConstants.ROBOT_WIDTH / 2, FieldConstants.ROBOT_LENGTH / 2).getNorm(), // Drive base radius (distance from center to furthest module) 
+      new ReplanningConfig()
+    );
   }
 
   public static class SwerveModuleConstants { 
@@ -33,7 +49,7 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = 3.0; //meters per second
+    public static final double ROBOT_MAX_SPEED = 0.25; //meters per second
 
     public static final int FRONT_RIGHT_DRIVE_MOTOR_CANID = 1;
     public static final int FRONT_RIGHT_ROTATION_MOTOR_CANID = 5;
@@ -84,9 +100,8 @@ public final class Constants {
   }
 
   public static class FieldConstants {
-    // XXX I think this is right, but if the robot drives funny, check these numbers
-  public static final double ROBOT_WIDTH = 0.508; // in meters, with bumpers? find out
-  public static final double ROBOT_LENGTH = 0.508; // in meters, with bumpers? find out
+    public static final double ROBOT_WIDTH = 0.552; // in meters, with bumpers? find out
+    public static final double ROBOT_LENGTH = 0.552; // in meters, with bumpers? find out
   }
 
   public static class DriveCommandConstants {

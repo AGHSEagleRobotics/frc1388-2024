@@ -4,65 +4,62 @@
 
 package frc.robot.commands;
 
-import javax.xml.stream.events.StartDocument;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class AutoDrive extends Command {
 
-  private final DriveTrainSubsystem m_driveTrainSubsystem;
+  private final DriveTrainSubsystem m_driveTrain;
+  private final double m_setPoint;
   private double m_start;
-  private final double m_totalDist;
 
-  SlewRateLimiter filter = new SlewRateLimiter(0.1);
-  PIDController pid = new PIDController(0.1, 0, 0);
+  private final PIDController m_driveController = new PIDController(0.03, 0.015, 0);
+  private final SlewRateLimiter m_accelerationLImiter = new SlewRateLimiter(0.4);
 
   /** Creates a new AutoDrive. */
-  public AutoDrive(DriveTrainSubsystem driveTrainSubsystem, double distance) {
-    m_driveTrainSubsystem = driveTrainSubsystem;
-    m_totalDist = distance;
-    
+  public AutoDrive(double setpoint, DriveTrainSubsystem driveTrainSubsystem) {
+    m_driveTrain = driveTrainSubsystem;
+    m_setPoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_driveTrainSubsystem);
+    addRequirements(m_driveTrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // m_start = m_driveTrainSubsystem.getDistTraveled();
+    m_start = m_driveTrain.getDistTraveled();
+    m_accelerationLImiter.calculate(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // double pidInput = 2 * m_totalDist - Math.abs(m_start - m_driveTrainSubsystem.getDistTraveled());
-    // SmartDashboard.putNumber("pid input", pidInput);
-    // double pidOutput = pid.calculate(pidInput);
-    // SmartDashboard.putNumber("Pid output", pidOutput);
+    // double pidInput = -m_setPoint  + (m_driveTrain.getDistTraveled() - m_start);
+    // SmartDashboard.putNumber("drive pid input", pidInput);
+    // SmartDashboard.putString("auto drive info", "setpoint" + m_setPoint + "dt.getdist" + m_driveTrain.getDistTraveled() + "start" + m_start);
+    double pidOutput = m_driveController.calculate(m_driveTrain.getDistTraveled() - m_start, m_setPoint);
+    double slewOutput = m_accelerationLImiter.calculate(pidOutput);
+    SmartDashboard.putNumber("drive slew", slewOutput);
+    m_driveTrain.differentialDrive(slewOutput);
+    SmartDashboard.putNumber("dist traveled", m_driveTrain.getDistTraveled() - m_start);
+    SmartDashboard.putNumber("total dist traveled", m_driveTrain.getDistTraveled());
 
-    // m_driveTrainSubsystem.differentialDrive(filter.calculate(0.1) - pidOutput, 0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_driveTrainSubsystem.drive(0, 0, 0);
+    m_driveTrain.drive(0, 0, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-    // SmartDashboard.putNumber("pid input", (Math.abs(m_start - m_driveTrainSubsystem.getDistTraveled())));
-    // SmartDashboard.putNumber("dist", Math.abs(m_start - m_driveTrainSubsystem.getDistTraveled()));
-    // SmartDashboard.putNumber("m_start", m_start);
-    // SmartDashboard.putNumber("dt dist traveled", m_driveTrainSubsystem.getDistTraveled());
-    // return Math.abs(m_start - m_driveTrainSubsystem.getDistTraveled()) > m_totalDist;
+    return Math.abs(m_driveTrain.getDistTraveled() - m_start) > Math.abs(m_setPoint) - 0.01;
   }
 }

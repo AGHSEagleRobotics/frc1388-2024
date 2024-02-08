@@ -12,11 +12,13 @@ public class FeedShooter extends Command {
   TransitionSubsystem m_transitionSubsystem;
   IntakeSubsystem m_intakeSubsystem;
   /** Creates a new FeedShooter. */
-  public FeedShooter(TransitionSubsystem transitionSubsystem, IntakeSubsystem intakeSubsystem) {
-    m_transitionSubsystem = transitionSubsystem;
+  public FeedShooter(
+    // TransitionSubsystem transitionSubsystem, 
+    IntakeSubsystem intakeSubsystem) {
+    // m_transitionSubsystem = transitionSubsystem;
     m_intakeSubsystem = intakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_transitionSubsystem, m_intakeSubsystem);
+    addRequirements(m_intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -26,7 +28,7 @@ public class FeedShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_transitionSubsystem.set(-0.5);
+    // m_transitionSubsystem.set(-0.5);
     m_intakeSubsystem.setRollerMotor(0.5);
   }
 
