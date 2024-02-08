@@ -4,6 +4,12 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.util.PIDConstants;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.Constants.DriveTrainConstants;
 import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,22 +18,17 @@ import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class AutoTurn extends Command {
 
-  public enum RotationDirection {
-    ccw, cw
-  }
+  private final double m_setpoint;
+  private final DriveTrainSubsystem m_driveTrain;
+  private PIDController m_rotationController = new PIDController(0.003, 0, 0);
 
-  private final DriveTrainSubsystem m_driveTrainSubsystem;
-  private final double m_turnSetPoint;
-  private final RotationDirection m_rotationDirection;
 
-  /** Creates a new AutoTurn. */
-  public AutoTurn(DriveTrainSubsystem driveTrainSubsystem, double turnSetPoint, RotationDirection rotationDirection) {
-    m_driveTrainSubsystem = driveTrainSubsystem;
-    m_turnSetPoint = turnSetPoint;
-    m_rotationDirection = rotationDirection;
-
+  /** Creates a new AutoTurbn. */
+  public AutoTurn(double setpoint, DriveTrainSubsystem driveTrainSubsystem) {
+    m_setpoint = setpoint;
+    m_driveTrain = driveTrainSubsystem;
+    addRequirements(m_driveTrain);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_driveTrainSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -37,22 +38,19 @@ public class AutoTurn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("turn set point", m_turnSetPoint);
-    if (m_rotationDirection == RotationDirection.ccw) {
-      m_driveTrainSubsystem.driveRobotRelative(new ChassisSpeeds(0, 0, 0.06));
-    } else {
-      m_driveTrainSubsystem.driveRobotRelative(new ChassisSpeeds(0, 0, -0.06));
-    }
+    m_driveTrain.drive(0, 0, m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_setpoint));
+    // m_driveTrain.drive(0, 0, 0.1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_driveTrain.drive(0, 0, 0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-    // return Math.abs(m_driveTrainSubsystem.getAngle() - m_turnSetPoint) < 5;
+    return Math.abs(m_driveTrain.getAngle() - 360 + m_setpoint) < 5;
   }
 }
