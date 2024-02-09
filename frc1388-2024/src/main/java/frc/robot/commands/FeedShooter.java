@@ -5,41 +5,40 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
 
-public class RetractIntakeCommand extends Command {
-  /** Creates a new RetractIntakeCommand. */
-  private final IntakeSubsystem m_intakeSubsystem;
-
-  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
+public class FeedShooter extends Command {
+  TransitionSubsystem m_transitionSubsystem;
+  IntakeSubsystem m_intakeSubsystem;
+  /** Creates a new FeedShooter. */
+  public FeedShooter(
+    // TransitionSubsystem transitionSubsystem, 
+    IntakeSubsystem intakeSubsystem) {
+    // m_transitionSubsystem = transitionSubsystem;
     m_intakeSubsystem = intakeSubsystem;
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
-    m_intakeSubsystem.setRollerMotor(0);
+    // m_transitionSubsystem.set(-0.5);
+    m_intakeSubsystem.setRollerMotor(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_intakeSubsystem.setLifterMotor(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.getUpperLimit();
+    return false;
   }
 }

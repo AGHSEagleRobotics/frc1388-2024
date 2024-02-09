@@ -17,17 +17,20 @@ public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkMax m_lifterMotor;
   private final DigitalInput m_lowerLimit;
   private final DigitalInput m_upperLimit;
+  private final DigitalInput m_beamBreak;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem(CANSparkMax rollerMotor,
       CANSparkMax lifterMotor,
       DigitalInput lowerLimit,
-      DigitalInput upperLimit) {
+      DigitalInput upperLimit,
+      DigitalInput beamBreak) {
 
     m_rollerMotor = rollerMotor;
     m_lifterMotor = lifterMotor;
     m_lowerLimit = lowerLimit;
     m_upperLimit = upperLimit;
+    m_beamBreak = beamBreak;
 
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setInverted(true);
@@ -88,11 +91,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   }
 
+  /** gets beam break */
+  public boolean getBeamBreak() {
+    return m_beamBreak.get();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("upper limit", getUpperLimit());
     SmartDashboard.putBoolean("lower limit", getLowerLimit());
+    SmartDashboard.putBoolean("beam break", getBeamBreak());
     m_rollerMotor.set(0.0);
   }
 }

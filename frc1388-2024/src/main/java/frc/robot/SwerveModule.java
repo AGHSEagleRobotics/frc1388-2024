@@ -63,7 +63,7 @@ public class SwerveModule {
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            -m_driveMotor.getPosition().getValue() * Constants.SwerveModuleConstants.DIST_PER_TICK,
+            m_driveMotor.getPosition().getValue() * Constants.SwerveModuleConstants.DIST_PER_TICK,
             new Rotation2d(Math.toRadians(getRotationAngle()))
         );
     }
