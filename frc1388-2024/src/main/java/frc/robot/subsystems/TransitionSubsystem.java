@@ -8,16 +8,22 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake extends SubsystemBase {
-  CANSparkMax m_intake;
-  /** Creates a new Intake. */
-  public Intake(CANSparkMax intake) {
-    m_intake = intake;
+public class TransitionSubsystem extends SubsystemBase {
+  private final CANSparkMax m_transitionMotor;
+  /** Creates a new TransitionSubsystem. */
+  public TransitionSubsystem(CANSparkMax transitionMotor) {
+    m_transitionMotor = transitionMotor;
+  }
+
+  /**Set transition speed, positive is into shooter
+   * @param speed [-1, 1]
+   */
+  public void set(double speed) {
+    m_transitionMotor.set(speed);
   }
 
   @Override
   public void periodic() {
-    m_intake.set(-.65);
     // This method will be called once per scheduler run
   }
 }

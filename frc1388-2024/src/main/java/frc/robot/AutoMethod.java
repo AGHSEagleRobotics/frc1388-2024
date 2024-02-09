@@ -12,7 +12,6 @@ import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrainSubsystem;
-import frc.robot.subsystems.Intake;
 public class AutoMethod {
 
   /** Creates a new AutoMethod. */
@@ -26,11 +25,11 @@ public class AutoMethod {
   }
 
   public Command SitStillLookPretty(){
-    return new AutoDrive(m_driveTrainSubsystem, 0);
+    return new AutoDrive(0, m_driveTrainSubsystem);
   }
 
   public Command MoveOutOfZone(){
-    return new AutoDrive(m_driveTrainSubsystem, 2);
+    return new AutoDrive(2, m_driveTrainSubsystem);
     // distance needs to be changed to a Constant
     // need to create multiple methods depending on where you start
   }
