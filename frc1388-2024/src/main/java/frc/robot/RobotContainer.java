@@ -4,14 +4,11 @@
 
 package frc.robot;
 
-<<<<<<< HEAD
 
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
-=======
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
->>>>>>> f970fe3e964c9ad9ed5ed9221c070a0c60617929
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
@@ -42,9 +39,7 @@ import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.Power;
 import edu.wpi.first.wpilibj.SerialPort;
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj.XboxController;
-=======
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -57,7 +52,6 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
->>>>>>> dev
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -111,17 +105,8 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB)
       //new ADIS16470_IMU()  
     );
-<<<<<<< HEAD
-<<<<<<< HEAD
     Limelight m_limelight = new Limelight(m_driveTrain);
-=======
 
-    
->>>>>>> dev
-// all those numbers should be constants review what the names should be
-  private final CommandXboxController m_driverController = 
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
-=======
     
   public final IntakeSubsystem m_intake = new IntakeSubsystem(
     new CANSparkMax(Constants.IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless), 
@@ -138,7 +123,6 @@ public class RobotContainer {
       OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = new CommandXboxController(
       OperatorConstants.kOperatorControllerPort);
->>>>>>> f970fe3e964c9ad9ed5ed9221c070a0c60617929
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -170,7 +154,10 @@ public class RobotContainer {
       () -> m_driverController.getLeftY(), 
       () -> m_driverController.getLeftX(), 
       () -> m_driverController.getRightX(),
-<<<<<<< HEAD
+            () -> m_driverController.getHID().getAButton(),
+      () -> m_driverController.getHID().getBButton(),
+      () -> m_driverController.getHID().getXButton(),
+      () -> m_driverController.getHID().getYButton(),
       () -> m_driverController.getHID().getStartButton() // test button
     );
 
@@ -182,14 +169,9 @@ public class RobotContainer {
     m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
-=======
       // () -> getDPad()
-      () -> m_driverController.getHID().getAButton(),
-      () -> m_driverController.getHID().getBButton(),
-      () -> m_driverController.getHID().getXButton(),
-      () -> m_driverController.getHID().getYButton()
 
-    );
+
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
       m_driveTrain, 
@@ -223,7 +205,6 @@ public class RobotContainer {
     
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
->>>>>>> dev
   }
 
   /**

@@ -31,19 +31,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
   /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
 
-<<<<<<< HEAD
-  
-  private final SwerveModule m_frontRight, m_frontLeft;
-
-
-  private final SwerveModule m_backLeft;
-
-
-  private final SwerveModule m_backRight;
-=======
   /** the SwerveModule objects we created for this class */
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
->>>>>>> dev
 
   /** The distance in <strong>meters</strong> from the center of rotation of the front wheel to the center of rotation of the back wheel */
   private final double ROBOT_WHEEL_BASE = Constants.FieldConstants.ROBOT_LENGTH;
@@ -221,12 +210,9 @@ private Rotation2d getGyroHeading() {
     pose);
   }
 
-<<<<<<< HEAD
 
 
-=======
   // XXX test me
->>>>>>> dev
   public Pose2d getPose() {
     if (m_odometry != null) {
       return m_odometry.getPoseMeters();

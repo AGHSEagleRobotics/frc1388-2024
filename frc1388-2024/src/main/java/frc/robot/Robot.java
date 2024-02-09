@@ -18,15 +18,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
-
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
   private boolean m_lastUserButton = false;
   private int m_userButtonCounter = 0;
+
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
 
@@ -34,63 +35,69 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DataLogManager.start();
     DataLogManager.log("####### RobotInit");
-    DataLogManager.log("Git version: " + BuildInfo.GIT_VERSION + " (branch: " + BuildInfo.GIT_BRANCH + " " + BuildInfo.GIT_STATUS + ")");
+    DataLogManager.log("Git version: " + BuildInfo.GIT_VERSION + " (branch: " + BuildInfo.GIT_BRANCH + " "
+        + BuildInfo.GIT_STATUS + ")");
     DataLogManager.log("      Built: " + BuildInfo.BUILD_DATE + "  " + BuildInfo.BUILD_TIME);
 
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    
-    CommandScheduler.getInstance().onCommandInitialize(command -> DataLogManager.log("++ " + command.getName() + " Initialized" ));
-    CommandScheduler.getInstance().onCommandInterrupt(command -> DataLogManager.log("-- " + command.getName() + " Interrupted" ));
-    CommandScheduler.getInstance().onCommandFinish(command -> DataLogManager.log("-- " + command.getName() + " Finished" ));
+
+    CommandScheduler.getInstance()
+        .onCommandInitialize(command -> DataLogManager.log("++ " + command.getName() + " Initialized"));
+    CommandScheduler.getInstance()
+        .onCommandInterrupt(command -> DataLogManager.log("-- " + command.getName() + " Interrupted"));
+    CommandScheduler.getInstance()
+        .onCommandFinish(command -> DataLogManager.log("-- " + command.getName() + " Finished"));
   }
 
   /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * This function is called every 20 ms, no matter the mode. Use this for items
+   * like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
    * SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled
+    // commands, running already-scheduled commands, removing finished or
+    // interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the
+    // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-
-        // Actions to perform when user button on RoboRio is pressed
+    // Actions to perform when user button on RoboRio is pressed
     if (RobotController.getUserButton()) {
       // User button is pressed
       m_userButtonCounter += 1;
 
       if (m_userButtonCounter == 1) {
-      DataLogManager.log("### UserButtonPressed");
+        DataLogManager.log("### UserButtonPressed");
         RobotController.setRadioLEDState(RadioLEDState.kGreen);
-<<<<<<< HEAD
-        //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
-  }
-=======
-      //m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
-    }
->>>>>>> f970fe3e964c9ad9ed5ed9221c070a0c60617929
+        // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
+      }
+      // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
+
       else if (m_userButtonCounter == 100) {
         DataLogManager.log("### UserButtonHeld");
         RobotController.setRadioLEDState(RadioLEDState.kOrange);
         m_robotContainer.m_driveTrain.setAllEncoderOffsets();
+      } else {
+        // User button is not pressed
+        if (m_userButtonCounter > 0) {
+          // button has just been released
+          m_userButtonCounter = 0;
+          RobotController.setRadioLEDState(RadioLEDState.kOff);
+        }
       }
     }
-    else{
-      // User button is not pressed
-      if (m_userButtonCounter > 0) {
-        // button has just been released
-      m_userButtonCounter = 0;
-        RobotController.setRadioLEDState(RadioLEDState.kOff);
-    }
-  }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -100,9 +107,13 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /**
+   * This autonomous runs the autonomous command selected by your
+   * {@link RobotContainer} class.
+   */
   @Override
   public void autonomousInit() {
     DataLogManager.log("####### Autonomous Init");
@@ -133,12 +144,13 @@ public class Robot extends TimedRobot {
       DataLogManager.log("Event name:\t" + DriverStation.getEventName());
       DataLogManager.log("Alliance:\t" + DriverStation.getAlliance());
       DataLogManager.log("Match number:\t" + DriverStation.getMatchNumber());
-  }
+    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
@@ -151,7 +163,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    
+
   }
 
   /** This function is called periodically during operator control. */
@@ -183,5 +195,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-}
+  }
 }
