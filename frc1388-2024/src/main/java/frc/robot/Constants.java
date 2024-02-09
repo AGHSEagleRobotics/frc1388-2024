@@ -86,8 +86,21 @@ public final class Constants {
 
     public static final int kShooterMotor1CANID = 13;
     public static final int kShooterMotor2CANID = 14;
-
   }
+
+  public static class ShooterAngleSubsystemConstants {
+    public static final double kShooterAngleP = 0.00025;
+    public static final double kShooterAngleI = 0; 
+    public static final double kShooterAngleD = 0;
+    public static final double kShooterAngleFF = 0;
+    public static final int kPotentiometerAnalogIN = 0;
+
+    public static final double kShooterPositionUp = 0.8;
+    public static final double kShooterPositionDown = 0.2;
+
+    public static final int kShooterAngleMotorCANID = 22;
+  }
+
   public static class IntakeConstants {
     public static final int ROLLER_MOTOR_CANID = 19;
     public static final int LIFTER_MOTOR_CANID = 20;
