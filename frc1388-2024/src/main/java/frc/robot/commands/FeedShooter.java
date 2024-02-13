@@ -11,12 +11,12 @@ import frc.robot.subsystems.TransitionSubsystem;
 public class FeedShooter extends Command {
   TransitionSubsystem m_transitionSubsystem;
   IntakeSubsystem m_intakeSubsystem;
+
   /** Creates a new FeedShooter. */
-  public FeedShooter(
-    // TransitionSubsystem transitionSubsystem, 
-    IntakeSubsystem intakeSubsystem) {
-    // m_transitionSubsystem = transitionSubsystem;
+  public FeedShooter(TransitionSubsystem transitionSubsystem, IntakeSubsystem intakeSubsystem) {
+    m_transitionSubsystem = transitionSubsystem;
     m_intakeSubsystem = intakeSubsystem;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_intakeSubsystem);
   }
@@ -28,13 +28,16 @@ public class FeedShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // m_transitionSubsystem.set(-0.5);
     m_intakeSubsystem.setRollerMotor(0.5);
+    m_transitionSubsystem.set(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_intakeSubsystem.setRollerMotor(0);
+    m_transitionSubsystem.set(0);
+  }
 
   // Returns true when the command should end.
   @Override

@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation2d;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -77,6 +75,11 @@ public final class Constants {
     public static final int kShooterMotor2CANID = 14;
 
   }
+
+  public static class TransitionSubsystemConstants {
+    public static final int MOTOR_CANID = 21;
+  }
+
   public static class IntakeConstants {
     public static final int ROLLER_MOTOR_CANID = 19;
     public static final int LIFTER_MOTOR_CANID = 20;
@@ -99,10 +102,11 @@ public final class Constants {
 
   public static class AutoConstants
   {
-    public static final double TURN_P_VALUE = 0.08;
+    public static final double TURN_P_VALUE = 0.003;
     public static final double TURN_P_TOLERANCE = 1.25;
     public static final double TURN_I_VALUE = 0.003;
     public static final double TURN_D_VALUE = 0.004;
+    
     public static final double MOVE_P_VALUE = 0.045;
     public static final double MOVE_P_TOLERANCE = 0.5;
 

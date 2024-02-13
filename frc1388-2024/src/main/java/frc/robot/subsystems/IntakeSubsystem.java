@@ -47,9 +47,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
 
   public void setRollerMotor(double power) {
-
     m_rollerMotor.set(power);
-
   }
 
   /**

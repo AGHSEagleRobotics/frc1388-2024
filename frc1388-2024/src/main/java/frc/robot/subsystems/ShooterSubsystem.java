@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterSubsystemConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private final CANSparkMax m_motor1;
-  private final CANSparkMax m_motor2;
+  private final CANSparkFlex m_motor1;
+  private final CANSparkFlex m_motor2;
 
   private final SparkPIDController m_motor1PidController;
   private final SparkPIDController m_motor2PidController;
@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final DoubleLogEntry m_logMotor2Velocity = new DoubleLogEntry(m_log, "/robot/motor2Velocity");
 
   /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem(CANSparkMax motor1, CANSparkMax motor2) {
+  public ShooterSubsystem(CANSparkFlex motor1, CANSparkFlex motor2) {
     m_motor1 = motor1;
     m_motor2 = motor2;
 
