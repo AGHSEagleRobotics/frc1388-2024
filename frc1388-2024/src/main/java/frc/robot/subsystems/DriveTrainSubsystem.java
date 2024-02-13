@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,12 +16,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
-import frc.robot.vision.Limelight;
 import frc.robot.Constants.DriveTrainConstants;
 
 public class DriveTrainSubsystem extends SubsystemBase {
@@ -68,7 +65,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight = backRight;
 
     m_navxGyro = gyro;
-    // m_gyro = gyro;
     
     //gyro and odometry setup code I copied from a youtube video <br> https://www.youtube.com/watch?v=0Xi9yb1IMyA
     new Thread(() -> {
@@ -126,8 +122,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             m_frontLeft.getPosition(),
             m_backLeft.getPosition(),
             m_backRight.getPosition()
-        });
-        // System.out.println("odo is being updated");
+        }
+      );
     }
   }
     /**
@@ -153,7 +149,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         + "  br: " + backRightOffset);
   }
 
-  // XXX this changed
   public Rotation2d getGyroHeading() {
     if (!m_navxGyro.isCalibrating()) {
       return new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_navxGyro.getAngle(), 360)));
@@ -161,36 +156,21 @@ public class DriveTrainSubsystem extends SubsystemBase {
     return new Rotation2d();
   }
 
-  
-
-
-// for adis delete later
-/* 
-private Rotation2d getGyroHeading() {
-  return new Rotation2d(Math.toRadians(Math.IEEEremainder(m_gyro.getAngle(IMUAxis.kZ), 360)));
-}
-*/
-// replace with above code when we get the navX on 
-
   public void resetGyroHeading() {
     m_navxGyro.reset();
   }
 
-    // XXX test me
   public void resetPose(Pose2d pose) {
-    m_odometry.resetPosition(getGyroHeading(), 
-    new SwerveModulePosition[] {
-      m_frontRight.getPosition(),
-      m_frontLeft.getPosition(),
-      m_backLeft.getPosition(),
-      m_backRight.getPosition() 
-    }, 
-    pose);
+    m_odometry.resetPosition(getGyroHeading(),
+        new SwerveModulePosition[] {
+            m_frontRight.getPosition(),
+            m_frontLeft.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        },
+        pose);
   }
 
-
-
-  // XXX test me
   public Pose2d getPose() {
     if (m_odometry != null) {
       return m_odometry.getPoseMeters();
@@ -285,7 +265,6 @@ private Rotation2d getGyroHeading() {
     SmartDashboard.putNumber("odo x", getPose().getX());
     SmartDashboard.putNumber("odo y", getPose().getY());
 
-    
     SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
 
     // System.out.println("is odo null?" + (m_odometry == null));

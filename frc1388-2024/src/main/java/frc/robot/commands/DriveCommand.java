@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -89,14 +88,6 @@ public class DriveCommand extends Command {
     else {
       omega = 2 * Math.PI * -scale(MathUtil.applyDeadband(m_rightX.get(), Constants.DriveCommandConstants.CONTROLLER_DEADBAND), Constants.DriveCommandConstants.RIGHT_STICK_SCALE);
     }
-    
-
-    // rotation state: auto rotating, driver rotating
-    // if stick input, driver rotating
-    // if dpad isnt -1 auto rotating
-    // if auto rotating, auto rotate
-    // if auto rotating and at setpoint, driver rotating
-
 
 
     int setAngle = 0;
@@ -112,7 +103,6 @@ public class DriveCommand extends Command {
       } else {
         setAngle = 270;
       }
-      
     } else {
       setAngle = -1; // default, -1 indicates no set point
     }
@@ -135,8 +125,6 @@ public class DriveCommand extends Command {
 
 
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
-    // m_driveTrain.driveRobotRelative(new ChassisSpeeds(xVelocity, yVelocity, omega));
-
   }
 
   /**this method needs documentation */
