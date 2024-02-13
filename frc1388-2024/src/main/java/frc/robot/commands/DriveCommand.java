@@ -25,7 +25,7 @@ public class DriveCommand extends Command {
   private final Supplier<Double> m_leftY;
   private final Supplier<Double> m_leftX;
   private final Supplier<Double> m_rightX;
-  private final Supplier<Boolean> m_start;
+  private final Supplier<Boolean> m_autoTracking;
   private final PIDController m_pidController = new PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
   // private final Supplier<Integer> m_dPad;
   private final Supplier<Boolean> m_a;
@@ -39,7 +39,7 @@ public class DriveCommand extends Command {
   private PIDController m_rotationController = new PIDController(0.003, 0, 0);
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> start) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> autoTrackingButton) {
     m_driveTrain = driveTrain;
 
     m_leftY = leftY;
@@ -47,7 +47,7 @@ public class DriveCommand extends Command {
     m_rightX = rightX;
 
     m_limelight = limelight;
-    m_start = start;
+    m_autoTracking = autoTrackingButton;
     // m_dPad = dpad;
     m_a = a;
     m_b = b;
@@ -82,7 +82,7 @@ public class DriveCommand extends Command {
     double yVelocity = -Constants.DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
 
     double omega = 0;
-    if (m_start.get())
+    if (m_autoTracking.get())
     {
       omega = m_pidController.calculate(m_limelight.getAngleFromSpeaker());
     }
@@ -101,16 +101,16 @@ public class DriveCommand extends Command {
 
     int setAngle = 0;
     if (m_a.get()) {
-      setAngle = 180;
+      setAngle = 180; // straight speaker
     } else if (m_b.get()) {
-      setAngle = 240;
+      setAngle = 240; // right side of speaker (driver relative)
     } else if (m_x.get()) {
-      setAngle = 120;
+      setAngle = 120; // left side of speaker (driver relatice)
     } else if (m_y.get()) {
       if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        setAngle = 90;
+        setAngle = 90;  // amp red side
       } else {
-        setAngle = 270;
+        setAngle = 270; // amp blue side
       }
       
     } else {

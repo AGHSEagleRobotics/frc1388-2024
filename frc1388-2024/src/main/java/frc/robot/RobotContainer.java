@@ -154,23 +154,17 @@ public class RobotContainer {
       () -> m_driverController.getLeftY(), 
       () -> m_driverController.getLeftX(), 
       () -> m_driverController.getRightX(),
-            () -> m_driverController.getHID().getAButton(),
+      () -> m_driverController.getHID().getAButton(),
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
-      () -> m_driverController.getHID().getStartButton() // test button
+      () -> m_driverController.getHID().getBackButton() // test button
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand); 
 
-    
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-    m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
-
-      // () -> getDPad()
-
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
@@ -202,9 +196,6 @@ public class RobotContainer {
         new FeedShooter(m_intake)
       )
     );
-    
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
   }
 
   /**
