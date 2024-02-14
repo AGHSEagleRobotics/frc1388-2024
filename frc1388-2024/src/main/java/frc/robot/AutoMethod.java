@@ -6,19 +6,25 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 public class AutoMethod {
 
   /** Creates a new AutoMethod. */
 
   private DriveTrainSubsystem m_driveTrainSubsystem;
   private final Dashboard m_dashboard;
+  private final ShooterSubsystem m_shooter;
 
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard) {
+  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter) {
     m_driveTrainSubsystem = driveTrainSubsystem;
     m_dashboard = dashboard;
+    m_shooter = shooter;
   }
 
   public Command SitStillLookPretty(){
@@ -26,9 +32,19 @@ public class AutoMethod {
   }
 
   public Command MoveOutOfZone(){
-    return new AutoDrive(2, m_driveTrainSubsystem);
+    return new AutoDrive(AutoConstants.LEAVE_ZONE_DIST, m_driveTrainSubsystem);
     // distance needs to be changed to a Constant
     // need to create multiple methods depending on where you start
+  }
+
+  public Command ShootAndLeave(){
+    return new ShooterCommand(m_shooter)
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new AutoDrive(AutoConstants.LEAVE_ZONE_DIST, m_driveTrainSubsystem)
+    );
   }
 
   public Command getAutonomousCommand() {
@@ -48,6 +64,14 @@ public class AutoMethod {
     
           case LEAVEZONE:
             return MoveOutOfZone();
+
+          case LEAVEANDSHOOT:
+            if (position == AutoConstants.Position.MID){
+              return ShootAndLeave();
+            }
+            else{
+              return null;
+            }
         }
         return null;
       }
