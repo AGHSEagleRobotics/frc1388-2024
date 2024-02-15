@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +33,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     m_angleMotorPIDController.setFF(ShooterAngleSubsystemConstants.kShooterAngleFF);    
   }
 
+  /** may break things, position is not limited in this method */
   public void setPower(double power) {
     m_angleMotor.set(power);
   }
@@ -41,8 +43,10 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public void setPosition(double position) {
+    position = MathUtil.clamp(position, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
   m_angleMotorPIDController.setReference(position, ControlType.kPosition);
   }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("potentiometerPosition", getPotentiometer());
