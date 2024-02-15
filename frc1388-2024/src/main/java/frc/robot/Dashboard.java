@@ -20,27 +20,10 @@ public class Dashboard {
     private final ComplexWidget m_complexWidgetPosition;
     private static SendableChooser<Objective> m_autoObjective = new SendableChooser<>();
     private static SendableChooser<Position> m_autoPosition = new SendableChooser<>();
-    private final UsbCamera m_cameraView;
-    private final int CAMERA_RES_WIDTH = 320;
-    private final int CAMERA_RES_HEIGHT = 200;
-    private final int CAMERA_FPS = 30;
-
-    private final ComplexWidget m_CameraComplexWidget;
-
     
     public Dashboard() {
         m_shuffleboardTab =  Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
         Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
-
-        m_cameraView = CameraServer.startAutomaticCapture(0);
-        m_cameraView.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-        m_cameraView.setFPS(CAMERA_FPS);
-        m_cameraView.setResolution(CAMERA_RES_WIDTH, CAMERA_RES_HEIGHT);
-
-        m_CameraComplexWidget = m_shuffleboardTab.add("Camera View", m_cameraView)
-            .withWidget(BuiltInWidgets.kCameraStream)
-            .withSize(20, 14)
-            .withPosition(24, 0);
 
         HttpCamera limelightCamera = new HttpCamera("limelight", "http://limelight.local:5800");
         CameraServer.addCamera(limelightCamera);
