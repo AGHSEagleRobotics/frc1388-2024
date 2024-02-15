@@ -20,11 +20,27 @@ public class Dashboard {
     private final ComplexWidget m_complexWidgetPosition;
     private static SendableChooser<Objective> m_autoObjective = new SendableChooser<>();
     private static SendableChooser<Position> m_autoPosition = new SendableChooser<>();
+    private final UsbCamera m_cameraView;
+    private final int CAMERA_RES_WIDTH = 320;
+    private final int CAMERA_RES_HEIGHT = 200;
+    private final int CAMERA_FPS = 30;
+
+    private final ComplexWidget m_CameraComplexWidget;
 
     
     public Dashboard() {
         m_shuffleboardTab =  Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
         Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
+
+        m_cameraView = CameraServer.startAutomaticCapture(0);
+        m_cameraView.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+        m_cameraView.setFPS(CAMERA_FPS);
+        m_cameraView.setResolution(CAMERA_RES_WIDTH, CAMERA_RES_HEIGHT);
+
+        m_CameraComplexWidget = m_shuffleboardTab.add("Camera View", m_cameraView)
+            .withWidget(BuiltInWidgets.kCameraStream)
+            .withSize(20, 14)
+            .withPosition(24, 0);
 
         HttpCamera limelightCamera = new HttpCamera("limelight", "http://limelight.local:5800");
         CameraServer.addCamera(limelightCamera);
@@ -34,7 +50,7 @@ public class Dashboard {
 
         m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(8, 6)
+        .withSize(4, 4)
         .withPosition(20, 0)
         .getEntry();
 
@@ -47,7 +63,7 @@ public class Dashboard {
         m_complexWidgetObjective = m_shuffleboardTab.add( "AutoObjective", m_autoObjective)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withSize(4, 4)
-            .withPosition(20, 6);
+            .withPosition(20, 4);
 
 
         //position
@@ -59,7 +75,7 @@ public class Dashboard {
         m_complexWidgetPosition = m_shuffleboardTab.add( "AutoPosition", m_autoPosition)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withSize(4, 4)
-            .withPosition(24, 6);
+            .withPosition(20, 8);
 
     } //end constructor
 
