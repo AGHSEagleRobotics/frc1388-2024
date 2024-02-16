@@ -216,6 +216,7 @@ public class Limelight extends SubsystemBase {
     }
   }
 
+  // don't know if we are going to use this method might be deleted
   public void goToSpeaker() {
 
       if (getDistance() > 3) {
@@ -227,6 +228,7 @@ public class Limelight extends SubsystemBase {
       }
   }
 
+  //don't know if we are going to use this method might be deleted
   public void goToCenterOfSpeaker() {
     double[] targetSpace = NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace")
         .getDoubleArray(new double[] {});
@@ -258,6 +260,5 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Vertical Degree", getdegRotationToTarget());
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
-      SmartDashboard.putNumber("new thing", m_table.getEntry("tx").getDouble(0));
   }
 }
