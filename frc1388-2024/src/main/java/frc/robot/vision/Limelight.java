@@ -5,6 +5,7 @@ import java.util.Map;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,7 +19,6 @@ public class Limelight extends SubsystemBase {
   public Limelight(DriveTrainSubsystem driveTrain) {
     m_table = NetworkTableInstance.getDefault().getTable("limelight");
     m_driveTrain = driveTrain;
-    // double rz = (bot_pose_blue[5] + 360) % 360; (test what this does later)
 
   }
 
@@ -53,13 +53,6 @@ public class Limelight extends SubsystemBase {
     }
 
   }
-
-  /**
-   * tx Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
-   * @param i 
-   * 
-   * @return
-   */
 
    public double getAprilTagID() {
     NetworkTableEntry tid = m_table.getEntry("tid");
@@ -256,7 +249,6 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getIsTargetFound() == true) {
       SmartDashboard.putNumber("Distance to April Tag: ", getDistance()); // it calculates in meters
       SmartDashboard.putBoolean("Is the target found", getIsTargetFound());
       SmartDashboard.putNumber("Get Horizontal Degree", getdegRotationToTarget());
@@ -266,6 +258,6 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Vertical Degree", getdegRotationToTarget());
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
-    }
+      SmartDashboard.putNumber("new thing", m_table.getEntry("tx").getDouble(0));
   }
 }
