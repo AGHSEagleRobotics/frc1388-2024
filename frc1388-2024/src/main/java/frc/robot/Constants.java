@@ -66,7 +66,7 @@ public final class Constants {
   }
 
   public static class ShooterSubsystemConstants {
-    public static final double kShooterP = 0.00025;
+    public static final double kShooterP = 0.001; // was 0.00025;
     public static final double kShooterI = 0; //change later as needed
     public static final double kShooterD = 0;
     public static final double kShooterFF = 0;

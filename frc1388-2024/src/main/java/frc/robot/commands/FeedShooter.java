@@ -29,7 +29,7 @@ public class FeedShooter extends Command {
   @Override
   public void execute() {
     m_intakeSubsystem.setRollerMotor(0.5);
-    m_transitionSubsystem.set(0.5);
+    m_transitionSubsystem.set(1.0);
   }
 
   // Called once the command ends or is interrupted.
