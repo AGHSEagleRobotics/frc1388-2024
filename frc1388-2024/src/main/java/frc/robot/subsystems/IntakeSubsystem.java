@@ -100,8 +100,5 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("upper limit", getUpperLimit());
     SmartDashboard.putBoolean("lower limit", getLowerLimit());
     SmartDashboard.putBoolean("beam break", getBeamBreak());
-
-//    m_rollerMotor.set(0.0);
-
   }
 }
