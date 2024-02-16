@@ -33,8 +33,6 @@ public class AutoMethod {
 
   public Command MoveOutOfZone(){
     return new AutoDrive(AutoConstants.LEAVE_ZONE_DIST, m_driveTrainSubsystem);
-    // distance needs to be changed to a Constant
-    // need to create multiple methods depending on where you start
   }
 
   public Command ShootAndLeave(){
@@ -49,11 +47,9 @@ public class AutoMethod {
 
   public Command getAutonomousCommand() {
         AutoConstants.Objective objective = m_dashboard.getObjective();
-        AutoConstants.Position position = m_dashboard.getPosition();
         DataLogManager.log("####### objective:" + objective);
-        DataLogManager.log("####### position:" + position);
     
-        if (objective == null || position == null) {
+        if (objective == null) {
           return null;
         }
     
@@ -66,12 +62,7 @@ public class AutoMethod {
             return MoveOutOfZone();
 
           case LEAVEANDSHOOT:
-            if (position == AutoConstants.Position.MID){
-              return ShootAndLeave();
-            }
-            else{
-              return null;
-            }
+            return ShootAndLeave();
         }
         return null;
       }
