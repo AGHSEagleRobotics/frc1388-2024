@@ -165,6 +165,7 @@ public class Limelight extends SubsystemBase {
         .getDoubleArray(new double[] {});
     // finds distance in meters (needs callibration from limelight) needs to see the
     // april tag (needs testing)
+    // might also need to add values like where the limelight is although we might be able to do that in the pipeline
 
     if (getIsTargetFound() == true) {
 
