@@ -94,10 +94,11 @@ public final class Constants {
   public static class FieldConstants {
     public static final double ROBOT_WIDTH = 0.552; // in meters, with bumpers? find out
     public static final double ROBOT_LENGTH = 0.552; // in meters, with bumpers? find out
+    public static final double SUBLIFER_LENGTH = 0.91;
   }
 
   public static class LimelightConstants {
-    
+    public static final double MAX_DISTANCE = 3;
   }
 
   public static class AutoConstants
