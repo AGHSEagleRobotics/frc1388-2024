@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -14,92 +14,97 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterSubsystemConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private final CANSparkMax m_motor1;
-  private final CANSparkMax m_motor2;
+  private final CANSparkFlex m_bottomShooterMotor;
+  private final CANSparkFlex m_topShooterMotor;
 
-  private final SparkPIDController m_motor1PidController;
-  private final SparkPIDController m_motor2PidController;
+  private final SparkPIDController m_bottomShooterMotorPIDController;
+  private final SparkPIDController m_topShooterMotorPIDController;
 
-  private final RelativeEncoder m_motor1Encoder;
-  private final RelativeEncoder m_motor2Encoder;
+  private final RelativeEncoder m_bottomShooterEncoder;
+  private final RelativeEncoder m_topMotorEncoder;
 
   private final DataLog m_log = DataLogManager.getLog();
-  private final DoubleLogEntry m_logMotor1Velocity = new DoubleLogEntry(m_log, "/robot/motor1Velocity");
-  private final DoubleLogEntry m_logMotor2Velocity = new DoubleLogEntry(m_log, "/robot/motor2Velocity");
+  private final DoubleLogEntry m_logBottomShooterMotorVelocity = new DoubleLogEntry(m_log, "/robot/bottomShooterMotorVelocity");
+  private final DoubleLogEntry m_logTopShooterMotorVelocity = new DoubleLogEntry(m_log, "/robot/topShooterMotorVelocity");
 
   /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem(CANSparkMax motor1, CANSparkMax motor2) {
-    m_motor1 = motor1;
-    m_motor2 = motor2;
+  public ShooterSubsystem(CANSparkFlex bottomShooterMotor, CANSparkFlex topShooterMotor) {
+    m_bottomShooterMotor = bottomShooterMotor;
+    m_topShooterMotor = topShooterMotor;
 
-    m_motor1Encoder = m_motor1.getEncoder();
-    m_motor2Encoder = m_motor2.getEncoder();
+    m_bottomShooterEncoder = m_bottomShooterMotor.getEncoder();
+    m_topMotorEncoder = m_topShooterMotor.getEncoder();
 
-    m_motor1.setIdleMode(IdleMode.kCoast);
-    m_motor1.setInverted(true);
+    m_bottomShooterMotor.setIdleMode(IdleMode.kCoast);
+    m_bottomShooterMotor.setInverted(true);
 
-    m_motor2.setIdleMode(IdleMode.kCoast);
-    m_motor2.setInverted(false);
+    m_topShooterMotor.setIdleMode(IdleMode.kCoast);
+    m_topShooterMotor.setInverted(false);
 
-    m_motor1PidController = m_motor1.getPIDController();
-    m_motor2PidController = m_motor2.getPIDController();
+    m_bottomShooterMotorPIDController = m_bottomShooterMotor.getPIDController();
+    m_topShooterMotorPIDController = m_topShooterMotor.getPIDController();
 
-    m_motor1PidController.setP(ShooterSubsystemConstants.kShooterP);
-    m_motor1PidController.setI(ShooterSubsystemConstants.kShooterI);
-    m_motor1PidController.setD(ShooterSubsystemConstants.kShooterD);
-    m_motor1PidController.setFF(ShooterSubsystemConstants.kShooterFF);
+    m_bottomShooterMotorPIDController.setP(ShooterConstants.SHOOTER_MOTOR_P);
+    m_bottomShooterMotorPIDController.setI(ShooterConstants.SHOOTER_MOTOR_I);
+    m_bottomShooterMotorPIDController.setD(ShooterConstants.SHOOTER_MOTOR_D);
+    m_bottomShooterMotorPIDController.setFF(ShooterConstants.SHOOTER_MOTOR_FF);
 
-    m_motor2PidController.setP(ShooterSubsystemConstants.kShooterP);
-    m_motor2PidController.setI(ShooterSubsystemConstants.kShooterI);
-    m_motor2PidController.setD(ShooterSubsystemConstants.kShooterD);
-    m_motor2PidController.setFF(ShooterSubsystemConstants.kShooterFF);
+    m_topShooterMotorPIDController.setP(ShooterConstants.SHOOTER_MOTOR_P);
+    m_topShooterMotorPIDController.setI(ShooterConstants.SHOOTER_MOTOR_I);
+    m_topShooterMotorPIDController.setD(ShooterConstants.SHOOTER_MOTOR_D);
+    m_topShooterMotorPIDController.setFF(ShooterConstants.SHOOTER_MOTOR_FF);
   }
 
   public void setPower(double power) {
-    m_motor1.set(power);
-    m_motor2.set(power);
+    m_bottomShooterMotor.set(power);
+    m_topShooterMotor.set(power);
   }
 
   /**
-   * sets motor 1 velocity
+   * sets bottom motor velocity
    * 
    * @param rpm setting motor to rpm velocity
    */
-  private void setMotor1Velocity(double rpm) {
-    m_motor1PidController.setReference(rpm, ControlType.kVelocity);
+  private void setBottomMotorVelocity(double rpm) {
+    m_bottomShooterMotorPIDController.setReference(rpm, ControlType.kVelocity);
   }
 
-  private void setMotor2Velocity(double rpm) {
-    m_motor2PidController.setReference(rpm, ControlType.kVelocity);
+    /**
+   * sets top motor velocity
+   * 
+   * @param rpm setting motor to rpm velocity
+   */
+  private void setTopMotorVelocity(double rpm) {
+    m_topShooterMotorPIDController.setReference(rpm, ControlType.kVelocity);
   }
 
-  public double getMotor1Velocity() {
-    return m_motor1Encoder.getVelocity();
+  public double getBottomMotorVelocity() {
+    return m_bottomShooterEncoder.getVelocity();
   }
 
-  public double getMotor2Velocity() {
-    return m_motor2Encoder.getVelocity();
+  public double getTopMotorVelocity() {
+    return m_topMotorEncoder.getVelocity();
   }
 
   public void setShooterRPM(double rpm) {
-    setMotor1Velocity(rpm);
-    setMotor2Velocity(rpm);
+    setBottomMotorVelocity(rpm);
+    setTopMotorVelocity(rpm);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    double motor1Velocity = getMotor1Velocity();
-    if (motor1Velocity != 0) {
-      m_logMotor1Velocity.append(motor1Velocity);
+    double bottomMotorVelocity = getBottomMotorVelocity();
+    if (bottomMotorVelocity != 0) {
+      m_logBottomShooterMotorVelocity.append(bottomMotorVelocity);
     }
-    double motor2Velocity = getMotor2Velocity();
-    if (motor2Velocity != 0) {
-      m_logMotor2Velocity.append(motor2Velocity);
+    double topMotorVelocity = getTopMotorVelocity();
+    if (topMotorVelocity != 0) {
+      m_logTopShooterMotorVelocity.append(topMotorVelocity);
     }
 
   }

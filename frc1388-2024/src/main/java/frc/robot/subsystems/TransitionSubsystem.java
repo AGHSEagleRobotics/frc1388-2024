@@ -13,6 +13,7 @@ public class TransitionSubsystem extends SubsystemBase {
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem(CANSparkMax transitionMotor) {
     m_transitionMotor = transitionMotor;
+    m_transitionMotor.setInverted(true);
   }
 
   /**Set transition speed, positive is into shooter

@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
-import frc.robot.Constants.ShooterSubsystemConstants;
 
 
 public class ShooterAngleSubsystem extends SubsystemBase {

@@ -4,19 +4,13 @@
 
 package frc.robot;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -44,6 +38,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    // logs everytime a command starts / stops
     CommandScheduler.getInstance()
         .onCommandInitialize(command -> DataLogManager.log("++ " + command.getName() + " Initialized"));
     CommandScheduler.getInstance()
@@ -82,20 +77,17 @@ public class Robot extends TimedRobot {
         DataLogManager.log("### UserButtonPressed");
         RobotController.setRadioLEDState(RadioLEDState.kGreen);
         // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
-      }
-      // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
-
-      else if (m_userButtonCounter == 100) {
+      } else if (m_userButtonCounter == 100) { // when held for 2 seconds (100 tics)
         DataLogManager.log("### UserButtonHeld");
         RobotController.setRadioLEDState(RadioLEDState.kOrange);
-        m_robotContainer.m_driveTrain.setAllEncoderOffsets();
-      } else {
-        // User button is not pressed
-        if (m_userButtonCounter > 0) {
-          // button has just been released
-          m_userButtonCounter = 0;
-          RobotController.setRadioLEDState(RadioLEDState.kOff);
-        }
+        m_robotContainer.setAllEncoderOffsets();
+      }
+    } else {
+      // User button is not pressed
+      if (m_userButtonCounter > 0) {
+        // button has just been released
+        m_userButtonCounter = 0;
+        RobotController.setRadioLEDState(RadioLEDState.kOff);
       }
     }
   }
@@ -119,12 +111,13 @@ public class Robot extends TimedRobot {
     DataLogManager.log("####### Autonomous Init");
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    System.out.println("setting neutral mode");
+    // System.out.println("setting neutral mode");
     // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Brake);
-    System.out.println("starting auto command");
-    // schedule the autonomous command (example)
+   
+    // schedule the autonomous command
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+      System.out.println("starting auto command");
     }
 
     // Get match info from FMS
@@ -156,6 +149,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     DataLogManager.log("####### Teleop Init");
     // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Brake);
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -163,7 +157,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
   }
 
   /** This function is called periodically during operator control. */
@@ -182,7 +175,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-
   }
 
   /** This function is called once when the robot is first started up. */

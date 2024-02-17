@@ -28,9 +28,9 @@ public class SwerveModule {
         m_driveMotor = driveMotor;
         m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
         Slot0Configs driveConfig = new Slot0Configs();
-        driveConfig.kP = Constants.SwerveModuleConstants.kDriveMotorP;
-        driveConfig.kI = Constants.SwerveModuleConstants.kDriveMotorI;
-        driveConfig.kD = Constants.SwerveModuleConstants.kDriveMotorD;
+        driveConfig.kP = Constants.SwerveModuleConstants.DRIVE_MOTOR_P;
+        driveConfig.kI = Constants.SwerveModuleConstants.DRIVE_MOTOR_I;
+        driveConfig.kD = Constants.SwerveModuleConstants.DRIVE_MOTOR_D;
         m_driveMotor.getConfigurator().apply(driveConfig);
 
         m_rotationMotor = rotationMotor;
@@ -39,10 +39,11 @@ public class SwerveModule {
 
         m_encoderOffset = encoderOffset;
 
-        m_rotationPID = new PIDController(Constants.SwerveModuleConstants.kRotationP,
-                                          Constants.SwerveModuleConstants.kRotationI,
-                                          Constants.SwerveModuleConstants.kRotationD);
-        m_rotationPID.setTolerance(Constants.SwerveModuleConstants.kRotationTolerance);
+        m_rotationPID = new PIDController(
+            Constants.SwerveModuleConstants.ROTATION_MOTOR_P,
+            Constants.SwerveModuleConstants.ROTATION_MOTOR_I,
+            Constants.SwerveModuleConstants.ROTATION_MOTOR_D);
+        m_rotationPID.setTolerance(Constants.SwerveModuleConstants.ROTATION_TOLERANCE);
         m_rotationPID.enableContinuousInput(0, 360);
 
         m_cancoder = cancoder;
@@ -51,7 +52,6 @@ public class SwerveModule {
         cancoderConfig.MagnetOffset = 0;
         cancoderConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         m_cancoder.getConfigurator().apply(cancoderConfig);
-
     }
     
     public void setSwerveModuleStates(SwerveModuleState inputState) {
@@ -68,18 +68,14 @@ public class SwerveModule {
         );
     }
 
-    public void setDriveSpeed(double inputSpeed) {
-        // because the robot's max speed is 3 m/s, deviding the speed by 3 results in a power [-1, 1] we can set the motor to 
+    public void setDriveSpeed(double inputSpeed) { 
+        // because the robot's max speed is 3 m/s, dividing the speed by 3 results in a power [-1, 1] we can set the motor to 
         m_driveMotor.set(inputSpeed / Constants.DriveTrainConstants.ROBOT_MAX_SPEED); // probably should be done outside of swerve module
     }
 
     public void setRotationPosition(double angle) {
         m_rotationMotor.set(m_rotationPID.calculate(getRotationAngle(), angle));
     }
-
-    // public double getRotationAngle() {
-    //     return (m_cancoder.getAbsolutePosition().getValue() * 360 - m_encoderOffset + 36000) % 360 - 90; // math should be reviewed and ask what they do for constants
-    // }
 
     /**
      * Determines the encoder offset from the swerve module.

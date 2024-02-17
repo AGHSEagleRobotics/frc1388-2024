@@ -10,7 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class SwerveAutoTesting extends Command {
@@ -41,8 +41,8 @@ public class SwerveAutoTesting extends Command {
   @Override
   public void execute() {
     //base driving functionality
-    double xVelocity = -Constants.DriveTrainConstants.ROBOT_MAX_SPEED * scale(MathUtil.applyDeadband(m_leftY.get(), 0.1), 2.5);
-    double yVelocity = -Constants.DriveTrainConstants.ROBOT_MAX_SPEED * scale(MathUtil.applyDeadband(m_leftX.get(), 0.1), 2.5);
+    double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(MathUtil.applyDeadband(m_leftY.get(), 0.1), 2.5);
+    double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(MathUtil.applyDeadband(m_leftX.get(), 0.1), 2.5);
     double omega = -2 * Math.PI * scale(MathUtil.applyDeadband(m_rightX.get(), 0.1), 5);
     //lots of magic numbers check what the names should be
     // m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
