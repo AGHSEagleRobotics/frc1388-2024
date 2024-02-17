@@ -20,7 +20,7 @@ public class FeedShooter extends Command {
     m_intakeSubsystem = intakeSubsystem;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_intakeSubsystem);
+    addRequirements(m_intakeSubsystem , m_transitionSubsystem);
   }
 
   // Called when the command is initially scheduled.

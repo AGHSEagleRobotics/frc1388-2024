@@ -10,17 +10,16 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
-import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
-import frc.robot.subsystems.LoggingSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.IntakeConstants;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -48,7 +47,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
-  private final LoggingSubsystem m_logger = new LoggingSubsystem();
   private final Dashboard m_dashboard = new Dashboard();
 
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
@@ -83,16 +81,15 @@ public class RobotContainer {
       new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
           MotorType.kBrushless));
 
-
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
-      new CANSparkMax(Constants.IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
-      new CANSparkMax(Constants.IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless),
-      new DigitalInput(Constants.IntakeConstants.LOWER_LIMIT_DIO),
-      new DigitalInput(Constants.IntakeConstants.UPPER_LIMIT_DIO),
-      new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO));
+      new CANSparkMax(IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
+      new CANSparkMax(IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless),
+      new DigitalInput(IntakeConstants.LOWER_LIMIT_DIO),
+      new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
+      new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
 
   private final TransitionSubsystem m_transitionSubsystem = new
-  TransitionSubsystem(new CANSparkMax(TransitionConstants.MOTOR_CANID, MotorType.kBrushless));
+  TransitionSubsystem(new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless));
 
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
@@ -138,24 +135,27 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // ========MAYBE RE-ADD THESE CONTROLS?========
-    // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
-    
+    // m_driverController.rightBumper().whileTrue(new RunCommand(() ->
+    // m_limelight.turnToSpeaker()));
+    // m_driverController.leftTrigger().whileTrue(new RunCommand(() ->
+    // m_limelight.goToCenterOfSpeaker()));
+
     // DRIVER CONTROLS
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
-    
+
+    // SHOOT COMMAND SEQUENCE
     m_driverController.rightTrigger().whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem)
       .andThen(
         new ShooterCommand(m_shooterSubsystem)
-        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-        )
-        );
-      
+                    .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+
+    // RESET GYRO CONTROL
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-        
+    // TODO decide if reset pose is needed
+    //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));

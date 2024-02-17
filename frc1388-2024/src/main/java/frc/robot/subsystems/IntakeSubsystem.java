@@ -90,15 +90,17 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /** gets beam break */
-  public boolean getBeamBreak() {
+  public boolean isNoteDetected() {
     return m_beamBreak.get();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // DEBUG 
     SmartDashboard.putBoolean("upper limit", getUpperLimit());
     SmartDashboard.putBoolean("lower limit", getLowerLimit());
-    SmartDashboard.putBoolean("beam break", getBeamBreak());
+    SmartDashboard.putBoolean("beam break", isNoteDetected());
   }
 }

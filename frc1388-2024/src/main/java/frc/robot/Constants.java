@@ -80,7 +80,7 @@ public final class Constants {
   }
 
   public static class TransitionConstants {
-    public static final int MOTOR_CANID = 21;
+    public static final int TRANSITION_MOTOR_CANID = 21;
 
     /** feeding into the shooter */
     public static final double TRANSITION_MOTOR_POWER_IN = 1.0;
@@ -108,8 +108,7 @@ public final class Constants {
   }
 
   public static class LimelightConstants {
-
-  }
+      }
 
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
