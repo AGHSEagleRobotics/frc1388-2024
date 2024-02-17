@@ -98,9 +98,10 @@ public final class Constants {
     public static final double kShooterPositionUp = 0.8;
     public static final double kShooterPositionDown = 0.2;
 
-    public static final double kShooterPositionMax = 0.8;
-    public static final double kShooterPositionMin = 0.2;
-    
+    public static final double kShooterMaxHeight = 0.9;
+    public static final double kShooterMinHeight = 0.1;
+
+
     public static final int kShooterAngleMotorCANID = 22;
   }
 
