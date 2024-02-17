@@ -20,6 +20,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   private final CANSparkMax m_angleMotor;
   private final AnalogPotentiometer m_potentiometer;
   private final SparkPIDController m_angleMotorPIDController;
+
   /** Creates a new ShooterAngleSubsystem. */
   public ShooterAngleSubsystem(CANSparkMax angleMotor, AnalogPotentiometer potentiometer) {
     m_angleMotor = angleMotor;
@@ -41,7 +42,14 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public void setPosition(double position) {
-  m_angleMotorPIDController.setReference(position, ControlType.kPosition);
+    if (position > ShooterAngleSubsystemConstants.kShooterPositionMax) {
+      position = ShooterAngleSubsystemConstants.kShooterPositionMax;
+    }
+    if (position < ShooterAngleSubsystemConstants.kShooterPositionMin) {
+      position = ShooterAngleSubsystemConstants.kShooterPositionMin;
+    }
+    
+    m_angleMotorPIDController.setReference(position, ControlType.kPosition);
   }
   @Override
   public void periodic() {

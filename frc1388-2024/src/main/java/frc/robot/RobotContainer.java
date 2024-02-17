@@ -7,7 +7,6 @@ package frc.robot;
 
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
-import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
@@ -18,17 +17,10 @@ import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterAngleCommand;
 import frc.robot.subsystems.LoggingSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ShooterSubsystemConstants;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoTurn;
-import frc.robot.commands.DriveCommand;
 import frc.robot.commands.SwerveAutoTesting;
 
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -39,29 +31,17 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.units.Power;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.XboxController;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
