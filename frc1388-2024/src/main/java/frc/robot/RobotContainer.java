@@ -18,6 +18,8 @@ import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.IntakeConstants;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -74,20 +76,20 @@ public class RobotContainer {
   private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard);
 
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterSubsystemConstants.kShooterMotor1CANID,
+      new CANSparkFlex(ShooterSubsystemConstants.kBottomShooterMotorCANID,
           MotorType.kBrushless),
-      new CANSparkFlex(ShooterSubsystemConstants.kShooterMotor2CANID,
+      new CANSparkFlex(ShooterSubsystemConstants.kTopShooterMotorCANID,
           MotorType.kBrushless));
 
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
-      new CANSparkMax(Constants.IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
-      new CANSparkMax(Constants.IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless),
-      new DigitalInput(Constants.IntakeConstants.LOWER_LIMIT_DIO),
-      new DigitalInput(Constants.IntakeConstants.UPPER_LIMIT_DIO),
-      new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO));
+      new CANSparkMax(IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
+      new CANSparkMax(IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless),
+      new DigitalInput(IntakeConstants.LOWER_LIMIT_DIO),
+      new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
+      new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
 
   private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(
-      new CANSparkMax(TransitionSubsystemConstants.MOTOR_CANID, MotorType.kBrushless));
+      new CANSparkMax(TransitionSubsystemConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless));
 
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 

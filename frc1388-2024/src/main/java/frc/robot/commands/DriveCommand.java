@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 
@@ -72,8 +72,8 @@ public class DriveCommand extends Command {
     double rightX = -MathUtil.applyDeadband(m_rightX.get(), 0.1);
     
     // velocities from controller inputs
-    double xVelocity = -Constants.DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, 2.5);
-    double yVelocity = -Constants.DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
+    double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, 2.5);
+    double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
     double omega = 0;
 
     
