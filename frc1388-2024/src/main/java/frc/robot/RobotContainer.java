@@ -7,9 +7,9 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ShooterSubsystemConstants;
-import frc.robot.Constants.TransitionSubsystemConstants;
+import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
@@ -78,9 +78,9 @@ public class RobotContainer {
   private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard);
 
     public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterSubsystemConstants.kShooterMotor1CANID,
+      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
           MotorType.kBrushless),
-      new CANSparkFlex(ShooterSubsystemConstants.kShooterMotor2CANID,
+      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
           MotorType.kBrushless));
 
 
@@ -92,13 +92,13 @@ public class RobotContainer {
       new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_DIO));
 
   private final TransitionSubsystem m_transitionSubsystem = new
-  TransitionSubsystem(new CANSparkMax(TransitionSubsystemConstants.MOTOR_CANID, MotorType.kBrushless));
+  TransitionSubsystem(new CANSparkMax(TransitionConstants.MOTOR_CANID, MotorType.kBrushless));
 
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
-  private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
-  private final CommandXboxController m_operatorController = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+  private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

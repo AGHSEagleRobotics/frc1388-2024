@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterCommandConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterCommand extends Command {
@@ -28,8 +28,8 @@ public class ShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // m_shooter.setPower(ShooterCommandConstants.kInitialMotorSpeed);
-    m_shooter.setShooterRPM(3000);
+    // m_shooter.setPower(ShooterConstants.kInitialMotorSpeed);
+    m_shooter.setShooterRPM(ShooterConstants.SHOOTER_RPM);
     
   }
 
@@ -42,6 +42,6 @@ public class ShooterCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_timer.hasElapsed(ShooterCommandConstants.kShooterTimer);
+    return m_timer.hasElapsed(ShooterConstants.SHOOTER_TIMER);
   }
 }
