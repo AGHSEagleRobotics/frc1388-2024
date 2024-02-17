@@ -60,9 +60,7 @@ public final class Constants {
   }
 
   public static class ShooterCommandConstants {
-    public static final double kInitialMotorSpeed = 0.3;
-    public static final double kShooterTimer = 10;
-
+    public static final double kShooterRPM = 3000;
   }
 
   public static class ShooterSubsystemConstants {

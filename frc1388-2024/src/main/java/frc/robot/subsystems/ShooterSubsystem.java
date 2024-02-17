@@ -93,6 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
+    //Logging motor velocity
     double motor1Velocity = getMotor1Velocity();
     if (motor1Velocity != 0) {
       m_logMotor1Velocity.append(motor1Velocity);
