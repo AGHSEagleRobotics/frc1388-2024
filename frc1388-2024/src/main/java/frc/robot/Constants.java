@@ -93,13 +93,13 @@ public final class Constants {
     public static final double kShooterAngleI = 0; 
     public static final double kShooterAngleD = 0;
     public static final double kShooterAngleFF = 0;
-    public static final int kPotentiometerAnalogIN = 0;
+    public static final int kPotentiometerAnalogIN = 3;
 
     public static final double kShooterPositionUp = 0.8;
     public static final double kShooterPositionDown = 0.2;
 
-    public static final double kShooterMaxHeight = 0.9;
-    public static final double kShooterMinHeight = 0.1;
+    public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
+    public static final double kShooterMinHeight = 0.14; //  observed min without hitting transition is 0.14
 
 
     public static final int kShooterAngleMotorCANID = 22;
