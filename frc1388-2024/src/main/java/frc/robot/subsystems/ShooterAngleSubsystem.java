@@ -45,8 +45,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   public void periodic() {
     double currentPosition = getCurrentPosition();
     double error = m_targetPosition - currentPosition;
-    double speed = error * 45;
-    if (Math.abs(error) <= 0.009)
+    double speed = error * ShooterAngleSubsystemConstants.kShooterAngleP;
+    if (Math.abs(error) <= ShooterAngleSubsystemConstants.P_TOLERANCE)
     {
       speed = 0;
     }

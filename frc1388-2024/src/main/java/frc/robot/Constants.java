@@ -90,7 +90,7 @@ public final class Constants {
   
 
   public static class ShooterAngleSubsystemConstants {
-    public static final double kShooterAngleP = 0.00025;
+    public static final double kShooterAngleP = 45;
     public static final double kShooterAngleI = 0; 
     public static final double kShooterAngleD = 0;
     public static final double kShooterAngleFF = 0;
@@ -102,8 +102,9 @@ public final class Constants {
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
     public static final double kShooterMinHeight = 0.14; //  observed min without hitting transition is 0.14
 
-
     public static final int kShooterAngleMotorCANID = 22;
+
+    public static final double P_TOLERANCE = 0.09;
   }
 
   public static class IntakeConstants {
