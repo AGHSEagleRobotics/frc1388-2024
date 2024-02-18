@@ -4,7 +4,12 @@
 
 package frc.robot.commands;
 
+import org.opencv.core.Mat;
+
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,6 +22,8 @@ public class GoToNote extends Command {
     private final DriveTrainSubsystem m_driveTrain;
     private final Limelight m_limelight;
     private final IntakeSubsystem m_intakeSubsystem;
+    private Pose2d m_initialPose;
+    private Debouncer m_canSeePieceDebouncer;
 
     private final PIDController m_driveController = new PIDController(0.03, 0.015, 0);
     private final PIDController m_limelightPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
@@ -25,6 +32,7 @@ public class GoToNote extends Command {
     m_driveTrain = driveTrainSubsystem;
     m_limelight = limelight;
     m_intakeSubsystem = intakeSubsystem;
+    m_initialPose = m_driveTrain.getPose();
     addRequirements(m_driveTrain, m_intakeSubsystem);
   }
 
@@ -33,15 +41,19 @@ public class GoToNote extends Command {
   public void initialize() {
     m_limelightPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
     m_limelightPIDController.enableContinuousInput(0, 360);
+    m_canSeePieceDebouncer = new Debouncer(0.1, DebounceType.kFalling);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    NetworkTableEntry tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv");
-    double m_tv = tv.getDouble(0);
-    double xVelocity = m_driveController.calculate(m_tv); // change target area to distance
-    double omega = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
+    if (!m_canSeePieceDebouncer.calculate(m_limelight.getIsTargetFound())) {
+      m_driveTrain.drive(0, 0, 0);
+      return;
+    }
+
+    double omega = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
+    double xVelocity = distanceTraveled() > 1 ? 2 / 2 : 2;
     m_driveTrain.drive(xVelocity, 0, omega);
   }
 
@@ -51,9 +63,17 @@ public class GoToNote extends Command {
     m_driveTrain.drive(0, 0, 0);
   }
 
+  private double distanceTraveled() {
+    return Math.abs(m_driveTrain.getPose().getTranslation().getDistance(m_initialPose.getTranslation()));
+  }
+
+  private boolean isDistanceTooFar() {
+    return Math.abs(distanceTraveled()) > 3;
+  }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.isNoteDetected();
+    return m_intakeSubsystem.isNoteDetected() || isDistanceTooFar();
   }
 }

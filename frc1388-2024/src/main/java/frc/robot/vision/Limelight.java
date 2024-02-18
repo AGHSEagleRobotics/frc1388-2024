@@ -263,16 +263,6 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Vertical Degree", getdegRotationToTarget());
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
-      double ty = m_table.getEntry("ty").getDouble(0.0);
-      SmartDashboard.putNumber("ty", ty);
-      double pAngle;
-      double pEx;
-      double goToAngle;
-      pAngle = getDistance() * Math.E;
-      pAngle -= FieldConstants.SUBLIFER_LENGTH;
-      pEx = LimelightConstants.MAX_DISTANCE / ty;
 
-      goToAngle = Math.pow(pAngle, -pEx);
-      SmartDashboard.putNumber("Angle for linear actuator", goToAngle);
   }
 }

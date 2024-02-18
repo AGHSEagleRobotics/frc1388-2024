@@ -4,22 +4,25 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.vision.Limelight;
 
 public class AutoAngleShooter extends Command {
-  private final ShooterSubsystem m_shooterSubsystem;
+  private final ShooterAngleSubsystem m_shooterAngleSubsystem;
   private final Limelight m_limelight;
   /** Creates a new AutoAngleShooter. */
-  public AutoAngleShooter(ShooterSubsystem shooterSubsystem, Limelight limelight) {
-    m_shooterSubsystem = shooterSubsystem;
+  public AutoAngleShooter(ShooterAngleSubsystem shooterAngleSubsystem, Limelight limelight) {
+    m_shooterAngleSubsystem = shooterAngleSubsystem;
     m_limelight = limelight;
-    addRequirements(m_shooterSubsystem);
+    addRequirements(m_shooterAngleSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -32,22 +35,24 @@ public class AutoAngleShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double pAngle;
-    double pEx;
-    double goToAngle;
-    pAngle = m_limelight.getDistance() * Math.E;
-    pAngle -= FieldConstants.SUBLIFER_LENGTH;
-    pEx = m_limelight.getdegVerticalToTarget() / LimelightConstants.MAX_DISTANCE;
+    double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
+      SmartDashboard.putNumber("ty", ty);
+      double pAngle;
+      double pEx;
+      double goToAngle;
+      pAngle = m_limelight.getDistance() * Math.E;
+      pAngle -= FieldConstants.SUBLIFER_LENGTH;
+      pEx = LimelightConstants.MAX_TY_VALUE / ty;
     
     goToAngle = Math.pow(pAngle, pEx);
     SmartDashboard.putNumber("Angle for linear actuator", goToAngle);
-    // set the linear actuator to that value
+    m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // default value from where the lienar actuator
+    m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
   }
 
   // Returns true when the command should end.

@@ -128,7 +128,7 @@ public final class Constants {
   }
 
   public static class LimelightConstants {
-    public static final double MAX_DISTANCE = 3;
+    public static final double MAX_TY_VALUE = 20.5;
   }
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;

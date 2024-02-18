@@ -10,6 +10,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
+import frc.robot.commands.AutoTracking;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FeedShooter;
@@ -121,8 +122,7 @@ public class RobotContainer {
             () -> m_driverController.getHID().getAButton(),
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
-      () -> m_driverController.getHID().getYButton(),
-        () -> m_driverController.getHID().getBackButton() // test button
+      () -> m_driverController.getHID().getYButton()
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
@@ -135,6 +135,11 @@ public class RobotContainer {
 
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+
+    // test button will change to right stick maybe and need to test if it works while driving
+    if (isDriverJoysticksMoved()) {
+    m_driverController.back().onTrue(new RunCommand(() -> new AutoTracking(m_driveTrain, m_limelight)));
+    }
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
@@ -176,7 +181,7 @@ public class RobotContainer {
     // DRIVER CONTROLS
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
-
+    
     // SHOOT COMMAND SEQUENCE
     m_driverController.rightTrigger().whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem)
@@ -206,6 +211,18 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoMethod.getAutonomousCommand();
+  }
+  
+  public boolean isDriverJoysticksMoved(){
+    // boolean isGuestJoysticksMoved = (m_driveController.getLeftX()!= 0) || (m_driveController.getLeftY()!= 0) || (m_driveController.getRightX()!= 0) || (m_driveController.getRightY()!= 0);
+    boolean isDriverJoysticksMoved = 
+      !isClosetoZero(m_driverController.getRightX());
+    return isDriverJoysticksMoved; 
+  }
+
+  public boolean isClosetoZero(double number){
+    boolean isClosetoZero = (number < DriveTrainConstants.CONTROLLER_DEADBAND && number > -DriveTrainConstants.CONTROLLER_DEADBAND);
+    return isClosetoZero;
   }
 
   public boolean getDPadUp() {

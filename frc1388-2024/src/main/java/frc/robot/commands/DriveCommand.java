@@ -24,7 +24,6 @@ public class DriveCommand extends Command {
   private final Supplier<Double> m_leftY;
   private final Supplier<Double> m_leftX;
   private final Supplier<Double> m_rightX;
-  private final Supplier<Boolean> m_backButton;
   private final Supplier<Boolean> m_a;
   private final Supplier<Boolean> m_b;
   private final Supplier<Boolean> m_x;
@@ -37,7 +36,7 @@ public class DriveCommand extends Command {
   private PIDController m_rotationController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> back) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y) {
     m_driveTrain = driveTrain;
     m_limelight = limelight;
 
@@ -48,7 +47,6 @@ public class DriveCommand extends Command {
     m_b = b;
     m_x = x;
     m_y = y;
-    m_backButton = back;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveTrain);
@@ -79,9 +77,8 @@ public class DriveCommand extends Command {
     
     if (rightX != 0) { // default turning with stick
       omega = rightX;
-    } else if (m_backButton.get()) { // limelight auto tracking
-      omega = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
-    } else { // a/b/x/y rotation setpoints
+    } 
+    else { // a/b/x/y rotation setpoints
       int setAngle = 0;
       if (m_a.get()) {
         setAngle = 180;
