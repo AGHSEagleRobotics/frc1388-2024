@@ -19,18 +19,13 @@ import frc.robot.Constants.ShooterAngleSubsystemConstants;
 public class ShooterAngleSubsystem extends SubsystemBase {
   private final CANSparkMax m_angleMotor;
   private final AnalogPotentiometer m_potentiometer;
-  private final SparkPIDController m_angleMotorPIDController;
+  private double m_targetPosition;
 
   /** Creates a new ShooterAngleSubsystem. */
   public ShooterAngleSubsystem(CANSparkMax angleMotor, AnalogPotentiometer potentiometer) {
     m_angleMotor = angleMotor;
     m_potentiometer = potentiometer;
-    m_angleMotorPIDController = m_angleMotor.getPIDController();
-
-    m_angleMotorPIDController.setP(ShooterAngleSubsystemConstants.kShooterAngleP);
-    m_angleMotorPIDController.setI(ShooterAngleSubsystemConstants.kShooterAngleI);
-    m_angleMotorPIDController.setD(ShooterAngleSubsystemConstants.kShooterAngleD);
-    m_angleMotorPIDController.setFF(ShooterAngleSubsystemConstants.kShooterAngleFF);    
+    m_targetPosition = getCurrentPosition();
   }
 
   /** may break things, position is not limited in this method */
@@ -38,18 +33,33 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     m_angleMotor.set(power);
   }
 
-  public double getPotentiometer() {
+  public double getCurrentPosition() {
     return m_potentiometer.get();
   }
 
   public void setPosition(double position) {
-    position = MathUtil.clamp(position, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
-    m_angleMotorPIDController.setReference(position, ControlType.kPosition);
+    m_targetPosition = MathUtil.clamp(position, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("potentiometerPosition", getPotentiometer());
+    double currentPosition = getCurrentPosition();
+    double error = m_targetPosition - currentPosition;
+    double speed = error * 45;
+    if (Math.abs(error) <= 0.009)
+    {
+      speed = 0;
+    }
+    m_angleMotor.set(speed);
+
+
+    // if (currentPosition < m_targetPosition - 0.01) {
+    // m_angleMotor.set(1);
+    // }
+    // else if (currentPosition > m_targetPosition + 0.01) {
+    //   m_angleMotor.set(-1);
+    // }
+    SmartDashboard.putNumber("potentiometerPosition", currentPosition);
     // This method will be called once per scheduler run
   }
 }

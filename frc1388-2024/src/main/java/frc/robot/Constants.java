@@ -74,7 +74,7 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SHOOTER_RPM = 3000;
+    public static final double SHOOTER_RPM = 4000;
     public static final double SHOOTER_TIMER = 10;
 
   }
@@ -96,8 +96,8 @@ public final class Constants {
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionUp = 0.8;
-    public static final double kShooterPositionDown = 0.2;
+    public static final double kShooterPositionUp = 0.37; // 0.37 seems like a good sublifer angle
+    public static final double kShooterPositionDown = 0.22; // 0.25 seem good for podium
 
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
     public static final double kShooterMinHeight = 0.14; //  observed min without hitting transition is 0.14

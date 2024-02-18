@@ -33,6 +33,7 @@ public class ShooterAngleCommand extends Command {
   public void execute() {
     if(m_dPadUp.get() ) {
       m_ShooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp);
+      // m_ShooterAngleSubsystem.setPosition(0.4);
     }
     else if(m_dPadDown.get() ){
       m_ShooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown);

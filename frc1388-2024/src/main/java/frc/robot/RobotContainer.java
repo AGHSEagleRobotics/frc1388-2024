@@ -125,29 +125,26 @@ public class RobotContainer {
         () -> m_driverController.getHID().getBackButton() // test button
     );
 
-    m_driveTrain.setDefaultCommand(m_driveCommand); 
+    m_driveTrain.setDefaultCommand(m_driveCommand);
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-      () -> getDPadUp(),
-      () -> getDPadDown(),
-      m_ShooterAngleSubsystem);
+        () -> getDPadUp(),
+        () -> getDPadDown(),
+        m_ShooterAngleSubsystem);
 
-      m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
-      
+    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
+
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-    m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
+    // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
+    // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
-      // () -> getDPad()
-
-
+    // () -> getDPad()
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
-      m_driveTrain, 
-      () -> m_driverController.getLeftY(), 
-      () -> m_driverController.getLeftX(), 
-      () -> m_driverController.getRightX()
-    );
+        m_driveTrain,
+        () -> m_driverController.getLeftY(),
+        () -> m_driverController.getLeftX(),
+        () -> m_driverController.getRightX());
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
