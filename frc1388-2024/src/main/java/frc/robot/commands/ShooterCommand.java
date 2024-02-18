@@ -4,15 +4,13 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterCommandConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterCommand extends Command {
   private final ShooterSubsystem m_shooter;
-  private final Timer m_timer = new Timer();
-  
+
   /** assumes intake is in up position, ready to shoot */
   public ShooterCommand(ShooterSubsystem shooter) {
     m_shooter = shooter;
@@ -22,16 +20,14 @@ public class ShooterCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_timer.restart();
   }
-  
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // m_shooter.setPower(ShooterCommandConstants.kInitialMotorSpeed);
-    m_shooter.setShooterRPM(3000);
-    
-  }
+    // m_shooter.setShooterRPM(3000);
+
+    m_shooter.setShooterRPM(ShooterConstants.SHOOTER_RPM);  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -42,6 +38,6 @@ public class ShooterCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_timer.hasElapsed(ShooterCommandConstants.kShooterTimer);
+    return false;
   }
 }
