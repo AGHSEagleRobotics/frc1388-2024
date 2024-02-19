@@ -4,15 +4,12 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.vision.Limelight;
 
 public class AutoAngleShooter extends Command {
@@ -35,8 +32,10 @@ public class AutoAngleShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // replace this with m_limelight.getVerticalDegrees find the bug with it idk
     double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
       SmartDashboard.putNumber("ty", ty);
+      
       double pAngle;
       double pEx;
       double goToAngle;
@@ -46,14 +45,13 @@ public class AutoAngleShooter extends Command {
     
     goToAngle = Math.pow(pAngle, pEx);
     SmartDashboard.putNumber("Angle for linear actuator", goToAngle);
+
     m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

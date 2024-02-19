@@ -10,10 +10,13 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
+import frc.robot.commands.AutoAngleShooter;
 import frc.robot.commands.AutoTracking;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FeedShooter;
+import frc.robot.commands.GoToNote;
+import frc.robot.commands.LineUpWithAprilTag;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.SwerveAutoTesting;
@@ -133,13 +136,7 @@ public class RobotContainer {
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-
     // test button will change to right stick maybe and need to test if it works while driving
-    if (isDriverJoysticksMoved()) {
-    m_driverController.back().onTrue(new RunCommand(() -> new AutoTracking(m_driveTrain, m_limelight)));
-    }
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
@@ -194,10 +191,20 @@ public class RobotContainer {
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
+    // TODO test to see if works
+    if (!isDriverJoysticksMoved()) {
+    m_driverController.back().onTrue(new AutoTracking(m_driveTrain, m_limelight));
+    }
+
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
     
+    // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
+    m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
+    m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 0, 0));
+    // TODO test button for now don't do anything without knowing what you're doing
+    m_operatorController.start().onTrue(new AutoAngleShooter(m_ShooterAngleSubsystem, m_limelight)); 
   }
 
   public void setAllEncoderOffsets() {

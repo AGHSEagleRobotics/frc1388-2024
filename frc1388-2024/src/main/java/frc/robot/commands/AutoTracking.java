@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 
@@ -15,8 +14,7 @@ public class AutoTracking extends Command {
   private final DriveTrainSubsystem m_driveTrain;
   private final Limelight m_limelight;
 
-  private final PIDController m_limelightPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
-  private PIDController m_rotationController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
+  private final PIDController m_rotationPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
   /** Creates a new AutoTracking. */
   public AutoTracking(DriveTrainSubsystem driveTrain, Limelight limelight) {
     m_driveTrain = driveTrain;
@@ -28,16 +26,14 @@ public class AutoTracking extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_limelightPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
-    m_limelightPIDController.enableContinuousInput(0, 360);
-
-    m_rotationController.enableContinuousInput(0, 360);
+    m_rotationPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
+    m_rotationPIDController.enableContinuousInput(0, 360);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double omega = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
+    double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
     m_driveTrain.drive(0, 0, omega);
   }
 
