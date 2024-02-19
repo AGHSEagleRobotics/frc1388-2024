@@ -153,6 +153,12 @@ public class RobotContainer {
     configureBindings();
   }
 
+    public void setBrakeMode(boolean brakeMode){
+      m_driveTrain.setBrakeMode(brakeMode);
+      m_intakeSubsystem.setBrakeMode(brakeMode);
+      m_transitionSubsystem.setBrakeMode(brakeMode);
+    }
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
