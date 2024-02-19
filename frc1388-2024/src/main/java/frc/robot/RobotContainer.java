@@ -10,6 +10,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
+import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.FeedShooter;
@@ -83,8 +85,7 @@ public class RobotContainer {
   private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard);
 
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-          MotorType.kBrushless),
+      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID, MotorType.kBrushless),
       new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID, MotorType.kBrushless));
 
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
@@ -133,8 +134,8 @@ public class RobotContainer {
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
@@ -182,7 +183,9 @@ public class RobotContainer {
       new RetractIntakeCommand(m_intakeSubsystem)
       .andThen(
         new ShooterCommand(m_shooterSubsystem)
-                    .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
 
     // RESET GYRO CONTROL
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
