@@ -249,12 +249,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backLeft.setRotationPosition(0);
     m_backRight.setRotationPosition(0);
 
+    m_frontRight.setDriveSpeed(speed);
     m_frontLeft.setDriveSpeed(speed);
     m_backLeft.setDriveSpeed(speed);
-    m_frontRight.setDriveSpeed(speed);
     m_backRight.setDriveSpeed(speed);
   }
 
+  public void setBrakeMode(boolean brakeMode){
+    m_frontRight.setBrakeMode(brakeMode);
+    m_frontLeft.setBrakeMode(brakeMode);
+    m_backLeft.setBrakeMode(brakeMode);
+    m_backRight.setBrakeMode(brakeMode);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

@@ -67,6 +67,15 @@ public class SwerveModule {
             new Rotation2d(Math.toRadians(getRotationAngle()))
         );
     }
+    public void setBrakeMode(boolean brakeMode){
+        if(brakeMode) {
+            m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
+            m_rotationMotor.setNeutralMode(NeutralModeValue.Brake);
+        } else {
+            m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
+            m_rotationMotor.setNeutralMode(NeutralModeValue.Coast);
+        }
+    }
 
     public void setDriveSpeed(double inputSpeed) { 
         // because the robot's max speed is 3 m/s, dividing the speed by 3 results in a power [-1, 1] we can set the motor to 
