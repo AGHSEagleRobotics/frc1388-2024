@@ -75,7 +75,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public boolean getUpperLimit() {
 
-    return !m_upperLimit.get();
+    return m_upperLimit.get();
 
   }
 
@@ -85,7 +85,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public boolean getLowerLimit() {
 
-    return !m_lowerLimit.get();
+    return m_lowerLimit.get();
 
   }
 

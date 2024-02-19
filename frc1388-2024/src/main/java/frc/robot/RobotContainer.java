@@ -178,11 +178,20 @@ public class RobotContainer {
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
 
-    // SHOOT COMMAND SEQUENCE
+    // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger().whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem)
       .andThen(
-        new ShooterCommand(m_shooterSubsystem)
+        new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
+
+    // SHOOT AMP COMMAND SEQUENCE
+    m_driverController.rightBumper().whileTrue(
+      new RetractIntakeCommand(m_intakeSubsystem)
+      .andThen(
+        new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );

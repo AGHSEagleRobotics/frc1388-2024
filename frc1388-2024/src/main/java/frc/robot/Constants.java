@@ -74,7 +74,8 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SHOOTER_RPM = 4000;
+    public static final double SPEAKER_SHOT_RPM = 3000;
+    public static final double AMP_SHOT_RPM = 1000;
     public static final double SHOOTER_TIMER = 10;
 
   }
@@ -117,8 +118,8 @@ public final class Constants {
     public static final double ROLLER_MOTOR_SPEED_IN = 0.7;
     public static final double ROLLER_MOTOR_SPEED_OUT = 0.7;
 
-    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.1; // XXX increase for final design
-    public static final double LIFTER_MOTOR_SPEED_UP = 0.2; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
   }
 
   public static class FieldConstants {
