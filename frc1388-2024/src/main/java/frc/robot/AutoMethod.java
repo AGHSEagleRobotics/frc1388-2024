@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
-
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.DriveTrainSubsystem;
@@ -36,7 +36,7 @@ public class AutoMethod {
   }
 
   public Command ShootAndLeave(){
-    return new ShooterCommand(m_shooter)
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
     .alongWith(
       new WaitCommand(1.0)
     )
