@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,6 +14,15 @@ public class TransitionSubsystem extends SubsystemBase {
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem(CANSparkMax transitionMotor) {
     m_transitionMotor = transitionMotor;
+    m_transitionMotor.setInverted(true);
+  }
+
+  public void setBrakeMode(boolean brakeMode) {
+    if (brakeMode) {
+      m_transitionMotor.setIdleMode(IdleMode.kBrake);
+    } else {
+      m_transitionMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   /**Set transition speed, positive is into shooter

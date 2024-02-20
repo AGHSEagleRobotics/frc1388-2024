@@ -5,11 +5,13 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -38,6 +40,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     m_lifterMotor.setIdleMode(IdleMode.kBrake);
     m_lifterMotor.setInverted(true);
+  }
+  
+  public void setBrakeMode(boolean brakeMode) {
+    if (brakeMode) {
+      m_rollerMotor.setIdleMode(IdleMode.kBrake);
+      m_lifterMotor.setIdleMode(IdleMode.kBrake);
+    } else {
+      m_rollerMotor.setIdleMode(IdleMode.kCoast);
+      m_lifterMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   /**
@@ -90,16 +102,18 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /** gets beam break */
-  public boolean getBeamBreak() {
+  public boolean isNoteDetected() {
     return m_beamBreak.get();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // DEBUG 
     SmartDashboard.putBoolean("upper limit", getUpperLimit());
     SmartDashboard.putBoolean("lower limit", getLowerLimit());
-    SmartDashboard.putBoolean("beam break", getBeamBreak());
-    m_rollerMotor.set(0.0);
+    SmartDashboard.putBoolean("beam break", isNoteDetected());
   }
+  
 }

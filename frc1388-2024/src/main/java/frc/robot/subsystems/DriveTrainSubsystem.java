@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.FieldConstants;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
@@ -31,9 +31,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
 
   /** The distance in <strong>meters</strong> from the center of rotation of the front wheel to the center of rotation of the back wheel */
-  private final double ROBOT_WHEEL_BASE = Constants.FieldConstants.ROBOT_LENGTH;
+  private final double ROBOT_WHEEL_BASE = FieldConstants.ROBOT_LENGTH;
   /** The distance in <strong>meters</strong> from the center of rotation of the left wheel to the center of rotation of the right wheel */
-  private final double ROBOT_TRACK_WIDTH = Constants.FieldConstants.ROBOT_WIDTH;
+  private final double ROBOT_TRACK_WIDTH = FieldConstants.ROBOT_WIDTH;
 
   // these are the translations from the center of rotation of the robot to the center of rotation of each swerve module
   private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, -ROBOT_TRACK_WIDTH / 2);
@@ -106,7 +106,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(robotRelativeSpeeds);
 
     // optimises wheel heading direction changes.
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveTrainConstants.ROBOT_MAX_SPEED);
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);
@@ -204,7 +204,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   // auto stuff
   public void driveRobotRelative(ChassisSpeeds speeds) {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.DriveTrainConstants.ROBOT_MAX_SPEED);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveTrainConstants.ROBOT_MAX_SPEED);
     //check desaturate constants
     m_frontRight.setSwerveModuleStates(states[0]);
     m_frontLeft.setSwerveModuleStates(states[1]);
@@ -249,12 +249,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backLeft.setRotationPosition(0);
     m_backRight.setRotationPosition(0);
 
+    m_frontRight.setDriveSpeed(speed);
     m_frontLeft.setDriveSpeed(speed);
     m_backLeft.setDriveSpeed(speed);
-    m_frontRight.setDriveSpeed(speed);
     m_backRight.setDriveSpeed(speed);
   }
 
+  public void setBrakeMode(boolean brakeMode){
+    m_frontRight.setBrakeMode(brakeMode);
+    m_frontLeft.setBrakeMode(brakeMode);
+    m_backLeft.setBrakeMode(brakeMode);
+    m_backRight.setBrakeMode(brakeMode);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

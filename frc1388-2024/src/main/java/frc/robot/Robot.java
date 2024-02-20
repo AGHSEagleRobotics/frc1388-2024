@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -19,6 +21,7 @@ public class Robot extends TimedRobot {
   private boolean m_lastUserButton = false;
   private int m_userButtonCounter = 0;
 
+  private Timer m_neutralModeTimer = new Timer();
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -76,7 +79,6 @@ public class Robot extends TimedRobot {
       if (m_userButtonCounter == 1) {
         DataLogManager.log("### UserButtonPressed");
         RobotController.setRadioLEDState(RadioLEDState.kGreen);
-        // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Coast);
       } else if (m_userButtonCounter == 100) { // when held for 2 seconds (100 tics)
         DataLogManager.log("### UserButtonHeld");
         RobotController.setRadioLEDState(RadioLEDState.kOrange);
@@ -96,10 +98,17 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     DataLogManager.log("####### Disabled Robot");
+    m_neutralModeTimer.restart();
   }
 
   @Override
   public void disabledPeriodic() {
+    // starts coast mode after robot disabled for 5 seconds
+    if (m_neutralModeTimer.hasElapsed(5)) {
+      m_robotContainer.setBrakeMode(false);
+      m_neutralModeTimer.reset();
+      m_neutralModeTimer.stop();
+    }
   }
 
   /**
@@ -112,7 +121,8 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // System.out.println("setting neutral mode");
-    // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Brake);
+    m_robotContainer.setBrakeMode(true);
+
    
     // schedule the autonomous command
     if (m_autonomousCommand != null) {
@@ -148,7 +158,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     DataLogManager.log("####### Teleop Init");
-    // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Brake);
+    m_robotContainer.setBrakeMode(true);
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -167,7 +177,8 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     DataLogManager.log("####### Test Init");
-    // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Brake);
+    m_robotContainer.setBrakeMode(true);
+
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
@@ -181,7 +192,7 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationInit() {
     DataLogManager.log("####### Simulation Init");
-    // m_robotContainer.setDriveTrainNeutralMode(NeutralMode.Brake);
+    m_robotContainer.setBrakeMode(true);
   }
 
   /** This function is called periodically whilst in simulation. */

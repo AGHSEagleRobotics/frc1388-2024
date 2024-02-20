@@ -28,9 +28,9 @@ public class SwerveModule {
         m_driveMotor = driveMotor;
         m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
         Slot0Configs driveConfig = new Slot0Configs();
-        driveConfig.kP = Constants.SwerveModuleConstants.kDriveMotorP;
-        driveConfig.kI = Constants.SwerveModuleConstants.kDriveMotorI;
-        driveConfig.kD = Constants.SwerveModuleConstants.kDriveMotorD;
+        driveConfig.kP = Constants.SwerveModuleConstants.DRIVE_MOTOR_P;
+        driveConfig.kI = Constants.SwerveModuleConstants.DRIVE_MOTOR_I;
+        driveConfig.kD = Constants.SwerveModuleConstants.DRIVE_MOTOR_D;
         m_driveMotor.getConfigurator().apply(driveConfig);
 
         m_rotationMotor = rotationMotor;
@@ -40,10 +40,10 @@ public class SwerveModule {
         m_encoderOffset = encoderOffset;
 
         m_rotationPID = new PIDController(
-            Constants.SwerveModuleConstants.kRotationP,
-            Constants.SwerveModuleConstants.kRotationI,
-            Constants.SwerveModuleConstants.kRotationD);
-        m_rotationPID.setTolerance(Constants.SwerveModuleConstants.kRotationTolerance);
+            Constants.SwerveModuleConstants.ROTATION_MOTOR_P,
+            Constants.SwerveModuleConstants.ROTATION_MOTOR_I,
+            Constants.SwerveModuleConstants.ROTATION_MOTOR_D);
+        m_rotationPID.setTolerance(Constants.SwerveModuleConstants.ROTATION_TOLERANCE);
         m_rotationPID.enableContinuousInput(0, 360);
 
         m_cancoder = cancoder;
@@ -66,6 +66,15 @@ public class SwerveModule {
             m_driveMotor.getPosition().getValue() * Constants.SwerveModuleConstants.DIST_PER_TICK,
             new Rotation2d(Math.toRadians(getRotationAngle()))
         );
+    }
+    public void setBrakeMode(boolean brakeMode){
+        if(brakeMode) {
+            m_driveMotor.setNeutralMode(NeutralModeValue.Brake);
+            m_rotationMotor.setNeutralMode(NeutralModeValue.Brake);
+        } else {
+            m_driveMotor.setNeutralMode(NeutralModeValue.Coast);
+            m_rotationMotor.setNeutralMode(NeutralModeValue.Coast);
+        }
     }
 
     public void setDriveSpeed(double inputSpeed) { 
