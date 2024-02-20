@@ -59,6 +59,12 @@ public class RobotContainer {
 
   private final Dashboard m_dashboard = new Dashboard();
 
+  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
+      new CANSparkFlex(ShooterConstants.kShooterMotor1CANID,
+          MotorType.kBrushless),
+      new CANSparkFlex(ShooterConstants.kShooterMotor2CANID,
+          MotorType.kBrushless));
+
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID),
@@ -83,11 +89,7 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB) // navx
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard);
-
-  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID, MotorType.kBrushless),
-      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID, MotorType.kBrushless));
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem);
 
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),

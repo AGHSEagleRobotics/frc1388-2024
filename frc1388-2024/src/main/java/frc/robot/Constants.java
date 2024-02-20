@@ -77,6 +77,8 @@ public final class Constants {
     public static final double SPEAKER_SHOT_RPM = 3000;
     public static final double AMP_SHOT_RPM = 1000;
     public static final double SHOOTER_TIMER = 10;
+    public static final int kShooterMotor1CANID = 0;
+    public static final int kShooterMotor2CANID = 0;
 
   }
 
@@ -145,9 +147,12 @@ public final class Constants {
     public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
 
-    public enum Objective {
-      SITSTILL("LookPretty"),
-      LEAVEZONE("LeaveZone");
+    public static final double LEAVE_ZONE_FROM_SUB_DIST = -2;
+
+    public enum Objective{
+        SITSTILL ("LookPretty"),
+        START1LEAVE ("Start1&Leave"),
+        LEAVEANDSHOOT ("shootAndLeave");
 
       public static final Objective Default = SITSTILL;
 
@@ -155,29 +160,13 @@ public final class Constants {
 
       private Objective(String dashboardDescript) {
         m_dashboardDescript = dashboardDescript;
-  }
+      }
 
       public String getDashboardDescript() {
         return m_dashboardDescript;
       }
     }
 
-    public enum Position {
-      CLOSE("CLOSE"), // need to rename this
-      MID("MID"),
-      FAR("FAR");
-
-      public static final Position Default = CLOSE;
-
-      private String m_dashboardDescript; // This is what will show on dashboard
-
-      private Position(String dashboardDescript) {
-        m_dashboardDescript = dashboardDescript;
   }
-
-      public String getDashboardDescript() {
-        return m_dashboardDescript;
-      }
-    }
-  } // end auto constants
 }
+
