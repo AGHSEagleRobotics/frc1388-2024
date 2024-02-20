@@ -8,6 +8,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -50,11 +53,12 @@ public class GoToNote extends Command {
       return;
     }
 
-    double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
+    double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker());
     double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? 
-    LimelightConstants.METERS_PER_SECOND / LimelightConstants.METERS_PER_SECOND : 
-    LimelightConstants.METERS_PER_SECOND;
-    m_driveTrain.drive(-xVelocity, 0, omega);
+    LimelightConstants.METERS_PER_SECOND / 2
+    : LimelightConstants.METERS_PER_SECOND;
+    m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, 0, omega, new Rotation2d()));
+    SmartDashboard.putNumber("xVelocity", xVelocity);
   }
 
   // Called once the command ends or is interrupted.
@@ -75,6 +79,6 @@ public class GoToNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.isNoteDetected() || isDistanceTooFar();
+    return isDistanceTooFar();
   }
 }

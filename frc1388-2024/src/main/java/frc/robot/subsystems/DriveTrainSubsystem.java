@@ -172,12 +172,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    if (m_odometry != null) {
+    // if (m_odometry != null) {
       return m_odometry.getPoseMeters();
-    }
-
+    // }
+    
     // return new Pose2d(123, 432, m_lastRotation2D);
-    return new Pose2d(123, 432, getGyroHeading());
+    // return new Pose2d(0, 0, getGyroHeading());
   }
 
 

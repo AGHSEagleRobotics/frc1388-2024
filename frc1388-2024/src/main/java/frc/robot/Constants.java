@@ -128,9 +128,9 @@ public final class Constants {
   }
 
   public static class LimelightConstants {
-    public static final double MAX_TY_VALUE = 20.5;
-    public static final double SLOW_DOWN = 1;
-    public static final double METERS_PER_SECOND = 2;
+    public static final double MAX_TY_VALUE = 8;
+    public static final double SLOW_DOWN = 0.5;
+    public static final double METERS_PER_SECOND = 0.2;
   }
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;

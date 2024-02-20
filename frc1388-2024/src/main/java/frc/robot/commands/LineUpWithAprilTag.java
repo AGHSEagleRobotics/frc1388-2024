@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -93,14 +94,16 @@ public class LineUpWithAprilTag extends Command {
     double xVelocity = -m_yPIDController.calculate(ty);
     double yVelocity = -m_xPIDController.calculate(tx);
     double omega = m_rotationPIDController.calculate(rotationError);
-        m_driveTrain.drive(xVelocity, yVelocity, omega);
+    m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, yVelocity, omega, new Rotation2d()));
 
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_driveTrain.drive(0, 0, 0);
+  }
 
 
   public static boolean isWithinTolerance(

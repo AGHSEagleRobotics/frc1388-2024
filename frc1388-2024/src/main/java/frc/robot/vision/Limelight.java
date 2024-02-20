@@ -264,5 +264,18 @@ public class Limelight extends SubsystemBase {
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
 
+      double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
+      SmartDashboard.putNumber("ty", ty);
+      
+      double pAngle;
+      double pEx;
+      double goToAngle;
+      pAngle = getDistance() * Math.E;
+      pAngle -= FieldConstants.SUBLIFER_LENGTH;
+      pEx = -LimelightConstants.MAX_TY_VALUE / ty;
+    
+    goToAngle = Math.pow(pAngle, pEx);
+    SmartDashboard.putNumber("Angle for linear actuator", goToAngle);
+
   }
 }

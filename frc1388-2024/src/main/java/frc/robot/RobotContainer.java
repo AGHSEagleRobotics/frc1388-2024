@@ -129,12 +129,13 @@ public class RobotContainer {
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
-    ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-        () -> getDPadUp(),
-        () -> getDPadDown(),
-        m_ShooterAngleSubsystem);
 
-    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
+    // ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
+    //     () -> getDPadUp(),
+    //     () -> getDPadDown(),
+    //     m_ShooterAngleSubsystem);
+
+    // m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
     // test button will change to right stick maybe and need to test if it works while driving
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
@@ -192,9 +193,7 @@ public class RobotContainer {
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // TODO test to see if works
-    if (!isDriverJoysticksMoved()) {
-    m_driverController.back().onTrue(new AutoTracking(m_driveTrain, m_limelight));
-    }
+    m_driverController.back().whileTrue(new AutoTracking(m_driveTrain, m_limelight));
 
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
