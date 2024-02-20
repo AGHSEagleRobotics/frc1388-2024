@@ -14,6 +14,7 @@ import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
@@ -210,6 +211,7 @@ public class RobotContainer {
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
+    m_operatorController.rightBumper().onTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     
   }
 
