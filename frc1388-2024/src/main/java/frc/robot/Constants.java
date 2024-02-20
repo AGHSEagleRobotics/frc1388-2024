@@ -117,7 +117,7 @@ public final class Constants {
     public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
 
-    public static final double LEAVE_ZONE_DIST = -2;
+    public static final double LEAVE_ZONE_FROM_SUB_DIST = -2;
 
     public enum Objective{
         SITSTILL ("LookPretty"),

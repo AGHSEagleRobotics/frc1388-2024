@@ -32,7 +32,7 @@ public class AutoMethod {
   }
 
   public Command Start1Leave(){
-    return new AutoDrive(AutoConstants.LEAVE_ZONE_DIST, m_driveTrainSubsystem);
+    return new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem);
   }
 
   public Command ShootAndLeave(){
@@ -41,7 +41,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new AutoDrive(AutoConstants.LEAVE_ZONE_DIST, m_driveTrainSubsystem)
+      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
     );
   }
 
