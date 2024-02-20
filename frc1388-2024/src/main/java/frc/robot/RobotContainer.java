@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
@@ -28,6 +29,8 @@ import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 
+import javax.swing.ButtonGroup;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -40,6 +43,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -108,6 +112,9 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
+  private final LEDSubsystem m_leds = new LEDSubsystem(new PWMSparkMax(0));
+
+
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
@@ -138,6 +145,7 @@ public class RobotContainer {
         m_ShooterAngleSubsystem);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
+
 
     // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
@@ -186,12 +194,13 @@ public class RobotContainer {
     // m_limelight.goToCenterOfSpeaker()));
 
     // DRIVER CONTROLS
-    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
+    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_leds));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
 
     // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger().whileTrue(
-      new RetractIntakeCommand(m_intakeSubsystem)
+      new InstantCommand(() -> m_leds.setRed(), m_leds)
+      .alongWith(new RetractIntakeCommand(m_intakeSubsystem))      
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
@@ -213,7 +222,7 @@ public class RobotContainer {
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
+    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_leds));
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
     m_operatorController.rightBumper().onTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     

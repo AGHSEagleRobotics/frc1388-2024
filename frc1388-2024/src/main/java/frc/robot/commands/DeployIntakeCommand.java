@@ -7,15 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class DeployIntakeCommand extends Command {
 
   private final IntakeSubsystem m_intakeSubsystem;
+  private final LEDSubsystem m_leds;
 
 
   /** Creates a new DeployIntakeCommand. */
-  public DeployIntakeCommand(IntakeSubsystem intakeSubsystem) {
+  public DeployIntakeCommand(IntakeSubsystem intakeSubsystem, LEDSubsystem leds) {
     m_intakeSubsystem = intakeSubsystem;
+    m_leds = leds;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_intakeSubsystem);
 
@@ -40,6 +43,7 @@ public class DeployIntakeCommand extends Command {
     
     if (!interrupted && m_intakeSubsystem.isNoteDetected()) {
       new RetractIntakeCommand(m_intakeSubsystem).schedule();
+      m_leds.setGreen();
     }
   }
 

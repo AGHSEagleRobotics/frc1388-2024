@@ -131,6 +131,12 @@ public final class Constants {
 
   public static class LimelightConstants {
   }
+
+  public static class LEDConstants {
+    public static final double RED = 0.61;
+    public static final double  GREEN_RAINBOW = -0.91;
+  }
+
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
     public static final double TURN_P_TOLERANCE = 1.25;
