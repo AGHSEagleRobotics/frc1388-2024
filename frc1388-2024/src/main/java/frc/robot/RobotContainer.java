@@ -101,8 +101,10 @@ public class RobotContainer {
       new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
 
-  private final TransitionSubsystem m_transitionSubsystem = new
-  TransitionSubsystem(new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless));
+  private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(
+    new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless),
+    new DigitalInput(4)
+  );
 
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
