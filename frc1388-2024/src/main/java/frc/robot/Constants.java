@@ -105,7 +105,7 @@ public final class Constants {
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.09;
+    public static final double P_TOLERANCE = 0.01;
   }
 
   public static class IntakeConstants {

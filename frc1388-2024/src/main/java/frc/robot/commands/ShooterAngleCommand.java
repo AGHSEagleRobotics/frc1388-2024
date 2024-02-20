@@ -17,10 +17,10 @@ public class ShooterAngleCommand extends Command {
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
 
   /** Creates a new ShooterAngleCommand. */
-  public ShooterAngleCommand(Supplier<Boolean> dPadUp, Supplier<Boolean> dPadDown, ShooterAngleSubsystem ShooterAngleSubsystem) {
+  public ShooterAngleCommand(Supplier<Boolean> dPadUp, Supplier<Boolean> dPadDown, ShooterAngleSubsystem shooterAngleSubsystem) {
     m_dPadUp = dPadUp;
     m_dPadDown = dPadDown;
-    m_shooterAngleSubsystem = ShooterAngleSubsystem;
+    m_shooterAngleSubsystem = shooterAngleSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooterAngleSubsystem);
   }
