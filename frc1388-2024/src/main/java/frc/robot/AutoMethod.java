@@ -31,7 +31,7 @@ public class AutoMethod {
     return new AutoDrive(0, m_driveTrainSubsystem);
   }
 
-  public Command MoveOutOfZone(){
+  public Command Start1Leave(){
     return new AutoDrive(AutoConstants.LEAVE_ZONE_DIST, m_driveTrainSubsystem);
   }
 
@@ -58,8 +58,8 @@ public class AutoMethod {
           case SITSTILL:
             return SitStillLookPretty();
     
-          case LEAVEZONE:
-            return MoveOutOfZone();
+          case START1LEAVE:
+            return Start1Leave();
 
           case LEAVEANDSHOOT:
             return ShootAndLeave();

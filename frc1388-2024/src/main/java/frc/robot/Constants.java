@@ -121,7 +121,7 @@ public final class Constants {
 
     public enum Objective{
         SITSTILL ("LookPretty"),
-        LEAVEZONE ("LeaveZone"),
+        START1LEAVE ("Start1&Leave"),
         LEAVEANDSHOOT ("shootAndLeave");
 
       public static final Objective Default = SITSTILL;
