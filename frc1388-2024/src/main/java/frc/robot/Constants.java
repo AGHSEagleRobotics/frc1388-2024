@@ -152,7 +152,8 @@ public final class Constants {
     public enum Objective{
         SITSTILL ("LookPretty"),
         START1LEAVE ("Start1&Leave"),
-        LEAVEANDSHOOT ("shootAndLeave");
+        LEAVEANDSHOOT ("shootAndLeave"),
+        Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B");
 
       public static final Objective Default = SITSTILL;
 
