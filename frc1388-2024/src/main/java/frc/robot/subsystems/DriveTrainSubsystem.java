@@ -35,6 +35,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
   /** The distance in <strong>meters</strong> from the center of rotation of the left wheel to the center of rotation of the right wheel */
   private final double ROBOT_TRACK_WIDTH = FieldConstants.ROBOT_WIDTH;
 
+  private double m_gyroOffset = 0;
+
   // these are the translations from the center of rotation of the robot to the center of rotation of each swerve module
   private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, -ROBOT_TRACK_WIDTH / 2);
   private final Translation2d m_frontLeftTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, ROBOT_TRACK_WIDTH / 2);
@@ -151,12 +153,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   public Rotation2d getGyroHeading() {
     if (!m_navxGyro.isCalibrating()) {
-      return new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_navxGyro.getAngle(), 360)));
+      // return new Rotation2d(Math.toRadians(Math.IEEEremainder(-m_navxGyro.getAngle(), 360)));
+      return new Rotation2d(Math.toRadians(getAngle()));
     }
     return new Rotation2d();
   }
 
-  public void resetGyroHeading() {
+  public void resetGyroHeading(double offset) {
+    m_gyroOffset = offset;
     m_navxGyro.reset();
   }
 
@@ -231,9 +235,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   public double getAngle() {
     if (!m_navxGyro.isCalibrating()) {
-      return (-m_navxGyro.getAngle() + 36000) % 360;
+      double angle = (-m_navxGyro.getAngle() + m_gyroOffset) % 360;
+      if (angle < 0) {
+        angle += 360;
+      }
+      return angle;
+      // return (-m_navxGyro.getAngle() + 36000) % 360;
+      // return Math.IEEEremainder(-m_navxGyro.getAngle() + m_gyroOffset, 360);
     }
-    return 0;
+    // return 0;
+    return 1092;
   }
 
   public void setWheelAngle(double angle) {

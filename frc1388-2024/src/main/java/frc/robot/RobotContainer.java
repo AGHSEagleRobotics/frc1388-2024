@@ -134,8 +134,6 @@ public class RobotContainer {
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
@@ -190,11 +188,10 @@ public class RobotContainer {
       .andThen(
         new ShooterCommand(m_shooterSubsystem)
                     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
-
-    // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    // TODO decide if reset pose is needed
-    //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+    
+                    
+    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
+    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
@@ -212,7 +209,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_autoMethod.getAutonomousCommand();
+    // return m_autoMethod.getAutonomousCommand();
+    return null;
   }
 
   public boolean getDPadUp() {
