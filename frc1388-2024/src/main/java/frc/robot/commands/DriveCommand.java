@@ -28,15 +28,19 @@ public class DriveCommand extends Command {
   private final Supplier<Boolean> m_b;
   private final Supplier<Boolean> m_x;
   private final Supplier<Boolean> m_y;
+  private final Supplier<Boolean> m_back;
   
+
   private final PIDController m_limelightPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
 
   private boolean m_goingToAngle;
   private double m_angleSetPoint;
   private PIDController m_rotationController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
+  private boolean m_autoTracking = false;
+  private boolean m_lastAutoTrackButtonPressed = false; // used for edge detection 
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> back) {
     m_driveTrain = driveTrain;
     m_limelight = limelight;
 
@@ -47,6 +51,7 @@ public class DriveCommand extends Command {
     m_b = b;
     m_x = x;
     m_y = y;
+    m_back = back;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveTrain);
@@ -74,36 +79,45 @@ public class DriveCommand extends Command {
     double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
     double omega = 0;
 
-    
+    boolean backButton = m_back.get();
+
+    // if back button is pressed then run auto tracking
+    if (backButton && !m_lastAutoTrackButtonPressed) {
+      m_autoTracking = !m_autoTracking;
+    }
+    m_lastAutoTrackButtonPressed = backButton;
+
+    // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
       omega = rightX;
-    } 
-    else { // a/b/x/y rotation setpoints
-      int setAngle = 0;
-      if (m_a.get()) {
-        setAngle = 180;
-      } else if (m_b.get()) {
-        setAngle = 240;
-      } else if (m_x.get()) {
-        setAngle = 120;
-      } else if (m_y.get()) {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-          setAngle = 90;
-        } else {
-          setAngle = 270;
-        }
+      m_autoTracking = false;
+      m_goingToAngle = false;
+    } else if (m_a.get()) {
+      m_goingToAngle = true;
+      m_autoTracking = false;
+      m_angleSetPoint = 180;
+    } else if (m_b.get()) {
+      m_goingToAngle = true;
+      m_autoTracking = false;
+      m_angleSetPoint = 240;
+    } else if (m_x.get()) {
+      m_goingToAngle = true;
+      m_autoTracking = false;
+      m_angleSetPoint = 120;
+    } else if (m_y.get()) {
+      m_autoTracking = false;
+      m_goingToAngle = true;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        m_angleSetPoint = 90;
       } else {
-        setAngle = -1; // default, -1 indicates no set point
+        m_angleSetPoint = 270;
       }
+    }
+    
+    if (m_goingToAngle) {// a/b/x/y rotation setpoints
+      omega = m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_angleSetPoint);
 
-      if (setAngle != -1) {
-        m_angleSetPoint = setAngle;
-      }
-       if (setAngle != -1 || m_goingToAngle) {
-        m_goingToAngle = true;
-        omega = m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_angleSetPoint);
-      } 
-      if (m_goingToAngle && Math.abs(m_driveTrain.getAngle() - 360 + m_angleSetPoint) < 5) {
+      if (Math.abs(m_driveTrain.getAngle() - 360 + m_angleSetPoint) < 5) {
         m_goingToAngle = false;
       }
     }

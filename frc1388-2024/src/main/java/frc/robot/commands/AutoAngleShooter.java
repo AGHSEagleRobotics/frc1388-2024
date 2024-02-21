@@ -39,11 +39,11 @@ public class AutoAngleShooter extends Command {
       double pAngle;
       double pEx;
       double goToAngle;
-      pAngle = m_limelight.getDistance() * Math.E;
-      pAngle -= FieldConstants.SUBLIFER_LENGTH;
-      pEx = LimelightConstants.MAX_TY_VALUE / ty;
+      pAngle = m_limelight.getDistance() * 5;
+      pEx = -LimelightConstants.MAX_TY_VALUE / ty / 50;
     
     goToAngle = Math.pow(pAngle, pEx);
+    goToAngle -= 0.65;
     SmartDashboard.putNumber("Angle for linear actuator", goToAngle);
 
     m_shooterAngleSubsystem.setPosition(goToAngle);

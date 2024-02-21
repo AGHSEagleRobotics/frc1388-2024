@@ -125,7 +125,8 @@ public class RobotContainer {
             () -> m_driverController.getHID().getAButton(),
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
-      () -> m_driverController.getHID().getYButton()
+      () -> m_driverController.getHID().getYButton(),
+      () -> m_driverController.getHID().getBackButton()
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
@@ -191,9 +192,6 @@ public class RobotContainer {
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-
-    // TODO test to see if works
-    m_driverController.back().whileTrue(new AutoTracking(m_driveTrain, m_limelight));
 
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
