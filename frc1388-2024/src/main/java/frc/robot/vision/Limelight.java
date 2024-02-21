@@ -254,6 +254,11 @@ public class Limelight extends SubsystemBase {
     return getdegRotationToTarget();
   }
 
+  /** 3 is on, 1 is off */
+  public void setLedMode(int mode) {
+    m_table.getEntry("ledMode").setNumber(mode);
+  }
+
   @Override
   public void periodic() {
     if (getIsTargetFound() == true) {
