@@ -240,11 +240,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         angle += 360;
       }
       return angle;
-      // return (-m_navxGyro.getAngle() + 36000) % 360;
-      // return Math.IEEEremainder(-m_navxGyro.getAngle() + m_gyroOffset, 360);
     }
-    // return 0;
-    return 1092;
+    return 0;
   }
 
   public void setWheelAngle(double angle) {
