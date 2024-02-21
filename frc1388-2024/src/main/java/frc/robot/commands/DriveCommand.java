@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 
@@ -31,7 +32,7 @@ public class DriveCommand extends Command {
   private final Supplier<Boolean> m_back;
   
 
-  private final PIDController m_limelightPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
+  private final PIDController m_limelightPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
 
   private boolean m_goingToAngle;
   private double m_angleSetPoint;
@@ -113,13 +114,18 @@ public class DriveCommand extends Command {
         m_angleSetPoint = 270;
       }
     }
-    
+
     if (m_goingToAngle) {// a/b/x/y rotation setpoints
       omega = m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_angleSetPoint);
 
       if (Math.abs(m_driveTrain.getAngle() - 360 + m_angleSetPoint) < 5) {
         m_goingToAngle = false;
       }
+    }
+
+    else if (m_autoTracking) {
+      double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
+      omega = MathUtil.clamp(speed, -0.1, 0.1);
     }
 
     SmartDashboard.putBoolean("going to angle", m_goingToAngle);
