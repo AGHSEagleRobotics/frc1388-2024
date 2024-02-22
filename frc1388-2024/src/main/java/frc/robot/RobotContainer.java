@@ -89,6 +89,7 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB) // navx
   );
 
+  
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
       new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
@@ -100,18 +101,19 @@ public class RobotContainer {
       new DigitalInput(IntakeConstants.LOWER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
-
+    
   private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(
     new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless),
     new DigitalInput(4)
   );
-
+    private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
+    
   private final Limelight m_limelight = new Limelight(m_driveTrain);
-
+    
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
-
+    
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
-
+    
   private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -138,8 +140,6 @@ public class RobotContainer {
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
-    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
@@ -196,6 +196,10 @@ public class RobotContainer {
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
+    
+                    
+    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
+    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
@@ -207,7 +211,7 @@ public class RobotContainer {
     );
 
     // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
@@ -228,7 +232,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_autoMethod.getAutonomousCommand();
+    // return m_autoMethod.getAutonomousCommand();
+    return null;
   }
 
   public boolean getDPadUp() {
