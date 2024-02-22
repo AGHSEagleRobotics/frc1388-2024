@@ -210,7 +210,7 @@ public class RobotContainer {
     );
 
     // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
