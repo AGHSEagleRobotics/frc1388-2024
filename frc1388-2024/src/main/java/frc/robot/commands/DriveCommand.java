@@ -67,18 +67,19 @@ public class DriveCommand extends Command {
   @Override
   public void execute() {
     // controller inputs    
-    double leftX = MathUtil.applyDeadband(m_leftX.get(), 0.1);
-    double leftY = MathUtil.applyDeadband(m_leftY.get(), 0.1);
-    double rightX = -MathUtil.applyDeadband(m_rightX.get(), 0.1);
+    double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     
     // velocities from controller inputs
-    double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, 2.5);
-    double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
+    double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, DriveTrainConstants.LEFT_STICK_SCALE);
+    double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, DriveTrainConstants.LEFT_STICK_SCALE);
+    /** angular velocity */
     double omega = 0;
 
-    
+    // the following code block is just for setting omega
     if (rightX != 0) { // default turning with stick
-      omega = rightX;
+      omega = scale(rightX, 2.5);
     } else if (m_backButton.get()) { // limelight auto tracking
       omega = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
     } else { // a/b/x/y rotation setpoints
@@ -99,6 +100,7 @@ public class DriveCommand extends Command {
         setAngle = -1; // default, -1 indicates no set point
       }
 
+      // this code is for moving to the setpoint
       if (setAngle != -1) {
         m_angleSetPoint = setAngle;
       }

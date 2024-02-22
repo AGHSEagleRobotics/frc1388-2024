@@ -74,7 +74,8 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SHOOTER_RPM = 4000;
+    public static final double SPEAKER_SHOT_RPM = 3000;
+    public static final double AMP_SHOT_RPM = 1000;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
     public static final int kShooterMotor2CANID = 0;
@@ -106,7 +107,7 @@ public final class Constants {
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.09;
+    public static final double P_TOLERANCE = 0.01;
   }
 
   public static class IntakeConstants {
@@ -119,8 +120,8 @@ public final class Constants {
     public static final double ROLLER_MOTOR_SPEED_IN = 0.7;
     public static final double ROLLER_MOTOR_SPEED_OUT = 0.7;
 
-    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.1; // XXX increase for final design
-    public static final double LIFTER_MOTOR_SPEED_UP = 0.2; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
   }
 
   public static class FieldConstants {
@@ -151,7 +152,8 @@ public final class Constants {
     public enum Objective{
         SITSTILL ("LookPretty"),
         START1LEAVE ("Start1&Leave"),
-        LEAVEANDSHOOT ("shootAndLeave");
+        LEAVEANDSHOOT ("shootAndLeave"),
+        Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B");
 
       public static final Objective Default = SITSTILL;
 

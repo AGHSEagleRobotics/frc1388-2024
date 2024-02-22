@@ -10,8 +10,11 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
+import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
@@ -86,7 +89,7 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB) // navx
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem);
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intake);
 
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
@@ -100,8 +103,10 @@ public class RobotContainer {
       new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
 
-  private final TransitionSubsystem m_transitionSubsystem = new
-  TransitionSubsystem(new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless));
+  private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(
+    new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless),
+    new DigitalInput(4)
+  );
 
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
@@ -182,20 +187,37 @@ public class RobotContainer {
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
 
-    // SHOOT COMMAND SEQUENCE
+    // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger().whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem)
       .andThen(
-        new ShooterCommand(m_shooterSubsystem)
-                    .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+        new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
     
                     
     m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
     m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
+    // SHOOT AMP COMMAND SEQUENCE
+    m_driverController.rightBumper().whileTrue(
+      new RetractIntakeCommand(m_intakeSubsystem)
+      .andThen(
+        new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
+
+    // RESET GYRO CONTROL
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    // TODO decide if reset pose is needed
+    //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
+
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
+    m_operatorController.rightBumper().onTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     
   }
 
