@@ -108,7 +108,7 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  // private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
     
   private final Limelight m_limelight = new Limelight(m_driveTrain);
     
@@ -232,10 +232,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return m_autoMethod.getAutonomousCommand();
+    return m_autoMethod.getAutonomousCommand();
     // return null;
     // return new AutoGoAndTurn(2, 0, 0, m_driveTrain);
-    return new AutoDrive(2, m_driveTrain);
+    // return new AutoDrive(2, m_driveTrain);
   }
 
   public boolean getDPadUp() {

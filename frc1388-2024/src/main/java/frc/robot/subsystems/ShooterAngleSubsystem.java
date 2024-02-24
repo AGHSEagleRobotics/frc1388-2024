@@ -38,11 +38,13 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public void setPosition(double position) {
-    m_targetPosition = MathUtil.clamp(position, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
+    m_targetPosition = position;
   }
 
   @Override
   public void periodic() {
+    m_targetPosition = MathUtil.clamp(m_targetPosition, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
+    
     double currentPosition = getCurrentPosition();
     double error = m_targetPosition - currentPosition;
     double speed = error * ShooterAngleSubsystemConstants.kShooterAngleP;
