@@ -77,6 +77,8 @@ public final class Constants {
     public static final double SPEAKER_SHOT_RPM = 3000;
     public static final double AMP_SHOT_RPM = 1000;
     public static final double SHOOTER_TIMER = 10;
+    public static final int kShooterMotor1CANID = 0;
+    public static final int kShooterMotor2CANID = 0;
 
   }
 
@@ -98,7 +100,7 @@ public final class Constants {
     public static final int kPotentiometerAnalogIN = 3;
 
     public static final double kShooterPositionUp = 0.37; // 0.37 seems like a good sublifer angle
-    public static final double kShooterPositionDown = 0.19; // 0.25 seem good for podium
+    public static final double kShooterPositionDown = 0.22; // 0.25 seem good for podium
 
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
     public static final double kShooterMinHeight = 0.14; //  observed min without hitting transition is 0.14
@@ -116,7 +118,7 @@ public final class Constants {
     public static final int BEAM_BREAK_DIO = 1;
 
     public static final double ROLLER_MOTOR_SPEED_IN = 0.7;
-    public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
+    public static final double ROLLER_MOTOR_SPEED_OUT = 0.7;
 
     public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
     public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
@@ -145,7 +147,7 @@ public final class Constants {
     public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
 
-    public static final double LEAVE_ZONE_FROM_SUB_DIST = -1.5;
+    public static final double LEAVE_ZONE_FROM_SUB_DIST = -2;
 
     public enum Objective{
         SITSTILL ("LookPretty"),
@@ -153,7 +155,9 @@ public final class Constants {
         LEAVEANDSHOOT ("shootAndLeave"),
         Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B"),
         Shoot2 ("Shoot2"),
-        Shoot3 ("Shoot3");
+        Shoot3 ("Shoot3"),
+        Shoot1IntakeBSpeakerBIntakeASpeakerA ("Shoot 1, Intake B, score B, Intake C, score C"),
+        testCoordinate ("testcoordinate");
 
       public static final Objective Default = SITSTILL;
 

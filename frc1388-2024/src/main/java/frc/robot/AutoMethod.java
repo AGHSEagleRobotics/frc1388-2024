@@ -81,11 +81,13 @@ public class AutoMethod {
     .alongWith(
       new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
     );
-    
   }
   
   public Command Shoot1IntakeBSpeakerBIntakeASpeakerA(){
     return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    .alongWith(
+      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
+    )
     .alongWith(
      new WaitCommand(1.0)
     )
@@ -108,7 +110,10 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2)
+    )
+    .alongWith(
+      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
     )
     .alongWith(
       new WaitCommand(1.0)
@@ -141,10 +146,48 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new FeedShooter(TransitionSubsystem, m_intakeSubsystem)
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
     )
     .alongWith(
-      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+      new FeedShooter(TransitionSubsystem, m_intakeSubsystem)
+    );
+  }
+
+  public Command testCoordinate(){
+    return new AutoGoToPoint(0, 3, m_driveTrainSubsystem);
+  }
+
+  public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    .alongWith(
+      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
+    )
+    .alongWith(
+     new WaitCommand(1.0)
+    )
+    .andThen(
+      new DeployIntakeCommand(m_intakeSubsystem)
+    )
+    .andThen(
+      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new RetractIntakeCommand(m_intakeSubsystem)
+    )
+    .alongWith(
+      new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2)
+    )
+    .alongWith(
+      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
     );
   }
   
@@ -162,14 +205,18 @@ public class AutoMethod {
   }
 
   public Command Start2Shoot(){
-    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter);
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2)
+    .alongWith(
+      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
+    );  
   }
     
   public Command Start3Shoot(){
-    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter);
+     return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2)
+    .alongWith(
+      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
+    );  
   }
-
-
 
   public Command getAutonomousCommand() {
         AutoConstants.Objective objective = m_dashboard.getObjective();
@@ -201,6 +248,9 @@ public class AutoMethod {
 
           case Shoot1IntakeBSpeakerBIntakeASpeakerA:
             return Shoot1IntakeBSpeakerB();
+
+          case testCoordinate:
+            return testCoordinate();
             
         }
         return null;

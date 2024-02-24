@@ -11,7 +11,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoGoAndTurn;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
@@ -61,9 +60,9 @@ public class RobotContainer {
   private final Dashboard m_dashboard = new Dashboard();
 
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+      new CANSparkFlex(ShooterConstants.kShooterMotor1CANID,
           MotorType.kBrushless),
-      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+      new CANSparkFlex(ShooterConstants.kShooterMotor2CANID,
           MotorType.kBrushless));
 
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
@@ -89,7 +88,6 @@ public class RobotContainer {
           Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
       new AHRS(SerialPort.Port.kUSB) // navx
   );
-
 
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
@@ -141,6 +139,8 @@ public class RobotContainer {
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
+    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
     // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
 
@@ -197,9 +197,6 @@ public class RobotContainer {
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
-
-                    
-    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
