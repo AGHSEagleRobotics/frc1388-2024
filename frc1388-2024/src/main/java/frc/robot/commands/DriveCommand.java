@@ -29,10 +29,10 @@ public class DriveCommand extends Command {
   private final Supplier<Boolean> m_b;
   private final Supplier<Boolean> m_x;
   private final Supplier<Boolean> m_y;
-  private final Supplier<Boolean> m_back;
+  private final Supplier<Boolean> m_rightStick;
   
 
-  private final PIDController m_limelightPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
+  private final PIDController m_limelightPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, LimelightConstants.TURN_I_VALUE_AUTO_TRACKING, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
 
   private boolean m_goingToAngle;
   private double m_angleSetPoint;
@@ -41,7 +41,7 @@ public class DriveCommand extends Command {
   private boolean m_lastAutoTrackButtonPressed = false; // used for edge detection 
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> back) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> rightStick) {
     m_driveTrain = driveTrain;
     m_limelight = limelight;
 
@@ -52,7 +52,7 @@ public class DriveCommand extends Command {
     m_b = b;
     m_x = x;
     m_y = y;
-    m_back = back;
+    m_rightStick = rightStick;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveTrain);
@@ -80,13 +80,13 @@ public class DriveCommand extends Command {
     double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
     double omega = 0;
 
-    boolean backButton = m_back.get();
+    boolean rightStickButton = m_rightStick.get();
 
     // if back button is pressed then run auto tracking
-    if (backButton && !m_lastAutoTrackButtonPressed) {
+    if (rightStickButton && !m_lastAutoTrackButtonPressed) {
       m_autoTracking = !m_autoTracking;
     }
-    m_lastAutoTrackButtonPressed = backButton;
+    m_lastAutoTrackButtonPressed = rightStickButton;
 
     // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
@@ -125,7 +125,7 @@ public class DriveCommand extends Command {
 
     else if (m_autoTracking) {
       double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
-      omega = MathUtil.clamp(speed, -0.1, 0.1);
+      omega = speed;
     }
 
     SmartDashboard.putBoolean("going to angle", m_goingToAngle);

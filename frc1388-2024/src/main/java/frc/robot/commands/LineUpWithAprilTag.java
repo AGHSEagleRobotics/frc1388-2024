@@ -30,7 +30,7 @@ public class LineUpWithAprilTag extends Command {
 
   private final PIDController m_rotationPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
   private final PIDController m_xPIDController = new PIDController(0.05, 0, 0);
-  private final PIDController m_yPIDController = new PIDController(0.2, 0, 0);
+  private final PIDController m_yPIDController = new PIDController(0.08, 0, 0);
   /** Creates a new LineUpWithAprilTag. */
   public LineUpWithAprilTag(DriveTrainSubsystem driveTrain, Limelight limelight, double tyOffset, double rotationGoal) {
     m_driveTrain = driveTrain;
@@ -49,7 +49,7 @@ public class LineUpWithAprilTag extends Command {
     m_xPIDController.setSetpoint(0);
     m_xPIDController.reset();
 
-    m_yPIDController.setSetpoint(m_tyOffset);
+    m_yPIDController.setSetpoint(m_tyOffset + 12.5);
     m_yPIDController.reset();
 
     m_rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
@@ -63,14 +63,14 @@ public class LineUpWithAprilTag extends Command {
   @Override
   public void execute() {
     
-  if (!m_canSeePieceDebouncer.calculate(m_limelight.getIsTargetFound())) {
+  if (!m_canSeePieceDebouncer.calculate(m_limelight.getApriltagTargetFound())) {
       m_driveTrain.drive(0, 0, 0);
       return;
     }
 
     // replace this with m_limelight.getVerticalDegrees find the bug with it idk
     double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
-    double tx = m_limelight.getdegRotationToTarget();
+    double tx = m_limelight.getAprilTagTx();
     double rotationError = m_driveTrain.getPose().getRotation().getRadians();
 
     double txTolerance = 0.5;
@@ -78,7 +78,7 @@ public class LineUpWithAprilTag extends Command {
       txTolerance = Math.copySign(txTolerance * 2, txTolerance);
     }
 
-    if (isWithinTolerance(rotationError, 0, 0.25)) {
+    if (isWithinTolerance(rotationError, 0, 0.025)) {
       rotationError = 0;
     }
 
@@ -91,12 +91,12 @@ public class LineUpWithAprilTag extends Command {
     if (isWithinTolerance(ty, m_tyOffset, 0.5)) {
       ty = m_tyOffset;
     }
-    double xVelocity = -m_yPIDController.calculate(ty);
+    double xVelocity = -m_yPIDController.calculate(ty + 12.5);
     double yVelocity = -m_xPIDController.calculate(tx);
     double omega = m_rotationPIDController.calculate(rotationError);
+    if (m_limelight.getApriltagTargetFound()) {
     m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, yVelocity, omega, new Rotation2d()));
-
-
+    }
   }
 
   // Called once the command ends or is interrupted.

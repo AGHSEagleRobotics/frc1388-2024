@@ -106,7 +106,7 @@ public class RobotContainer {
   private final TransitionSubsystem m_transitionSubsystem = new
   TransitionSubsystem(new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless));
 
-  private final Limelight m_limelight = new Limelight(m_driveTrain);
+  private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
 
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
@@ -126,17 +126,17 @@ public class RobotContainer {
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
-      () -> m_driverController.getHID().getBackButton()
+      () -> m_driverController.getHID().getRightStickButton()
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
-    // ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-    //     () -> getDPadUp(),
-    //     () -> getDPadDown(),
-    //     m_ShooterAngleSubsystem);
+    ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
+        () -> getDPadUp(),
+        () -> getDPadDown(),
+        m_ShooterAngleSubsystem);
 
-    // m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
+    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
     // test button will change to right stick maybe and need to test if it works while driving
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));

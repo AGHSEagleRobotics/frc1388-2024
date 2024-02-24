@@ -45,8 +45,9 @@ public class AutoAngleShooter extends Command {
     goToAngle = Math.pow(pAngle, pEx);
     goToAngle -= 0.65;
     SmartDashboard.putNumber("Angle for linear actuator", goToAngle);
-
+    if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
     m_shooterAngleSubsystem.setPosition(goToAngle);
+    }
   }
 
   // Called once the command ends or is interrupted.

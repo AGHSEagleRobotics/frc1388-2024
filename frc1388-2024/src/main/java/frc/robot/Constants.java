@@ -131,12 +131,13 @@ public final class Constants {
     public static final double MAX_TY_VALUE = 8.5;
     public static final double SLOW_DOWN = 0.5;
     public static final double METERS_PER_SECOND = 0.2;
-    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.0045;
-    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.0;
+    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.003;
+    public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
+    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
   }
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
-    public static final double TURN_P_TOLERANCE = 0.5;
+    public static final double TURN_P_TOLERANCE = 0.25;
     public static final double TURN_I_VALUE = 0.003;
     public static final double TURN_D_VALUE = 0.004;
 

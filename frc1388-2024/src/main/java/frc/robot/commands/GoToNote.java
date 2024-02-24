@@ -26,7 +26,7 @@ public class GoToNote extends Command {
     private Debouncer m_canSeePieceDebouncer;
     
 
-    private final PIDController m_rotationPIDController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
+    private final PIDController m_rotationPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
 
   /** Creates a new GoToNote. */
   public GoToNote(DriveTrainSubsystem driveTrainSubsystem, Limelight limelight, IntakeSubsystem intakeSubsystem) {
@@ -48,7 +48,7 @@ public class GoToNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!m_canSeePieceDebouncer.calculate(m_limelight.getIsTargetFound())) {
+    if (!m_canSeePieceDebouncer.calculate(m_limelight.getApriltagTargetFound())) {
       m_driveTrain.drive(0, 0, 0);
       return;
     }
@@ -57,7 +57,9 @@ public class GoToNote extends Command {
     double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? 
     LimelightConstants.METERS_PER_SECOND / 2
     : LimelightConstants.METERS_PER_SECOND;
+    if (m_limelight.getIsNoteFound()) {
     m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, 0, omega, new Rotation2d()));
+    }
     SmartDashboard.putNumber("xVelocity", xVelocity);
   }
 
@@ -79,6 +81,6 @@ public class GoToNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isDistanceTooFar();
+    return m_intakeSubsystem.isNoteDetected() || isDistanceTooFar();
   }
 }
