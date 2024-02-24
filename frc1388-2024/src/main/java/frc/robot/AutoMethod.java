@@ -12,14 +12,19 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoGoToPoint;
+import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
+import frc.robot.commands.FeedShooter;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
 public class AutoMethod {
 
+  private static final TransitionSubsystem TransitionSubsystem = null;
   /** Creates a new AutoMethod. */
 
   private DriveTrainSubsystem m_driveTrainSubsystem;
@@ -43,7 +48,7 @@ public class AutoMethod {
   }
 
   public Command Shoot1IntakeBSpeakerB(){
-    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
     .alongWith(
      new WaitCommand(1.0)
     )
@@ -66,7 +71,74 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
+      new FeedShooter(TransitionSubsystem, m_intakeSubsystem)
+    )
+    .alongWith(
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    );
+  }
+  
+  public Command Shoot1IntakeBSpeakerBIntakeASpeakerA(){
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    .alongWith(
+     new WaitCommand(1.0)
+    )
+    .andThen(
+      new DeployIntakeCommand(m_intakeSubsystem)
+    )
+    .andThen(
+      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new RetractIntakeCommand(m_intakeSubsystem)
+    )
+    .alongWith(
+      new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new AutoGoToPoint(-1.75,0, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new DeployIntakeCommand(m_intakeSubsystem)
+    )
+    .andThen(
+      new AutoGoToPoint(0,-2, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new RetractIntakeCommand(m_intakeSubsystem)
+    )
+    .andThen(
+      new AutoGoToPoint(1.75, 0, m_driveTrainSubsystem)    
+    )
+    .andThen(
+      new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new FeedShooter(TransitionSubsystem, m_intakeSubsystem)
+    )
+    .alongWith(
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
     );
   }
   
@@ -79,6 +151,16 @@ public class AutoMethod {
       new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
     );
   }
+
+  public Command Start2Shoot(){
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter);
+  }
+    
+  public Command Start3Shoot(){
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter);
+  }
+
+
 
   public Command getAutonomousCommand() {
         AutoConstants.Objective objective = m_dashboard.getObjective();
@@ -101,6 +183,16 @@ public class AutoMethod {
 
           case Shoot1IntakeBSpeakerB:
             return Shoot1IntakeBSpeakerB();
+
+          case Shoot2:
+            return Start2Shoot();
+
+          case Shoot3:
+            return Start3Shoot();
+
+          case Shoot1IntakeBSpeakerBIntakeASpeakerA:
+            return Shoot1IntakeBSpeakerB();
+            
         }
         return null;
       }

@@ -153,7 +153,9 @@ public final class Constants {
         SITSTILL ("LookPretty"),
         START1LEAVE ("Start1&Leave"),
         LEAVEANDSHOOT ("shootAndLeave"),
-        Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B");
+        Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B"),
+        Shoot2 ("Shoot2"),
+        Shoot3 ("Shoot3");
 
       public static final Objective Default = SITSTILL;
 
