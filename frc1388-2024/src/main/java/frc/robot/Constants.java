@@ -134,6 +134,7 @@ public final class Constants {
     public static final double TURN_P_VALUE_AUTO_TRACKING = 0.003;
     public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
+    public static final double TX_OFFSET = 0.0;
   }
 
   public static class AutoConstants {

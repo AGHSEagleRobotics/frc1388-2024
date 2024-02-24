@@ -80,12 +80,14 @@ public class Limelight extends SubsystemBase {
   public double getAprilTagTx() {
     NetworkTableEntry tx = m_shooterTable.getEntry("tx");
     double m_tx = tx.getDouble(0.0);
+    m_tx += LimelightConstants.TX_OFFSET;
     return m_tx;
   }
 
   public double getNoteTx() {
     NetworkTableEntry tx = m_intakeTable.getEntry("tx");
     double m_tx = tx.getDouble(0.0);
+    m_tx += LimelightConstants.TX_OFFSET;
     return m_tx;
   }
 
