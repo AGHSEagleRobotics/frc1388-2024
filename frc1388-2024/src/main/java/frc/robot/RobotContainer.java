@@ -236,7 +236,7 @@ public class RobotContainer {
   }
 
   public void resetGyro() {
-    m_driveTrain.resetGyroHeading(0);
+    m_driveTrain.resetGyroHeading(180);
   }
 
   public boolean getDPadUp() {
