@@ -235,6 +235,10 @@ public class RobotContainer {
     return m_autoMethod.getAutonomousCommand();
   }
 
+  public void resetGyro() {
+    m_driveTrain.resetGyroHeading(0);
+  }
+
   public boolean getDPadUp() {
     return m_driverController.getHID().getPOV() == 0;
   }
