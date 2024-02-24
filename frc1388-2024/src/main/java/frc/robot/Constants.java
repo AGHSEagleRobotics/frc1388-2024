@@ -23,7 +23,17 @@ public final class Constants {
   }
 
   public static class SwerveModuleConstants {
-    public static final double DIST_PER_TICK = (1.0 / 6.75) * (0.3192); // ask calvin about the math
+    /** MODULE GEAR RATIO */
+    public static final double WHEEL_ROTATIONS_PER_MOTOR_ROTATIONS = 1.0 / 6.75;
+    /** DIAMATER OF MODULE WHEEL IN meters */
+    public static final double WHEEL_DIAMETER = 0.097;
+    /** distance traveled in meters per wheel rotations */
+    public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    public static final double DISTANCE_PER_WHEEL_ROTATION = WHEEL_CIRCUMFERENCE;
+    // public static final double DIST_PER_TICK = DISTANCE_PER_WHEEL_ROTATION * WHEEL_ROTATIONS_PER_MOTOR_ROTATIONS;
+    /** the robot traveled 5.65 meters in 131.14 motor rotations */
+    public static final double DIST_PER_MOTOR_ROTATION = 5.65 / 131.14;
+
 
     public static final double DRIVE_MOTOR_P = 0.001;
     public static final double DRIVE_MOTOR_I = 0;
@@ -33,7 +43,7 @@ public final class Constants {
     public static final double ROTATION_MOTOR_I = 0;
     public static final double ROTATION_MOTOR_D = 0;
 
-    public static final double ROTATION_TOLERANCE = 5;
+    public static final double ROTATION_TOLERANCE = 1;
   }
 
   public static class DriveTrainConstants {

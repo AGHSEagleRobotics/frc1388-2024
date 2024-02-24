@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 
 
@@ -22,6 +23,7 @@ public class Robot extends TimedRobot {
   private int m_userButtonCounter = 0;
 
   private Timer m_neutralModeTimer = new Timer();
+  PowerDistribution m_PDH = new PowerDistribution();
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -30,6 +32,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    m_PDH.setSwitchableChannel(true);
     DataLogManager.start();
     DataLogManager.log("####### RobotInit");
     DataLogManager.log("Git version: " + BuildInfo.GIT_VERSION + " (branch: " + BuildInfo.GIT_BRANCH + " "

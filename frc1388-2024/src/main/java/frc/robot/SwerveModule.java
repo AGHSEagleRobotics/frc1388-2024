@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
     
@@ -63,7 +64,7 @@ public class SwerveModule {
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            m_driveMotor.getPosition().getValue() * Constants.SwerveModuleConstants.DIST_PER_TICK,
+            m_driveMotor.getPosition().getValue() * Constants.SwerveModuleConstants.DIST_PER_MOTOR_ROTATION,
             new Rotation2d(Math.toRadians(getRotationAngle()))
         );
     }

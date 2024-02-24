@@ -19,13 +19,15 @@ public class AutoGoToPoint extends Command {
   private final double Y_SETPOINT;
 
   // i was 0.015
-  private final PIDController m_xController = new PIDController(0.1, 0, 0);
+  private final PIDController m_xController = new PIDController(0.13, 0, 0);
   private double m_lastXSpeed = 0;
-  private final SlewRateLimiter m_xAccLimiter = new SlewRateLimiter(0.3);
+  private final SlewRateLimiter m_xAccLimiter = new SlewRateLimiter(0.18);
 
-  private final PIDController m_yController = new PIDController(0.1, 0, 0);
+  private final PIDController m_yController = new PIDController(0.13, 0, 0);
   private double m_lastYSpeed = 0;
-  private final SlewRateLimiter m_yAccLimiter = new SlewRateLimiter(0.3);
+  private final SlewRateLimiter m_yAccLimiter = new SlewRateLimiter(0.18);
+
+  private PIDController m_rotationController = new PIDController(0.003, 0, 0);
 
   /** Creates a new AutoMove. */
   public AutoGoToPoint(double xSetpoint, double ySetpoint, DriveTrainSubsystem drivetrain) {
@@ -37,6 +39,7 @@ public class AutoGoToPoint extends Command {
 
     m_xController.setTolerance(0.03);
     m_yController.setTolerance(0.03);
+    m_rotationController.enableContinuousInput(0, 360);
     
     addRequirements(m_driveTrain);
   }
@@ -61,7 +64,7 @@ public class AutoGoToPoint extends Command {
       ySpeed = m_yAccLimiter.calculate(ySpeed);
     }
 
-    m_driveTrain.drive(xSpeed, ySpeed, 0);
+    m_driveTrain.drive(xSpeed, ySpeed, m_rotationController.calculate(m_driveTrain.getAngle() - 360));
     m_lastXSpeed = xSpeed;
     m_lastYSpeed = ySpeed;
   }
