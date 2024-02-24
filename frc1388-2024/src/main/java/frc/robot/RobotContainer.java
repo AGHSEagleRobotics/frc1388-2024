@@ -11,6 +11,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoGoAndTurn;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
@@ -60,9 +61,9 @@ public class RobotContainer {
   private final Dashboard m_dashboard = new Dashboard();
 
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.kShooterMotor1CANID,
+      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
           MotorType.kBrushless),
-      new CANSparkFlex(ShooterConstants.kShooterMotor2CANID,
+      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
           MotorType.kBrushless));
 
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
@@ -107,7 +108,7 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
+  // private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
     
   private final Limelight m_limelight = new Limelight(m_driveTrain);
     
@@ -199,7 +200,6 @@ public class RobotContainer {
     
                     
     m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
-    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
@@ -233,7 +233,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return m_autoMethod.getAutonomousCommand();
-    return null;
+    // return null;
+    // return new AutoGoAndTurn(2, 0, 0, m_driveTrain);
+    return new AutoDrive(2, m_driveTrain);
   }
 
   public boolean getDPadUp() {

@@ -21,13 +21,13 @@ public class AutoGoAndTurn extends Command {
   // i was 0.015
   private final PIDController m_xController = new PIDController(0.1, 0, 0);
   private double m_lastXSpeed = 0;
-  private final SlewRateLimiter m_xAccLimiter = new SlewRateLimiter(0.3);
+  private final SlewRateLimiter m_xAccLimiter = new SlewRateLimiter(0.2);
 
   private final PIDController m_yController = new PIDController(0.1, 0, 0);
   private double m_lastYSpeed = 0;
-  private final SlewRateLimiter m_yAccLimiter = new SlewRateLimiter(0.3);
+  private final SlewRateLimiter m_yAccLimiter = new SlewRateLimiter(0.2);
 
-  private PIDController m_rotationController = new PIDController(0.003, 0, 0);
+  private PIDController m_rotationController = new PIDController(0.002, 0, 0);
   
   private final double m_rotationSetpoint;
 

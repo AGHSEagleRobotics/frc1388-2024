@@ -18,7 +18,7 @@ public class TransitionSubsystem extends SubsystemBase {
   /** Creates a new TransitionSubsystem. */
   public TransitionSubsystem(CANSparkMax transitionMotor, DigitalInput beamBreak) {
     m_transitionMotor = transitionMotor;
-    m_transitionMotor.setInverted(true);
+    m_transitionMotor.setInverted(false);
 
     m_beamBreak = beamBreak;
   }
