@@ -40,6 +40,14 @@ public class AutoMethod {
     m_intakeSubsystem = intake;
     m_transitionSubsystem = transition;
   }
+  // for summerswerve
+  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, IntakeSubsystem intake, TransitionSubsystem transition) {
+    m_driveTrainSubsystem = driveTrainSubsystem;
+    m_dashboard = dashboard;
+    m_shooter = null;
+    m_intakeSubsystem = intake;
+    m_transitionSubsystem = transition;
+  }
 
   public Command SitStillLookPretty(){
     return new AutoDrive(0, m_driveTrainSubsystem);

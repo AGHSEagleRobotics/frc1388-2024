@@ -58,12 +58,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final Dashboard m_dashboard = new Dashboard();
-
-    public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-        new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-            MotorType.kBrushless),
-        new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
-            MotorType.kBrushless));
+    // commented out for summerswerve
+    // public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
+    //     new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+    //         MotorType.kBrushless),
+    //     new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+    //         MotorType.kBrushless));
     
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -88,10 +88,10 @@ public class RobotContainer {
           Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
       new AHRS(SerialPort.Port.kUSB) // navx
   );
-
-  public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
-      new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
-      new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
+// commented out to run on summerswerve
+  // public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
+  //     new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
+  //     new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
 
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
       new CANSparkMax(IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
@@ -105,7 +105,9 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem);
+  // for summerswerve
+  //private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem);
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_intakeSubsystem, m_transitionSubsystem);
 
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
@@ -131,12 +133,14 @@ public class RobotContainer {
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
-    ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-        () -> getDPadUp(),
-        () -> getDPadDown(),
-        m_ShooterAngleSubsystem);
+ 
+    //commented out for summerswerve
+    // ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
+    //     () -> getDPadUp(),
+    //     () -> getDPadDown(),
+    //     m_ShooterAngleSubsystem);
 
-    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
+    // m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
     // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
     // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
@@ -188,23 +192,24 @@ public class RobotContainer {
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
 
-    // SHOOT SPEAKER COMMAND SEQUENCE
-    m_driverController.rightTrigger().whileTrue(
-      new RetractIntakeCommand(m_intakeSubsystem)
-      .andThen(
-        new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
-        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-      )
-    );
+    // commented out for summerswerve
+    // // SHOOT SPEAKER COMMAND SEQUENCE
+    // m_driverController.rightTrigger().whileTrue(
+    //   new RetractIntakeCommand(m_intakeSubsystem)
+    //   .andThen(
+    //     new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
+    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+    //   )
+    // );
 
-    // SHOOT AMP COMMAND SEQUENCE
-    m_driverController.rightBumper().whileTrue(
-      new RetractIntakeCommand(m_intakeSubsystem)
-      .andThen(
-        new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
-        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-      )
-    );
+    // // SHOOT AMP COMMAND SEQUENCE
+    // m_driverController.rightBumper().whileTrue(
+    //   new RetractIntakeCommand(m_intakeSubsystem)
+    //   .andThen(
+    //     new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
+    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+    //   )
+    // );
 
     // RESET GYRO CONTROL
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
