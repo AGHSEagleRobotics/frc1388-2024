@@ -34,6 +34,9 @@ public class RetractIntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // if (!interrupted) {
+    //   new PullToTransition(null, m_intakeSubsystem).schedule();
+    // }
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);
   }

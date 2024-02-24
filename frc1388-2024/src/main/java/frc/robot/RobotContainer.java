@@ -10,10 +10,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
+import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoGoAndTurn;
+import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoAngleShooter;
 import frc.robot.commands.AutoTracking;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.LineUpWithAprilTag;
@@ -60,6 +64,12 @@ public class RobotContainer {
 
   private final Dashboard m_dashboard = new Dashboard();
 
+  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
+      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+          MotorType.kBrushless),
+      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+          MotorType.kBrushless));
+
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID),
@@ -84,13 +94,7 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB) // navx
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard);
-
-  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-          MotorType.kBrushless),
-      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID, MotorType.kBrushless));
-
+  
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
       new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
@@ -102,16 +106,20 @@ public class RobotContainer {
       new DigitalInput(IntakeConstants.LOWER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
+    
+  private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(
+    new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless),
+    new DigitalInput(4)
+  );
 
-  private final TransitionSubsystem m_transitionSubsystem = new
-  TransitionSubsystem(new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless));
-
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
+    
   private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
-
+    
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
-
+    
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
-
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -156,6 +164,12 @@ public class RobotContainer {
     configureBindings();
   }
 
+    public void setBrakeMode(boolean brakeMode){
+      m_driveTrain.setBrakeMode(brakeMode);
+      m_intakeSubsystem.setBrakeMode(brakeMode);
+      m_transitionSubsystem.setBrakeMode(brakeMode);
+    }
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
@@ -171,31 +185,40 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // ========MAYBE RE-ADD THESE CONTROLS?========
-    // m_driverController.rightBumper().whileTrue(new RunCommand(() ->
-    // m_limelight.turnToSpeaker()));
-    // m_driverController.leftTrigger().whileTrue(new RunCommand(() ->
-    // m_limelight.goToCenterOfSpeaker()));
 
     // DRIVER CONTROLS
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
     
-    // SHOOT COMMAND SEQUENCE
+    // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger().whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem)
       .andThen(
-        new ShooterCommand(m_shooterSubsystem)
-                    .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+        new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
+           
+    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
+
+    // SHOOT AMP COMMAND SEQUENCE
+    m_driverController.rightBumper().whileTrue(
+      new RetractIntakeCommand(m_intakeSubsystem)
+      .andThen(
+        new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
 
     // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
+    m_operatorController.rightBumper().onTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
@@ -215,18 +238,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoMethod.getAutonomousCommand();
-  }
-  
-  public boolean isDriverJoysticksMoved(){
-    // boolean isGuestJoysticksMoved = (m_driveController.getLeftX()!= 0) || (m_driveController.getLeftY()!= 0) || (m_driveController.getRightX()!= 0) || (m_driveController.getRightY()!= 0);
-    boolean isDriverJoysticksMoved = 
-      !isClosetoZero(m_driverController.getRightX());
-    return isDriverJoysticksMoved; 
-  }
-
-  public boolean isClosetoZero(double number){
-    boolean isClosetoZero = (number < DriveTrainConstants.CONTROLLER_DEADBAND && number > -DriveTrainConstants.CONTROLLER_DEADBAND);
-    return isClosetoZero;
   }
 
   public boolean getDPadUp() {

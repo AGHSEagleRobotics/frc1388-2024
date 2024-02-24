@@ -74,7 +74,8 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SHOOTER_RPM = 4000;
+    public static final double SPEAKER_SHOT_RPM = 3000;
+    public static final double AMP_SHOT_RPM = 1000;
     public static final double SHOOTER_TIMER = 10;
 
   }
@@ -87,24 +88,23 @@ public final class Constants {
     /** ejecting in direction opposite of the shooter. */
     public static final double TRANSITION_MOTOR_POWER_OUT = 1.0;
   }
-  
 
   public static class ShooterAngleSubsystemConstants {
     public static final double kShooterAngleP = 45;
-    public static final double kShooterAngleI = 0; 
+    public static final double kShooterAngleI = 0;
     public static final double kShooterAngleD = 0;
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
     public static final double kShooterPositionUp = 0.37; // 0.37 seems like a good sublifer angle
-    public static final double kShooterPositionDown = 0.22; // 0.25 seem good for podium
+    public static final double kShooterPositionDown = 0.19; // 0.25 seem good for podium
 
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
-    public static final double kShooterMinHeight = 0.14; //  observed min without hitting transition is 0.14
+    public static final double kShooterMinHeight = 0.14; // observed min without hitting transition is 0.14
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.09;
+    public static final double P_TOLERANCE = 0.01;
   }
 
   public static class IntakeConstants {
@@ -115,10 +115,10 @@ public final class Constants {
     public static final int BEAM_BREAK_DIO = 1;
 
     public static final double ROLLER_MOTOR_SPEED_IN = 0.7;
-    public static final double ROLLER_MOTOR_SPEED_OUT = 0.7;
+    public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
 
-    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.1; // XXX increase for final design
-    public static final double LIFTER_MOTOR_SPEED_UP = 0.2; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
   }
 
   public static class FieldConstants {
@@ -135,6 +135,7 @@ public final class Constants {
     public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
   }
+
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
     public static final double TURN_P_TOLERANCE = 0.25;
@@ -151,9 +152,13 @@ public final class Constants {
     public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
 
+    public static final double LEAVE_ZONE_FROM_SUB_DIST = -1.5;
+
     public enum Objective {
       SITSTILL("LookPretty"),
-      LEAVEZONE("LeaveZone");
+      START1LEAVE("Start1&Leave"),
+      LEAVEANDSHOOT("shootAndLeave"),
+      Shoot1IntakeBSpeakerB("Shoot 1, Intake B, score B");
 
       public static final Objective Default = SITSTILL;
 
@@ -168,22 +173,5 @@ public final class Constants {
       }
     }
 
-      public enum Position {
-      CLOSE("CLOSE"), // need to rename this
-        MID("MID"),
-        FAR("FAR");
-
-        public static final Position Default = CLOSE;
-
-      private String m_dashboardDescript; // This is what will show on dashboard
-
-      private Position(String dashboardDescript) {
-          m_dashboardDescript = dashboardDescript;
-        }
-
-        public String getDashboardDescript() {
-          return m_dashboardDescript;
-        }
-      }
-  } // end auto constants
+  }
 }

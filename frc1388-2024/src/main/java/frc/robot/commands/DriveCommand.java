@@ -71,13 +71,14 @@ public class DriveCommand extends Command {
   @Override
   public void execute() {
     // controller inputs    
-    double leftX = MathUtil.applyDeadband(m_leftX.get(), 0.1);
-    double leftY = MathUtil.applyDeadband(m_leftY.get(), 0.1);
-    double rightX = -MathUtil.applyDeadband(m_rightX.get(), 0.1);
+    double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     
     // velocities from controller inputs
-    double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, 2.5);
-    double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, 2.5);
+    double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, DriveTrainConstants.LEFT_STICK_SCALE);
+    double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, DriveTrainConstants.LEFT_STICK_SCALE);
+    /** angular velocity */
     double omega = 0;
 
     boolean rightStickButton = m_rightStick.get();
@@ -90,7 +91,7 @@ public class DriveCommand extends Command {
 
     // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
-      omega = rightX;
+      omega = scale(rightX, 2.5);
       m_autoTracking = false;
       m_goingToAngle = false;
     } else if (m_a.get()) {

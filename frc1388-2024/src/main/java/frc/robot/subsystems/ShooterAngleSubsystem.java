@@ -38,14 +38,17 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public void setPosition(double position) {
-    m_targetPosition = MathUtil.clamp(position, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
+    m_targetPosition = position;
   }
 
   @Override
   public void periodic() {
+    m_targetPosition = MathUtil.clamp(m_targetPosition, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
+    
     double currentPosition = getCurrentPosition();
     double error = m_targetPosition - currentPosition;
     double speed = error * ShooterAngleSubsystemConstants.kShooterAngleP;
+    SmartDashboard.putNumber("error", error);
     if (Math.abs(error) <= ShooterAngleSubsystemConstants.P_TOLERANCE)
     {
       speed = 0;
@@ -60,6 +63,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     //   m_angleMotor.set(-1);
     // }
     SmartDashboard.putNumber("potentiometerPosition", currentPosition);
+    SmartDashboard.putNumber("target position", m_targetPosition);
+    SmartDashboard.putNumber("speed", speed);
     // This method will be called once per scheduler run
   }
 }

@@ -5,11 +5,13 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -38,6 +40,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     m_lifterMotor.setIdleMode(IdleMode.kBrake);
     m_lifterMotor.setInverted(true);
+  }
+  
+  public void setBrakeMode(boolean brakeMode) {
+    if (brakeMode) {
+      m_rollerMotor.setIdleMode(IdleMode.kBrake);
+      m_lifterMotor.setIdleMode(IdleMode.kBrake);
+    } else {
+      m_rollerMotor.setIdleMode(IdleMode.kCoast);
+      m_lifterMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   /**
@@ -75,7 +87,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public boolean getUpperLimit() {
 
-    return !m_upperLimit.get();
+    return m_upperLimit.get();
 
   }
 
@@ -85,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public boolean getLowerLimit() {
 
-    return !m_lowerLimit.get();
+    return m_lowerLimit.get();
 
   }
 
@@ -103,4 +115,5 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("lower limit", getLowerLimit());
     SmartDashboard.putBoolean("beam break", isNoteDetected());
   }
+  
 }

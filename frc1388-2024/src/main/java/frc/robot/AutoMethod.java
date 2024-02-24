@@ -4,40 +4,87 @@ package frc.robot;
 // the WPILib BSD license file in the root directory of this project.
 
 
+import javax.sound.midi.ShortMessage;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.DeployIntakeCommand;
+import frc.robot.commands.RetractIntakeCommand;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 public class AutoMethod {
 
   /** Creates a new AutoMethod. */
 
   private DriveTrainSubsystem m_driveTrainSubsystem;
   private final Dashboard m_dashboard;
+  private final ShooterSubsystem m_shooter;
+  private final IntakeSubsystem m_intakeSubsystem;
 
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard) {
+  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake) {
     m_driveTrainSubsystem = driveTrainSubsystem;
     m_dashboard = dashboard;
+    m_shooter = shooter;
+    m_intakeSubsystem = intake;
   }
 
   public Command SitStillLookPretty(){
     return new AutoDrive(0, m_driveTrainSubsystem);
   }
 
-  public Command MoveOutOfZone(){
-    return new AutoDrive(2, m_driveTrainSubsystem);
-    // distance needs to be changed to a Constant
-    // need to create multiple methods depending on where you start
+  public Command Start1Leave(){
+    return new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem);
+  }
+
+  public Command Shoot1IntakeBSpeakerB(){
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
+    .alongWith(
+     new WaitCommand(1.0)
+    )
+    .andThen(
+      new DeployIntakeCommand(m_intakeSubsystem)
+    )
+    .andThen(
+      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new RetractIntakeCommand(m_intakeSubsystem)
+    )
+    .alongWith(
+      new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    )
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
+    );
+  }
+  
+  public Command ShootAndLeave(){
+    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
+    .alongWith(
+      new WaitCommand(1.0)
+    )
+    .andThen(
+      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    );
   }
 
   public Command getAutonomousCommand() {
         AutoConstants.Objective objective = m_dashboard.getObjective();
-        AutoConstants.Position position = m_dashboard.getPosition();
         DataLogManager.log("####### objective:" + objective);
-        DataLogManager.log("####### position:" + position);
     
-        if (objective == null || position == null) {
+        if (objective == null) {
           return null;
         }
     
@@ -46,8 +93,14 @@ public class AutoMethod {
           case SITSTILL:
             return SitStillLookPretty();
     
-          case LEAVEZONE:
-            return MoveOutOfZone();
+          case START1LEAVE:
+            return Start1Leave();
+
+          case LEAVEANDSHOOT:
+            return ShootAndLeave();
+
+          case Shoot1IntakeBSpeakerB:
+            return Shoot1IntakeBSpeakerB();
         }
         return null;
       }

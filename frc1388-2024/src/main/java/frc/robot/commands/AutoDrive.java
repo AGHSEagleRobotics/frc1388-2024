@@ -17,7 +17,7 @@ public class AutoDrive extends Command {
   private double m_start;
 
   private final PIDController m_driveController = new PIDController(0.03, 0.015, 0);
-  private final SlewRateLimiter m_accelerationLImiter = new SlewRateLimiter(0.4);
+  private final SlewRateLimiter m_accelerationLimiter = new SlewRateLimiter(0.4);
 
   /** Creates a new AutoDrive. */
   public AutoDrive(double setpoint, DriveTrainSubsystem driveTrainSubsystem) {
@@ -31,7 +31,7 @@ public class AutoDrive extends Command {
   @Override
   public void initialize() {
     m_start = m_driveTrain.getDistTraveled();
-    m_accelerationLImiter.calculate(0);
+    m_accelerationLimiter.calculate(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,7 +41,7 @@ public class AutoDrive extends Command {
     // SmartDashboard.putNumber("drive pid input", pidInput);
     // SmartDashboard.putString("auto drive info", "setpoint" + m_setPoint + "dt.getdist" + m_driveTrain.getDistTraveled() + "start" + m_start);
     double pidOutput = m_driveController.calculate(m_driveTrain.getDistTraveled() - m_start, m_setPoint);
-    double slewOutput = m_accelerationLImiter.calculate(pidOutput);
+    double slewOutput = m_accelerationLimiter.calculate(pidOutput);
     SmartDashboard.putNumber("drive slew", slewOutput);
     m_driveTrain.differentialDrive(slewOutput);
     SmartDashboard.putNumber("dist traveled", m_driveTrain.getDistTraveled() - m_start);

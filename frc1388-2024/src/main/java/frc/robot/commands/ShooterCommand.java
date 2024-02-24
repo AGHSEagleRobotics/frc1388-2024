@@ -11,8 +11,11 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ShooterCommand extends Command {
   private final ShooterSubsystem m_shooter;
 
+  private final double SHOOTER_RPM;
+
   /** assumes intake is in up position, ready to shoot */
-  public ShooterCommand(ShooterSubsystem shooter) {
+  public ShooterCommand(double rpm, ShooterSubsystem shooter) {
+    SHOOTER_RPM = rpm;
     m_shooter = shooter;
     addRequirements(m_shooter);
   }
@@ -27,7 +30,7 @@ public class ShooterCommand extends Command {
   public void execute() {
     // m_shooter.setShooterRPM(3000);
 
-    m_shooter.setShooterRPM(ShooterConstants.SHOOTER_RPM);  }
+    m_shooter.setShooterRPM(SHOOTER_RPM);  }
 
   // Called once the command ends or is interrupted.
   @Override
