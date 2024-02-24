@@ -233,9 +233,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoMethod.getAutonomousCommand();
-    // return null;
-    // return new AutoGoAndTurn(2, 0, 0, m_driveTrain);
-    // return new AutoDrive(2, m_driveTrain);
   }
 
   public boolean getDPadUp() {
