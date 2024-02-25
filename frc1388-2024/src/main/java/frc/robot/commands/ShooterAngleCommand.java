@@ -12,16 +12,16 @@ import frc.robot.subsystems.ShooterAngleSubsystem;
 
 public class ShooterAngleCommand extends Command {
 
-  private final Supplier<Boolean> m_dPadUp;
-  private final Supplier<Boolean> m_dPadDown;
-  private final Supplier<Boolean> m_dPadRight;
+  private final Supplier<Boolean> m_yButton;
+  private final Supplier<Boolean> m_aButton;
+  private final Supplier<Boolean> m_bButton;
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
 
   /** Creates a new ShooterAngleCommand. */
-  public ShooterAngleCommand(Supplier<Boolean> dPadUp, Supplier<Boolean> dPadDown, Supplier<Boolean> dPadRight, ShooterAngleSubsystem shooterAngleSubsystem) {
-    m_dPadUp = dPadUp;
-    m_dPadDown = dPadDown;
-    m_dPadRight = dPadRight;
+  public ShooterAngleCommand(Supplier<Boolean> yButton, Supplier<Boolean> aButton, Supplier<Boolean> bButton, ShooterAngleSubsystem shooterAngleSubsystem) {
+    m_yButton = yButton;
+    m_aButton = aButton;
+    m_bButton = bButton;
     m_shooterAngleSubsystem = shooterAngleSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooterAngleSubsystem);
@@ -35,14 +35,14 @@ public class ShooterAngleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_dPadUp.get() ) {
+    if(m_yButton.get() ) {
       m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp);
       // m_ShooterAngleSubsystem.setPosition(0.4);
     }
-    else if(m_dPadDown.get() ){
+    else if(m_aButton.get() ){
       m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown);
     }
-    else if(m_dPadRight.get()) {
+    else if(m_bButton.get()) {
       m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMaxHeight);
     }
   }

@@ -135,9 +135,9 @@ public class RobotContainer {
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-        () -> getDPadUp(),
-        () -> getDPadDown(),
-        () -> getDPadRight(),
+        () -> m_operatorController.getHID().getYButton(),
+        () -> m_operatorController.getHID().getAButton(),
+        () -> m_operatorController.getHID().getBButton(),
         m_ShooterAngleSubsystem);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
@@ -200,7 +200,6 @@ public class RobotContainer {
     );
     
                     
-    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
@@ -212,7 +211,7 @@ public class RobotContainer {
     );
 
     // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(180)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
