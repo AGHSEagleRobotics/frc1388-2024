@@ -108,7 +108,11 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     if (getBlueButton()) {
       m_robotContainer.resetGyro();
+      RobotController.setRadioLEDState(RadioLEDState.kGreen);
+    } else {
+      RobotController.setRadioLEDState(RadioLEDState.kOff);
     }
+    
     // starts coast mode after robot disabled for 5 seconds
     if (m_neutralModeTimer.hasElapsed(5)) {
       m_robotContainer.setBrakeMode(false);
