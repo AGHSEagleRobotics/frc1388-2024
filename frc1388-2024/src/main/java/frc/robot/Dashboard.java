@@ -28,11 +28,11 @@ public class Dashboard {
         .withPosition(0, 0)
         .withSize(20, 14);
 
-        HttpCamera limelightIntakeCamera = new HttpCamera("limelight", "http://limelight-intake.local:5800");
-        CameraServer.addCamera(limelightIntakeCamera);
-        Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightIntakeCamera)
-        .withPosition(0, 0)
-        .withSize(20, 14);
+        // HttpCamera limelightIntakeCamera = new HttpCamera("limelight", "http://limelight-intake.local:5800");
+        // CameraServer.addCamera(limelightIntakeCamera);
+        // Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightIntakeCamera)
+        // .withPosition(0, 0)
+        // .withSize(20, 14);
 
 
         m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
