@@ -86,7 +86,7 @@ public final class Constants {
     /** feeding into the shooter */
     public static final double TRANSITION_MOTOR_POWER_IN = 1.0;
     /** ejecting in direction opposite of the shooter. */
-    public static final double TRANSITION_MOTOR_POWER_OUT = 1.0;
+    public static final double TRANSITION_MOTOR_POWER_OUT = -1.0;
   }
   
 

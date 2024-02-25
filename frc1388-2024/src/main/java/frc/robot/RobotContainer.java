@@ -191,7 +191,7 @@ public class RobotContainer {
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
 
     // SHOOT SPEAKER COMMAND SEQUENCE
-    m_driverController.rightTrigger().whileTrue(
+    m_driverController.rightTrigger(0.9).whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
@@ -199,7 +199,6 @@ public class RobotContainer {
       )
     );
     
-                    
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
