@@ -86,7 +86,7 @@ public final class Constants {
     /** feeding into the shooter */
     public static final double TRANSITION_MOTOR_POWER_IN = 1.0;
     /** ejecting in direction opposite of the shooter. */
-    public static final double TRANSITION_MOTOR_POWER_OUT = 1.0;
+    public static final double TRANSITION_MOTOR_POWER_OUT = -1.0;
   }
   
 
@@ -97,7 +97,7 @@ public final class Constants {
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionUp = 0.37; // 0.37 seems like a good sublifer angle
+    public static final double kShooterPositionUp = 0.38; // 0.37 seems like a good sublifer angle
     public static final double kShooterPositionDown = 0.19; // 0.25 seem good for podium
 
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4

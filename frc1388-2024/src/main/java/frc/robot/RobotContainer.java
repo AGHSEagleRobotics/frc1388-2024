@@ -192,7 +192,7 @@ public class RobotContainer {
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
 
     // SHOOT SPEAKER COMMAND SEQUENCE
-    m_driverController.rightTrigger().whileTrue(
+    m_driverController.rightTrigger(0.9).whileTrue(
       new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
@@ -200,8 +200,6 @@ public class RobotContainer {
       )
     );
     
-                    
-    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
@@ -213,7 +211,7 @@ public class RobotContainer {
     );
 
     // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(180)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
@@ -235,5 +233,19 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoMethod.getAutonomousCommand();
+  }
+
+  public void resetGyro() {
+    m_driveTrain.resetGyroHeading(180);
+  }
+
+  public boolean getDPadUp() {
+    return m_driverController.getHID().getPOV() == 0;
+  }
+  public boolean getDPadDown() {
+    return m_driverController.getHID().getPOV() == 180;
+  }
+  public boolean getDPadRight() {
+    return m_driverController.getHID().getPOV() == 90;
   }
 }
