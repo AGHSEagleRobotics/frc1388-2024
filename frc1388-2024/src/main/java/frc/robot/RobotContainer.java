@@ -138,6 +138,7 @@ public class RobotContainer {
         () -> m_operatorController.getHID().getYButton(),
         () -> m_operatorController.getHID().getAButton(),
         () -> m_operatorController.getHID().getBButton(),
+        () -> m_operatorController.getLeftY(),
         m_ShooterAngleSubsystem);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
