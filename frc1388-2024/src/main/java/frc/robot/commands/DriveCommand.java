@@ -85,17 +85,18 @@ public class DriveCommand extends Command {
     } else { // a/b/x/y rotation setpoints
       int setAngle = 0;
       if (m_a.get()) {
-        setAngle = 180;
-      } else if (m_b.get()) {
-        setAngle = 240;
-      } else if (m_x.get()) {
-        setAngle = 120;
-      } else if (m_y.get()) {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
           setAngle = 90;
         } else {
           setAngle = 270;
         }
+      } else if (m_b.get()) {
+        setAngle = 240;
+      } else if (m_x.get()) {
+        setAngle = 120;
+      }
+      else if (m_y.get()) {
+        setAngle = 180;
       } else {
         setAngle = -1; // default, -1 indicates no set point
       }

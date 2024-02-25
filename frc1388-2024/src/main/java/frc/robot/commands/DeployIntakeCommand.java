@@ -7,17 +7,20 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
 
 public class DeployIntakeCommand extends Command {
 
   private final IntakeSubsystem m_intakeSubsystem;
+  private final TransitionSubsystem m_transitionSubsystem;
 
 
   /** Creates a new DeployIntakeCommand. */
-  public DeployIntakeCommand(IntakeSubsystem intakeSubsystem) {
+  public DeployIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
     m_intakeSubsystem = intakeSubsystem;
+    m_transitionSubsystem = transitionSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_intakeSubsystem);
+    addRequirements(m_intakeSubsystem, m_transitionSubsystem);
 
   }
 
@@ -39,7 +42,7 @@ public class DeployIntakeCommand extends Command {
     m_intakeSubsystem.setRollerMotor(0);
     
     if (!interrupted && m_intakeSubsystem.isNoteDetected()) {
-      new RetractIntakeCommand(m_intakeSubsystem).schedule();
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem).schedule();
     }
   }
 
