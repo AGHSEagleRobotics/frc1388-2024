@@ -22,11 +22,18 @@ public class Dashboard {
         m_shuffleboardTab =  Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
         Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
 
-        HttpCamera limelightCamera = new HttpCamera("limelight", "http://limelight.local:5800");
-        CameraServer.addCamera(limelightCamera);
-        Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightCamera)
+        HttpCamera limelightShooterCamera = new HttpCamera("limelight", "http://limelight-shooter.local:5800");
+        CameraServer.addCamera(limelightShooterCamera);
+        Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightShooterCamera)
         .withPosition(0, 0)
         .withSize(20, 14);
+
+        HttpCamera limelightIntakeCamera = new HttpCamera("limelight", "http://limelight-intake.local:5800");
+        CameraServer.addCamera(limelightIntakeCamera);
+        Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightIntakeCamera)
+        .withPosition(0, 0)
+        .withSize(20, 14);
+
 
         m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
         .withWidget(BuiltInWidgets.kBooleanBox)

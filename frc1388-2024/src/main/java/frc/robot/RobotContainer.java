@@ -135,9 +135,9 @@ public class RobotContainer {
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-        () -> getDPadUp(),
-        () -> getDPadDown(),
-        () -> getDPadRight(),
+        () -> m_operatorController.getHID().getYButton(),
+        () -> m_operatorController.getHID().getAButton(),
+        () -> m_operatorController.getHID().getBButton(),
         m_ShooterAngleSubsystem);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
@@ -234,15 +234,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoMethod.getAutonomousCommand();
-  }
-
-  public boolean getDPadUp() {
-    return m_driverController.getHID().getPOV() == 0;
-  }
-  public boolean getDPadDown() {
-    return m_driverController.getHID().getPOV() == 180;
-  }
-  public boolean getDPadRight() {
-    return m_driverController.getHID().getPOV() == 90;
   }
 }
