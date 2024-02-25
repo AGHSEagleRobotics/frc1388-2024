@@ -14,12 +14,14 @@ public class ShooterAngleCommand extends Command {
 
   private final Supplier<Boolean> m_dPadUp;
   private final Supplier<Boolean> m_dPadDown;
+  private final Supplier<Boolean> m_dPadRight;
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
 
   /** Creates a new ShooterAngleCommand. */
-  public ShooterAngleCommand(Supplier<Boolean> dPadUp, Supplier<Boolean> dPadDown, ShooterAngleSubsystem shooterAngleSubsystem) {
+  public ShooterAngleCommand(Supplier<Boolean> dPadUp, Supplier<Boolean> dPadDown, Supplier<Boolean> dPadRight, ShooterAngleSubsystem shooterAngleSubsystem) {
     m_dPadUp = dPadUp;
     m_dPadDown = dPadDown;
+    m_dPadRight = dPadRight;
     m_shooterAngleSubsystem = shooterAngleSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooterAngleSubsystem);
@@ -39,6 +41,9 @@ public class ShooterAngleCommand extends Command {
     }
     else if(m_dPadDown.get() ){
       m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown);
+    }
+    else if(m_dPadRight.get()) {
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMaxHeight);
     }
   }
 
