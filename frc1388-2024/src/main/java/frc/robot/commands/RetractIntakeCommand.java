@@ -7,15 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.TransitionSubsystem;
 
 /** Creates a new RetractIntakeCommand. */
 public class RetractIntakeCommand extends Command {
   private final IntakeSubsystem m_intakeSubsystem;
+  private final TransitionSubsystem m_transitionSubsystem;
 
-  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem) {
+  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intakeSubsystem = intakeSubsystem;
-    addRequirements(m_intakeSubsystem);
+    m_transitionSubsystem = transitionSubsystem;
+    addRequirements(m_intakeSubsystem, m_transitionSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -35,7 +38,7 @@ public class RetractIntakeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     // if (!interrupted) {
-    //   new PullToTransition(null, m_intakeSubsystem).schedule();
+    //   new PullToTransition(m_transitionSubsystem, m_intakeSubsystem).schedule();
     // }
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);

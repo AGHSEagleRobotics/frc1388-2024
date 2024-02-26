@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
@@ -16,6 +17,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+
+  DigitalInput m_blueButton = new DigitalInput(5);
 
   private RobotContainer m_robotContainer;
   private boolean m_lastUserButton = false;
@@ -78,7 +81,7 @@ public class Robot extends TimedRobot {
 
       if (m_userButtonCounter == 1) {
         DataLogManager.log("### UserButtonPressed");
-        RobotController.setRadioLEDState(RadioLEDState.kGreen);
+        // RobotController.setRadioLEDState(RadioLEDState.kGreen);
       } else if (m_userButtonCounter == 100) { // when held for 2 seconds (100 tics)
         DataLogManager.log("### UserButtonHeld");
         RobotController.setRadioLEDState(RadioLEDState.kOrange);
@@ -103,6 +106,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    if (getBlueButton()) {
+      m_robotContainer.resetGyro();
+      RobotController.setRadioLEDState(RadioLEDState.kGreen);
+    } else {
+      RobotController.setRadioLEDState(RadioLEDState.kOff);
+    }
+    
     // starts coast mode after robot disabled for 5 seconds
     if (m_neutralModeTimer.hasElapsed(5)) {
       m_robotContainer.setBrakeMode(false);
@@ -198,5 +208,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
+  }
+
+  private boolean getBlueButton() {
+    return !m_blueButton.get();
   }
 }

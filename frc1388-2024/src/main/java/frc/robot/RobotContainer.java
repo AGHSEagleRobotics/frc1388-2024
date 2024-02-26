@@ -112,7 +112,7 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem);
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem);
     
   private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
     
@@ -140,10 +140,12 @@ public class RobotContainer {
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
-        () -> getDPadUp(),
-        () -> getDPadDown(),
-        () -> getDPadRight(),
-        m_ShooterAngleSubsystem);
+        () -> m_operatorController.getHID().getYButton(),
+        () -> m_operatorController.getHID().getAButton(),
+        () -> m_operatorController.getHID().getBButton(),
+        () -> m_operatorController.getLeftY(),
+        () -> m_operatorController.getHID().getStartButton(),
+        m_ShooterAngleSubsystem, m_limelight);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
@@ -188,23 +190,23 @@ public class RobotContainer {
   private void configureBindings() {
 
     // DRIVER CONTROLS
-    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
-    m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
+    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
     
     // SHOOT SPEAKER COMMAND SEQUENCE
-    m_driverController.rightTrigger().whileTrue(
-      new RetractIntakeCommand(m_intakeSubsystem)
+    m_driverController.rightTrigger(0.9).whileTrue(
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
            
-    m_driverController.back().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
-      new RetractIntakeCommand(m_intakeSubsystem)
+
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
       .andThen(
         new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
@@ -212,13 +214,15 @@ public class RobotContainer {
     );
 
     // RESET GYRO CONTROL
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(0)));
+
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(180)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem));
-    m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem));
+
+    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
     m_operatorController.rightBumper().onTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
@@ -239,6 +243,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return m_autoMethod.getAutonomousCommand();
+  }
+
+  public void resetGyro() {
+    m_driveTrain.resetGyroHeading(180);
   }
 
   public boolean getDPadUp() {

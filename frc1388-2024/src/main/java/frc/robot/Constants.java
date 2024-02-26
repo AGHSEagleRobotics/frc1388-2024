@@ -86,17 +86,16 @@ public final class Constants {
     /** feeding into the shooter */
     public static final double TRANSITION_MOTOR_POWER_IN = 1.0;
     /** ejecting in direction opposite of the shooter. */
-    public static final double TRANSITION_MOTOR_POWER_OUT = 1.0;
+    public static final double TRANSITION_MOTOR_POWER_OUT = -1.0;
   }
 
   public static class ShooterAngleSubsystemConstants {
     public static final double kShooterAngleP = 45;
-    public static final double kShooterAngleI = 0;
     public static final double kShooterAngleD = 0;
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionUp = 0.37; // 0.37 seems like a good sublifer angle
+    public static final double kShooterPositionUp = 0.38; // 0.37 seems like a good sublifer angle
     public static final double kShooterPositionDown = 0.19; // 0.25 seem good for podium
 
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
@@ -139,6 +138,7 @@ public final class Constants {
 
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
+
     public static final double TURN_P_TOLERANCE = 0.25;
     public static final double TURN_I_VALUE = 0.003;
     public static final double TURN_D_VALUE = 0.004;
@@ -173,6 +173,5 @@ public final class Constants {
         return m_dashboardDescript;
       }
     }
-
   }
 }
