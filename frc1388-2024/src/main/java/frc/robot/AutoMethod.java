@@ -60,7 +60,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, null)
+      new RetractIntakeCommand(m_intakeSubsystem, null, false)
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
