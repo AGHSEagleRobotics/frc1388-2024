@@ -130,7 +130,7 @@ public class RobotContainer {
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
-      () -> m_driverController.getHID().getBackButton() // test button
+      () -> m_driverController.getHID().getRightStickButton()
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
@@ -138,6 +138,7 @@ public class RobotContainer {
         () -> m_operatorController.getHID().getYButton(),
         () -> m_operatorController.getHID().getAButton(),
         () -> m_operatorController.getHID().getBButton(),
+        () -> m_operatorController.getLeftY(),
         m_ShooterAngleSubsystem);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);

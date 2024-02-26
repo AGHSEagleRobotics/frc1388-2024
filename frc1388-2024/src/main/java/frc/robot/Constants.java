@@ -101,7 +101,7 @@ public final class Constants {
     public static final double kShooterPositionDown = 0.19; // 0.25 seem good for podium
 
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
-    public static final double kShooterMinHeight = 0.14; //  observed min without hitting transition is 0.14
+    public static final double kShooterMinHeight = 0.16; //  observed min without hitting transition is
 
     public static final int kShooterAngleMotorCANID = 22;
 

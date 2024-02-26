@@ -28,11 +28,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     m_targetPosition = getCurrentPosition();
   }
 
-  /** may break things, position is not limited in this method */
-  public void setPower(double power) {
-    m_angleMotor.set(power);
-  }
-
   public double getCurrentPosition() {
     return m_potentiometer.get();
   }
@@ -49,8 +44,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     double error = m_targetPosition - currentPosition;
     double speed = error * ShooterAngleSubsystemConstants.kShooterAngleP;
     SmartDashboard.putNumber("error", error);
-    if (Math.abs(error) <= ShooterAngleSubsystemConstants.P_TOLERANCE)
-    {
+    if (Math.abs(error) <= ShooterAngleSubsystemConstants.P_TOLERANCE) {
       speed = 0;
     }
     m_angleMotor.set(speed);
