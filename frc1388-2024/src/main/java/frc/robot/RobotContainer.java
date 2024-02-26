@@ -130,7 +130,7 @@ public class RobotContainer {
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
-      () -> m_driverController.getHID().getBackButton() // test button
+      () -> m_driverController.getHID().getRightStickButton()
     );
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
