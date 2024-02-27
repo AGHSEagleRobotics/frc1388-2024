@@ -58,12 +58,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final Dashboard m_dashboard = new Dashboard();
-    // commented out for summerswerve
-    // public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-    //     new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-    //         MotorType.kBrushless),
-    //     new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
-    //         MotorType.kBrushless));
+    public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
+        new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+            MotorType.kBrushless),
+        new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+            MotorType.kBrushless));
     
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -88,10 +87,10 @@ public class RobotContainer {
           Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
       new AHRS(SerialPort.Port.kUSB) // navx
   );
-// commented out to run on summerswerve
-  // public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
-  //     new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
-  //     new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
+
+  public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
+      new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
+      new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
 
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
       new CANSparkMax(IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),

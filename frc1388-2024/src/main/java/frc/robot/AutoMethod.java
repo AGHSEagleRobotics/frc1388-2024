@@ -40,14 +40,6 @@ public class AutoMethod {
     m_intakeSubsystem = intake;
     m_transitionSubsystem = transition;
   }
-  // for summerswerve
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, IntakeSubsystem intake, TransitionSubsystem transition) {
-    m_driveTrainSubsystem = driveTrainSubsystem;
-    m_dashboard = dashboard;
-    m_shooter = null;
-    m_intakeSubsystem = intake;
-    m_transitionSubsystem = transition;
-  }
 
   public Command SitStillLookPretty(){
     return new AutoDrive(0, m_driveTrainSubsystem);
@@ -100,7 +92,7 @@ public class AutoMethod {
      new WaitCommand(1.0)
     )
     .andThen(
-      new DeployIntakeCommand(m_intakeSubsystem)
+      new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .andThen(
       new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -109,7 +101,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -133,7 +125,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new DeployIntakeCommand(m_intakeSubsystem)
+      new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .andThen(
       new AutoGoToPoint(0,-2, m_driveTrainSubsystem)
@@ -142,7 +134,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .andThen(
       new AutoGoToPoint(1.75, 0, m_driveTrainSubsystem)    
@@ -174,7 +166,7 @@ public class AutoMethod {
      new WaitCommand(1.0)
     )
     .andThen(
-      new DeployIntakeCommand(m_intakeSubsystem)
+      new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .andThen(
       new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -183,7 +175,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
