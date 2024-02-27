@@ -99,10 +99,14 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     double bottomMotorVelocity = getBottomMotorVelocity();
+    double topMotorVelocity = getTopMotorVelocity();
+
+    SmartDashboard.putNumber("bottom shooter rpm", bottomMotorVelocity);
+    SmartDashboard.putNumber("top shooter rpm", topMotorVelocity);
+
     if (bottomMotorVelocity != 0) {
       m_logBottomShooterMotorVelocity.append(bottomMotorVelocity);
     }
-    double topMotorVelocity = getTopMotorVelocity();
     if (topMotorVelocity != 0) {
       m_logTopShooterMotorVelocity.append(topMotorVelocity);
     }
