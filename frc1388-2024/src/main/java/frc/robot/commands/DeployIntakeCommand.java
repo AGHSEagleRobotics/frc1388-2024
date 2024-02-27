@@ -13,7 +13,7 @@ public class DeployIntakeCommand extends Command {
 
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
-
+  private int m_ticksNoteIsDetected = 0;
 
   /** Creates a new DeployIntakeCommand. */
   public DeployIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
@@ -31,8 +31,14 @@ public class DeployIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN);
     m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+    if (m_intakeSubsystem.isNoteDetected()) {
+      m_ticksNoteIsDetected++;
+      m_intakeSubsystem.setRollerMotor(0);
+    } else {
+      m_ticksNoteIsDetected = 0;
+      m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN);
+    }
   }
   
   // Called once the command ends or is interrupted.
@@ -49,6 +55,6 @@ public class DeployIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.isNoteDetected();
+    return m_ticksNoteIsDetected > IntakeConstants.TICKS_BEFORE_RETRACTING_INTAKE;
   }
 }
