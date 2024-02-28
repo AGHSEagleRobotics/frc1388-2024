@@ -115,7 +115,8 @@ public final class Constants {
     public static final int UPPER_LIMIT_DIO = 2;
     public static final int BEAM_BREAK_DIO = 1;
 
-    public static final double ROLLER_MOTOR_SPEED_IN = 0.7;
+    public static final double ROLLER_MOTOR_SPEED_IN_INTAKING = 0.7;
+    public static final double ROLLER_MOTOR_SPEED_IN_TRANSITION = 0.5;
     public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
 
     public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design

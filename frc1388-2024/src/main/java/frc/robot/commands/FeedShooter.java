@@ -30,7 +30,7 @@ public class FeedShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN);
+    m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_TRANSITION);
     m_transitionSubsystem.set(TransitionConstants.TRANSITION_MOTOR_POWER_IN);
   }
 
