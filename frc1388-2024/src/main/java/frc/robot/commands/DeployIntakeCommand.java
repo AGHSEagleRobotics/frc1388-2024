@@ -14,6 +14,7 @@ public class DeployIntakeCommand extends Command {
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
   private int m_ticksNoteIsDetected = 0;
+  private int m_lastTicksNoteIsDetected = 0;
 
   /** Creates a new DeployIntakeCommand. */
   public DeployIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
@@ -32,6 +33,7 @@ public class DeployIntakeCommand extends Command {
   @Override
   public void execute() {
     m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+
     if (m_intakeSubsystem.isNoteDetected()) {
       m_ticksNoteIsDetected++;
       m_intakeSubsystem.setRollerMotor(0);
@@ -39,6 +41,13 @@ public class DeployIntakeCommand extends Command {
       m_ticksNoteIsDetected = 0;
       m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN);
     }
+
+    if (m_ticksNoteIsDetected == 1) {
+      DataLogManager.log(">>> Intake: note detected");
+    } else if ((m_ticksNoteIsDetected == 0) && (m_lastTicksNoteIsDetected != 0)) {
+      DataLogManager.log(">>> Intake: note not detected; detection count = " + m_lastTicksNoteIsDetected);
+    }
+    m_lastTicksNoteIsDetected = m_ticksNoteIsDetected;
   }
   
   // Called once the command ends or is interrupted.
