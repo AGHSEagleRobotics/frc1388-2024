@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class LoggingSubsystem extends SubsystemBase {
 
+//   private final boolean DEBUG = false;
+  private final boolean DEBUG = true;
+
   // Log entries
   // private DataLog m_log = DataLogManager.getLog();
 
@@ -34,7 +37,9 @@ public class LoggingSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    // Display battery voltage (also available in the Driver Station log)
-    SmartDashboard.putNumber("battery voltage", RobotController.getBatteryVoltage());
+    if (DEBUG) {
+      // Display battery voltage (also available in the Driver Station log)
+      SmartDashboard.putNumber("battery voltage", RobotController.getBatteryVoltage());
+    }
   }
 }

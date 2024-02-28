@@ -31,6 +31,9 @@ public class ShooterSubsystem extends SubsystemBase {
   private final DoubleLogEntry m_logBottomShooterMotorVelocity = new DoubleLogEntry(m_log, "/robot/bottomShooterMotorVelocity");
   private final DoubleLogEntry m_logTopShooterMotorVelocity = new DoubleLogEntry(m_log, "/robot/topShooterMotorVelocity");
 
+//   private final boolean DEBUG = false;
+  private final boolean DEBUG = true;
+
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem(CANSparkFlex bottomShooterMotor, CANSparkFlex topShooterMotor) {
     m_bottomShooterMotor = bottomShooterMotor;
@@ -102,13 +105,15 @@ public class ShooterSubsystem extends SubsystemBase {
     double bottomMotorVelocity = getBottomMotorVelocity();
     double topMotorVelocity = getTopMotorVelocity();
 
-    SmartDashboard.putNumber("bottom shooter rpm", bottomMotorVelocity);
-    SmartDashboard.putNumber("top shooter rpm", topMotorVelocity);
+    if (DEBUG) {
+      SmartDashboard.putNumber("bottom shooter rpm", bottomMotorVelocity);
+      SmartDashboard.putNumber("top shooter rpm", topMotorVelocity);
+    }
 
-    if (bottomMotorVelocity != 0) {
+    if (bottomMotorVelocity >= 1.0) {
       m_logBottomShooterMotorVelocity.append(bottomMotorVelocity);
     }
-    if (topMotorVelocity != 0) {
+    if (topMotorVelocity >= 1.0) {
       m_logTopShooterMotorVelocity.append(topMotorVelocity);
     }
 
