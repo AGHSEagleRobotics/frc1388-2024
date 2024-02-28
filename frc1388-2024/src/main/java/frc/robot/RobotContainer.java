@@ -160,6 +160,8 @@ public class RobotContainer {
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
+    LoggingSubsystem m_loggingSubsystem = new LoggingSubsystem();
+
     // Configure the trigger bindings
     configureBindings();
   }

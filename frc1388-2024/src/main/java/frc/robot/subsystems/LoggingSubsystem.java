@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.io.File;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -27,11 +28,13 @@ public class LoggingSubsystem extends SubsystemBase {
     long freeSpace = logPath.getUsableSpace();
     long fileUsage = ((totalSpace - freeSpace) * 100 / totalSpace);
     DataLogManager.log("RoboRIO disk usage: " + fileUsage + "%");
-
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // Display battery voltage (also available in the Driver Station log)
+    SmartDashboard.putNumber("battery voltage", RobotController.getBatteryVoltage());
   }
 }
