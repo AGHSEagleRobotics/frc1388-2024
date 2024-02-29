@@ -117,8 +117,9 @@ public final class Constants {
     public static final int UPPER_LIMIT_DIO = 2;
     public static final int BEAM_BREAK_DIO = 1;
 
-    public static final double ROLLER_MOTOR_SPEED_IN = 0.5;
-    public static final double ROLLER_MOTOR_SPEED_OUT = 0.7;
+    public static final double ROLLER_MOTOR_SPEED_IN_INTAKING = 0.7;
+    public static final double ROLLER_MOTOR_SPEED_IN_TRANSITION = 0.5;
+    public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
 
     public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
     public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
@@ -131,6 +132,15 @@ public final class Constants {
 
   public static class LimelightConstants {
   }
+
+  public static class LEDConstants {
+    public static final double RAINBOW = -0.99;
+    public static final double RED_STROBE = -0.11;
+    public static final double BLUE_STROBE = -0.09;
+    public static final double RED_SOLID = 0.61;
+    public static final double BLUE_SOLID = 0.87;
+  }
+
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
     public static final double TURN_P_TOLERANCE = 1.25;

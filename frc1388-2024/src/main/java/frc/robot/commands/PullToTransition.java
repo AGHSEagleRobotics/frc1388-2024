@@ -31,7 +31,7 @@ public class PullToTransition extends Command {
   @Override
   public void execute() {
     m_transition.set(TransitionConstants.TRANSITION_MOTOR_POWER_IN);
-    m_intake.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN);
+    m_intake.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_TRANSITION);
   }
 
   // Called once the command ends or is interrupted.
