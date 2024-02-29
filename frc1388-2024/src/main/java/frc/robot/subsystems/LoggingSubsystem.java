@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 import java.io.File;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -18,6 +20,8 @@ public class LoggingSubsystem extends SubsystemBase {
 
 //   private final boolean DEBUG = false;
   private final boolean DEBUG = true;
+
+  private final PowerDistribution m_PDH = new PowerDistribution();
 
   // Log entries
   // private DataLog m_log = DataLogManager.getLog();
@@ -40,6 +44,8 @@ public class LoggingSubsystem extends SubsystemBase {
     if (DEBUG) {
       // Display battery voltage (also available in the Driver Station log)
       SmartDashboard.putNumber("battery voltage", RobotController.getBatteryVoltage());
+      SmartDashboard.putNumber("top shooter current", m_PDH.getCurrent(8));  // FIXME: update PDH channel number!
+      SmartDashboard.putNumber("bottom shooter current", m_PDH.getCurrent(9));  // FIXME: update PDH channel number!
     }
   }
 }
