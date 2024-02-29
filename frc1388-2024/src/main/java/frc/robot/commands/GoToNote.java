@@ -19,14 +19,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.vision.Limelight;
 
 public class GoToNote extends Command {
-    private final DriveTrainSubsystem m_driveTrain;
-    private final Limelight m_limelight;
-    private final IntakeSubsystem m_intakeSubsystem;
-    private Pose2d m_initialPose;
-    private Debouncer m_canSeePieceDebouncer;
-    
+  private final DriveTrainSubsystem m_driveTrain;
+  private final Limelight m_limelight;
+  private final IntakeSubsystem m_intakeSubsystem;
+  private Pose2d m_initialPose;
+  private Debouncer m_canSeePieceDebouncer;
 
-    private final PIDController m_rotationPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
+  private final PIDController m_rotationPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING,
+      0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
 
   /** Creates a new GoToNote. */
   public GoToNote(DriveTrainSubsystem driveTrainSubsystem, Limelight limelight, IntakeSubsystem intakeSubsystem) {
@@ -54,11 +54,12 @@ public class GoToNote extends Command {
     }
 
     double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker());
-    double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? 
-    LimelightConstants.METERS_PER_SECOND / 2
-    : LimelightConstants.METERS_PER_SECOND;
+    double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? LimelightConstants.METERS_PER_SECOND / 2
+        : LimelightConstants.METERS_PER_SECOND;
     if (m_limelight.getIsNoteFound()) {
-    m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, 0, omega, new Rotation2d()));
+      m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, 0, omega, new Rotation2d()));
+    } else {
+      m_driveTrain.drive(0, 0, 0);
     }
     SmartDashboard.putNumber("xVelocity", xVelocity);
   }

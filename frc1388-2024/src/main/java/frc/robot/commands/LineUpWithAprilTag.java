@@ -97,6 +97,9 @@ public class LineUpWithAprilTag extends Command {
     if (m_limelight.getApriltagTargetFound()) {
     m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, yVelocity, omega, new Rotation2d()));
     }
+    else {
+      m_driveTrain.drive(0, 0, 0);
+    }
   }
 
   // Called once the command ends or is interrupted.

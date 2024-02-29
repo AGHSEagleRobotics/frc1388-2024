@@ -48,6 +48,9 @@ public class AutoAngleShooter extends Command {
     if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
     m_shooterAngleSubsystem.setPosition(goToAngle);
     }
+    else {
+      m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
+    }
   }
 
   // Called once the command ends or is interrupted.
