@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight extends SubsystemBase {
 
+  private int m_ticks = 0;
+
   private final DriveTrainSubsystem m_driveTrain;
   private static NetworkTable m_table;
 
@@ -254,6 +256,10 @@ public class Limelight extends SubsystemBase {
     return getdegRotationToTarget();
   }
 
+  public void flash(double seconds) {
+    m_ticks = (int)(seconds * 50);
+  }
+
   @Override
   public void periodic() {
     if (getIsTargetFound() == true) {
@@ -267,5 +273,11 @@ public class Limelight extends SubsystemBase {
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
     }
+
+    if (m_ticks > 0) {
+      m_table.getEntry("ledMode").setNumber(1);
+      m_ticks--;
+    }
+
   }
 }

@@ -192,7 +192,10 @@ public class RobotContainer {
     // m_limelight.goToCenterOfSpeaker()));
 
     // DRIVER CONTROLS
-    m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_driverController.leftBumper().onTrue(
+      new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
+      .andThen(new InstantCommand(()-> m_limelight.flash(1.5)))
+      );
     m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
 
     // SHOOT SPEAKER COMMAND SEQUENCE
@@ -220,7 +223,10 @@ public class RobotContainer {
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_operatorController.leftBumper().onTrue(
+      new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
+      .andThen(new InstantCommand(()-> m_limelight.flash(1.5)))
+      );
     m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
     m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     m_operatorController.rightTrigger().onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
