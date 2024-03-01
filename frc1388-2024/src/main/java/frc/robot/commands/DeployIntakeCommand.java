@@ -37,7 +37,7 @@ public class DeployIntakeCommand extends Command {
       m_intakeSubsystem.setRollerMotor(0);
     } else {
       m_ticksNoteIsDetected = 0;
-      m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN);
+      m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_INTAKING);
     }
   }
   
