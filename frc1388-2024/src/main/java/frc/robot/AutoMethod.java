@@ -8,10 +8,12 @@ import javax.sound.midi.ShortMessage;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoToPoint;
@@ -22,6 +24,7 @@ import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 public class AutoMethod {
@@ -33,13 +36,15 @@ public class AutoMethod {
   private final ShooterSubsystem m_shooter;
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
+  private final ShooterAngleSubsystem m_shooterAngleSubsystem;
 
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition) {
+  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition, ShooterAngleSubsystem shooterAngle) {
     m_driveTrainSubsystem = driveTrainSubsystem;
     m_dashboard = dashboard;
     m_shooter = shooter;
     m_intakeSubsystem = intake;
     m_transitionSubsystem = transition;
+    m_shooterAngleSubsystem = shooterAngle;
   }
 
   public Command SitStillLookPretty(){
@@ -52,14 +57,28 @@ public class AutoMethod {
 
   public Command Shoot1IntakeBSpeakerB(){
     return new SequentialCommandGroup(
+      new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp)),
+      new WaitCommand(0.5),
       new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)),
+      new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown)),
       new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
         .deadlineWith(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)),
-      new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem),
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true),
       new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
-        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0))
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)) 
     );
+    // return new SequentialCommandGroup(
+    //   new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp)),
+    //   new WaitCommand(2.0),
+    //   new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)),
+    //   new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
+    //     .alongWith(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)),
+    //   new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem),
+    //   new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)) 
+    // );
   }
   
   public Command Shoot1IntakeBSpeakerBIntakeASpeakerA(){

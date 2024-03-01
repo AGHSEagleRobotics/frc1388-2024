@@ -106,7 +106,7 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem);
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem, m_ShooterAngleSubsystem);
     
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
@@ -141,14 +141,7 @@ public class RobotContainer {
         () -> m_operatorController.getLeftY(),
         m_ShooterAngleSubsystem);
 
-    // m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
-
-    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading()));
-    // m_driverController.a().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
-    // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
-
-    // () -> getDPad()
+    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
         m_driveTrain,
