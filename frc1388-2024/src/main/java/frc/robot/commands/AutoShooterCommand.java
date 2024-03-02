@@ -4,12 +4,9 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ShooterSubsystem;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.TransitionSubsystem;
 
 public class AutoShooterCommand extends Command {
@@ -17,6 +14,7 @@ public class AutoShooterCommand extends Command {
   private final TransitionSubsystem m_transition;
   private final double SHOOTER_RPM;
   private final Timer m_timer = new Timer();
+  private boolean m_noteEverDetected = false;
 
   /** assumes intake is in up position, ready to shoot */
   public AutoShooterCommand(double rpm, ShooterSubsystem shooter, TransitionSubsystem transition) {
@@ -29,6 +27,7 @@ public class AutoShooterCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_timer.restart();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,9 +36,9 @@ public class AutoShooterCommand extends Command {
     m_shooter.setShooterRPM(SHOOTER_RPM);  
     
     if(m_transition.isNoteDetected() == true){
+      m_noteEverDetected = true;
       m_timer.restart();
     }
-
   }
 
   // Called once the command ends or is interrupted.
@@ -51,7 +50,10 @@ public class AutoShooterCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_timer.hasElapsed(0.25)){
+    if(m_timer.hasElapsed(0.25) && m_noteEverDetected){
+      return true;
+    }
+    else if( m_timer.hasElapsed(2.5)){
       return true;
     }
     else{
