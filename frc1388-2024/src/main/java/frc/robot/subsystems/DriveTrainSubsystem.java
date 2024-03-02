@@ -35,7 +35,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   /** The distance in <strong>meters</strong> from the center of rotation of the left wheel to the center of rotation of the right wheel */
   private final double ROBOT_TRACK_WIDTH = FieldConstants.ROBOT_WIDTH;
 
-  private double m_gyroOffset = 0;
+  private double m_gyroOffset = 180;
 
   // these are the translations from the center of rotation of the robot to the center of rotation of each swerve module
   private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, -ROBOT_TRACK_WIDTH / 2);

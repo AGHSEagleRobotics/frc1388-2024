@@ -25,6 +25,8 @@ public final class Constants {
   public static class SwerveModuleConstants {
     public static final double DIST_PER_TICK = (1.0 / 6.75) * (0.3192); // ask calvin about the math
 
+    public static final double DIST_PER_MOTOR_ROTATION  = 5.65 / 131.14;
+
     public static final double DRIVE_MOTOR_P = 0.001;
     public static final double DRIVE_MOTOR_I = 0;
     public static final double DRIVE_MOTOR_D = 0;
