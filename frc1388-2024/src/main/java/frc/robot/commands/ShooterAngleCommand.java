@@ -27,7 +27,6 @@ public class ShooterAngleCommand extends Command {
   private final Limelight m_limelight;
   private boolean m_manualMode;
   private boolean m_autoMode;
-  private boolean m_lastAutoModePressed;
 
   /** Creates a new ShooterAngleCommand. */
   public ShooterAngleCommand(Supplier<Boolean> yButton, Supplier<Boolean> aButton, Supplier<Boolean> bButton,
@@ -42,7 +41,6 @@ public class ShooterAngleCommand extends Command {
     m_limelight = limelight;
     m_manualMode = false;
     m_autoMode = false;
-    m_lastAutoModePressed = false;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooterAngleSubsystem);
   }
@@ -57,26 +55,32 @@ public class ShooterAngleCommand extends Command {
   @Override
   public void execute() {
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
-    double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
-    SmartDashboard.putNumber("ty", ty);
 
-    double pAngle;
-    double pEx;
-    double goToAngle;
-    pAngle = m_limelight.getDistance() * 5;
-    pEx = -LimelightConstants.MAX_TY_VALUE / ty / 50;
-    goToAngle = Math.pow(pAngle, pEx);
-    goToAngle -= 0.65;
+      double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
 
-    if (m_start.get() && !m_lastAutoModePressed) {
+      if (m_limelight.getDistance() < LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM) {
+      goToAngle = LimelightConstants.SLOPE_MATH_SUBLIFER_TO_PODIUM * m_limelight.getDistance() + LimelightConstants.SHOOTER_OFFSET_SUB;
+       goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionDown, ShooterAngleSubsystemConstants.kShooterPositionUp);
+      }
+      else if (m_limelight.getDistance() > LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM && m_limelight.getDistance() < LimelightConstants.DISTANCE_FROM_APRILTAG_WING) {
+        goToAngle = LimelightConstants.SLOPE_MATH_PODIUM_TO_WING * m_limelight.getDistance() + LimelightConstants.SHOOTER_OFFSET_WING;
+        goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionWing, ShooterAngleSubsystemConstants.kShooterPositionDown);
+      }
+   
+    SmartDashboard.putNumber("/Auto Tracking Shooter Angle", goToAngle); 
+
+    boolean startButton = m_start.get();
+    if (startButton) {
       m_autoMode = !m_autoMode;
+      if (m_autoMode) {
+        m_manualMode = false;
+      }
     }
-    m_lastAutoModePressed = m_start.get();
 
     if (m_yButton.get()) {
       m_manualMode = false;
+      m_autoMode = false;
       m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp);
-      // m_ShooterAngleSubsystem.setPosition(0.4);
     } else if (m_aButton.get()) {
       m_manualMode = false;
       m_autoMode = false;
@@ -98,9 +102,6 @@ public class ShooterAngleCommand extends Command {
     } else if (m_autoMode == true) {
       if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
         m_shooterAngleSubsystem.setPosition(goToAngle);
-      }
-      else {
-        m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
       }
     }
   }

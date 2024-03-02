@@ -7,13 +7,14 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoAndTurn;
 import frc.robot.commands.AutoGoToPoint;
-import frc.robot.commands.AutoAngleShooter;
+import frc.robot.commands.ShooterAngleLimelight;
 import frc.robot.commands.AutoTracking;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
@@ -45,6 +46,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -95,7 +97,7 @@ public class RobotContainer {
   );
 
   
-  public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
+  public final ShooterAngleSubsystem m_shooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
       new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
           
@@ -112,9 +114,11 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem);
-    
   private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
+  
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem, m_limelight, m_shooterAngleSubsystem);
+  
+  private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
     
@@ -145,9 +149,9 @@ public class RobotContainer {
         () -> m_operatorController.getHID().getBButton(),
         () -> m_operatorController.getLeftY(),
         () -> m_operatorController.getHID().getStartButton(),
-        m_ShooterAngleSubsystem, m_limelight);
+        m_shooterAngleSubsystem, m_limelight);
 
-    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
+    m_shooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
     // test button will change to right stick maybe and need to test if it works while driving
     // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
@@ -191,11 +195,11 @@ public class RobotContainer {
 
     // DRIVER CONTROLS
     m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
-    m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
     
     // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger(0.9).whileTrue(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false)
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
@@ -205,8 +209,7 @@ public class RobotContainer {
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
-
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false)
       .andThen(
         new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
@@ -222,12 +225,13 @@ public class RobotContainer {
     // OPERATOR CONTROLS
 
     m_operatorController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
-    m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
-    m_operatorController.rightBumper().onTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
+    m_operatorController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
+    m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
+    m_operatorController.rightTrigger().onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
-    m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 12.5, 0));
+    m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 0, 0));
   }
 
   public void setAllEncoderOffsets() {

@@ -49,7 +49,7 @@ public class LineUpWithAprilTag extends Command {
     m_xPIDController.setSetpoint(0);
     m_xPIDController.reset();
 
-    m_yPIDController.setSetpoint(m_tyOffset + 12.5);
+    m_yPIDController.setSetpoint(m_tyOffset);
     m_yPIDController.reset();
 
     m_rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);

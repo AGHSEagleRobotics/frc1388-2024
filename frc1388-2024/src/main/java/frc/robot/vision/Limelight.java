@@ -22,6 +22,7 @@ public class Limelight extends SubsystemBase {
   public Limelight(String shooterName, String intakeName) {
     m_shooterTable = NetworkTableInstance.getDefault().getTable(shooterName);
     m_intakeTable = NetworkTableInstance.getDefault().getTable(intakeName);
+    
   }
 
   public void setShooterPipeline(double pipelineNumber) {
@@ -141,16 +142,12 @@ public class Limelight extends SubsystemBase {
     // april tag (needs testing)
     // might also need to add values like where the limelight is although we might be able to do that in the pipeline
 
-    if (getApriltagTargetFound() == true) {
-
+    if (targetSpace != null) {
       double distance;
-      distance = Math
-          .sqrt((targetSpace[0] * targetSpace[0]) + (targetSpace[1] * targetSpace[1])
-              + (targetSpace[2] * targetSpace[2]));
+      distance = targetSpace[2];
 
       return distance;
     }
-
     return 0;
   }
 
@@ -177,8 +174,6 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Vertical Degree", getAprilTagTx());
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
-;
-      
       
 
   }

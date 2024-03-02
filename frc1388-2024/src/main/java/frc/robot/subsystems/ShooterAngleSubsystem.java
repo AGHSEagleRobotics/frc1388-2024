@@ -48,6 +48,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
       speed = 0;
     }
     m_angleMotor.set(speed);
+    SmartDashboard.putNumber("error", error);
+    SmartDashboard.putNumber("shooter speed", speed);
 
 
     // if (currentPosition < m_targetPosition - 0.01) {

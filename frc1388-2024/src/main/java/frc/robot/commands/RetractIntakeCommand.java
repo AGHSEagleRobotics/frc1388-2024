@@ -14,10 +14,14 @@ public class RetractIntakeCommand extends Command {
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
 
-  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
+  private final boolean m_autoRetracting;
+
+  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem, boolean autoRetracting) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intakeSubsystem = intakeSubsystem;
     m_transitionSubsystem = transitionSubsystem;
+
+    m_autoRetracting = autoRetracting;
     addRequirements(m_intakeSubsystem, m_transitionSubsystem);
   }
 
@@ -37,9 +41,9 @@ public class RetractIntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // if (!interrupted) {
-    //   new PullToTransition(m_transitionSubsystem, m_intakeSubsystem).schedule();
-    // }
+    if (!interrupted && m_autoRetracting) {
+      new PullToTransition(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0).schedule();
+    }
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);
   }
