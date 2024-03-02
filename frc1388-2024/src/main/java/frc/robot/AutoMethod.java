@@ -54,14 +54,7 @@ public class AutoMethod {
   }
 
   public Command Start1Leave(){
-   // return new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem);
-
-   // test code
-   return new SequentialCommandGroup(
-    new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-      .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-    new AutoDrive(-1, m_driveTrainSubsystem)
-   );
+    return new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem);
   }
 
   public Command Shoot1IntakeBSpeakerB(){
@@ -77,17 +70,6 @@ public class AutoMethod {
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)) 
     );
-    // return new SequentialCommandGroup(
-    //   new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp)),
-    //   new WaitCommand(2.0),
-    //   new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
-    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)),
-    //   new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
-    //     .alongWith(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)),
-    //   new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem),
-    //   new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
-    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)) 
-    // );
   }
   
   public Command Shoot1IntakeBSpeakerBIntakeASpeakerA(){
