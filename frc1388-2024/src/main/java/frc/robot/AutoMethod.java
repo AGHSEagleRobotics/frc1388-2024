@@ -4,8 +4,6 @@ package frc.robot;
 // the WPILib BSD license file in the root directory of this project.
 
 
-import javax.sound.midi.ShortMessage;
-
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -73,8 +71,9 @@ public class AutoMethod {
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
       new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown)),
-      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
-        .alongWith(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem)),
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem)
+      .alongWith(new WaitCommand(.25)
+       .andThen(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem))),
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)) 
     );
