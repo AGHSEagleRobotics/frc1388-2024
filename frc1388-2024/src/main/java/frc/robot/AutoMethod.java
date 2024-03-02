@@ -17,6 +17,7 @@ import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoToPoint;
+import frc.robot.commands.AutoShooterCommand;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.FeedShooter;
@@ -59,13 +60,13 @@ public class AutoMethod {
     return new SequentialCommandGroup(
       new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp)),
       new WaitCommand(0.5),
-      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)),
       new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown)),
       new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
         .deadlineWith(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)),
       new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true),
-      new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)) 
     );
     // return new SequentialCommandGroup(
