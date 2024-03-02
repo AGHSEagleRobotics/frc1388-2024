@@ -12,7 +12,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoGoAndTurn;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
@@ -64,13 +63,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final Dashboard m_dashboard = new Dashboard();
-
-  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-          MotorType.kBrushless),
-      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
-          MotorType.kBrushless));
-
+    public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
+        new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+            MotorType.kBrushless),
+        new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+            MotorType.kBrushless));
+    
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
           new TalonFX(DriveTrainConstants.FRONT_RIGHT_DRIVE_MOTOR_CANID),
@@ -95,11 +93,9 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB) // navx
   );
 
-  
   public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
       new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
-          
 
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
       new CANSparkMax(IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
@@ -107,22 +103,22 @@ public class RobotContainer {
       new DigitalInput(IntakeConstants.LOWER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
-    
+
   private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(
     new CANSparkMax(TransitionConstants.TRANSITION_MOTOR_CANID, MotorType.kBrushless),
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem);
+  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem, m_ShooterAngleSubsystem);
     
   private final Limelight m_limelight = new Limelight(m_driveTrain);
 
   private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
-    
+
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
-  
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -149,11 +145,6 @@ public class RobotContainer {
         m_ShooterAngleSubsystem);
 
     m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
-
-    // m_driverController.rightBumper().whileTrue(new RunCommand(() -> m_limelight.turnToSpeaker()));
-    // m_driverController.leftTrigger().whileTrue(new RunCommand(() -> m_limelight.goToCenterOfSpeaker()));
-
-    // () -> getDPad()
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
         m_driveTrain,

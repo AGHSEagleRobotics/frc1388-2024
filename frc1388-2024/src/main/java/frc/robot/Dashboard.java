@@ -18,7 +18,7 @@ import frc.robot.subsystems.ShooterAngleSubsystem;
 public class Dashboard {
     private final ShuffleboardTab m_shuffleboardTab;
     private final String SHUFFLEBOARD_TAB_NAME = "Competition";
-    private final GenericEntry m_canYouShoot;
+    // private final GenericEntry m_canYouShoot;
     // private final SimpleWidget m_shooterPosition;
     private final ComplexWidget m_complexWidgetObjective;
     private static SendableChooser<Objective> m_autoObjective = new SendableChooser<>();
@@ -34,11 +34,12 @@ public class Dashboard {
         .withPosition(0, 0)
         .withSize(20, 14);
 
-        m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(8, 4)
-        .withPosition(20, 0)
-        .getEntry();
+        // possibly add later when we have a way to detect if we can succesfully make a shot
+        // m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
+        // .withWidget(BuiltInWidgets.kBooleanBox)
+        // .withSize(8, 4)
+        // .withPosition(20, 0)
+        // .getEntry();
 
         // m_shooterPosition = m_shuffleboardTab.add("Shooter Position", m_shooterAngleSubsystem.getCurrentPosition())
         //     .withWidget(BuiltInWidgets.kNumberBar)
@@ -58,9 +59,9 @@ public class Dashboard {
 
     } //end constructor
 
-    public void setIfCanShoot(boolean isReset) {
-        m_canYouShoot.setBoolean(isReset);
-    }
+    // public void setIfCanShoot(boolean isReset) {
+    //     m_canYouShoot.setBoolean(isReset);
+    // }
 
     public Objective getObjective() {
         return m_autoObjective.getSelected();
