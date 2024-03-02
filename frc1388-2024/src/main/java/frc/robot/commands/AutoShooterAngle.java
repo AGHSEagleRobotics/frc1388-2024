@@ -38,6 +38,11 @@ private double m_shooterAngle;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if( Math.abs(m_shooterAngle - m_shooterAngleSubsystem.getCurrentPosition()) < 0.02){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 }
