@@ -71,11 +71,11 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void setLifterMotor(double power) {
 
-    if ((getUpperLimit()) && (power > 0)) {
+    if ((atUpperLimit()) && (power > 0)) {
       power = 0;
     }
 
-    if ((getLowerLimit()) && (power < 0)) {
+    if ((atLowerLimit()) && (power < 0)) {
       power = 0;
     }
 
@@ -86,7 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * 
    * @return true if upper limit switch is pressed
    */
-  public boolean getUpperLimit() {
+  public boolean atUpperLimit() {
 
     return m_upperLimit.get();
 
@@ -96,7 +96,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * 
    * @return true if lower limit switch is pressed
    */
-  public boolean getLowerLimit() {
+  public boolean atLowerLimit() {
 
     return m_lowerLimit.get();
 
@@ -112,8 +112,8 @@ public class IntakeSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     // DEBUG 
-    SmartDashboard.putBoolean("upper limit", getUpperLimit());
-    SmartDashboard.putBoolean("lower limit", getLowerLimit());
+    SmartDashboard.putBoolean("upper limit", atUpperLimit());
+    SmartDashboard.putBoolean("lower limit", atLowerLimit());
     SmartDashboard.putBoolean("beam break", isNoteDetected());
   }
   
