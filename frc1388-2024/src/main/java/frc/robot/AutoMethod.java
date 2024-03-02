@@ -16,6 +16,7 @@ import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoToPoint;
+import frc.robot.commands.AutoShooterAngle;
 import frc.robot.commands.AutoShooterCommand;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
@@ -54,39 +55,38 @@ public class AutoMethod {
   }
 
   public Command Start1Leave(){
-   // return new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem);
-
-   // test code
-   return new SequentialCommandGroup(
-    new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-      .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-    new AutoDrive(-1, m_driveTrainSubsystem)
-   );
+    return new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem);
   }
 
   public Command Shoot1IntakeBSpeakerB(){
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp)),
-      new WaitCommand(0.5),
+    return new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionUp, m_shooterAngleSubsystem)
+      .alongWith(new SequentialCommandGroup(
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-      new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown)),
-      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem)
-      .alongWith(new WaitCommand(.25)
-       .andThen(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem))),
-      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)) 
+         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionDown, m_shooterAngleSubsystem)
+        .alongWith(
+          new SequentialCommandGroup(
+            new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem)
+            .alongWith(new WaitCommand(.25)
+            .andThen(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem))),
+            new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+            .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)) 
+          )
+        )
+      )
     );
+
     // return new SequentialCommandGroup(
     //   new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp)),
-    //   new WaitCommand(2.0),
-    //   new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
-    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)),
-    //   new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
-    //     .alongWith(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)),
-    //   new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem),
-    //   new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
-    //     .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)) 
+    //   new WaitCommand(0.5),
+    //   new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+    //     .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+    //   new InstantCommand(() -> m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown)),
+    //   new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem)
+    //   .alongWith(new WaitCommand(.25)
+    //    .andThen(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem))),
+    //   new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+    //     .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)) 
     // );
   }
   
@@ -161,7 +161,7 @@ public class AutoMethod {
   }
 
   public Command testCoordinate(){
-    return new AutoGoToPoint(0, 3, m_driveTrainSubsystem);
+    return new AutoGoToPoint(0, 1, m_driveTrainSubsystem);
   }
 
   public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
