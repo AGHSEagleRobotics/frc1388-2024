@@ -121,8 +121,11 @@ public final class Constants {
     public static final double ROLLER_MOTOR_SPEED_IN_TRANSITION = 0.5;
     public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
 
-    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
-    public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4;
+    public static final double LIFTER_MOTOR_SPEED_UP = 0.5;
+
+    /** The amount of consecutive tick the beambreak must be triggered for the intake to retract. */
+    public static final int TICKS_BEFORE_RETRACTING_INTAKE = 4;
   }
 
   public static class FieldConstants {
