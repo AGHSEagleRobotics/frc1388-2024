@@ -125,6 +125,7 @@ public final class Constants {
 
     public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4;
     public static final double LIFTER_MOTOR_SPEED_UP = 0.5;
+    public static final double LIFTER_MOTOR_SPEED_UP_HOLD = 0.2;
 
     /** The amount of consecutive tick the beambreak must be triggered for the intake to retract. */
     public static final int TICKS_BEFORE_RETRACTING_INTAKE = 4;

@@ -15,6 +15,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.SwerveAutoTesting;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
@@ -146,6 +147,8 @@ public class RobotContainer {
         () -> m_driverController.getRightX());
 
     m_driveTrain.setDefaultCommand(m_driveCommand);
+
+    m_intakeSubsystem.setDefaultCommand(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
 
     // Configure the trigger bindings
     configureBindings();

@@ -119,7 +119,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -152,7 +152,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
     )
     .andThen(
       new AutoGoToPoint(1.75, 0, 180, m_driveTrainSubsystem)    
@@ -193,7 +193,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
