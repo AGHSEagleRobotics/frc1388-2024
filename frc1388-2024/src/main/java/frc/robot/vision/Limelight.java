@@ -16,7 +16,7 @@ public class Limelight extends SubsystemBase {
 
   /** Creates a new Limelight. */
   public Limelight(DriveTrainSubsystem driveTrain) {
-    m_table = NetworkTableInstance.getDefault().getTable("limelight");
+    m_table = NetworkTableInstance.getDefault().getTable("limelight-shooter");
     m_driveTrain = driveTrain;
     // double rz = (bot_pose_blue[5] + 360) % 360; (test what this does later)
 
@@ -252,6 +252,14 @@ public class Limelight extends SubsystemBase {
 
   public double getAngleFromSpeaker() {
     return getdegRotationToTarget();
+  }
+
+  public void setLimelightLEDsOn(Boolean on) {
+    if (on) {
+      m_table.getEntry("ledMode").setNumber(2);
+    } else {
+      m_table.getEntry("ledMode").setNumber(1);
+    }
   }
 
   @Override
