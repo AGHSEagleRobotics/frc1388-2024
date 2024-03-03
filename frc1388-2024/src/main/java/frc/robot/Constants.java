@@ -76,7 +76,7 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SPEAKER_SHOT_RPM = 3000;
+    public static final double SPEAKER_SHOT_RPM = 3500;
     public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
@@ -102,8 +102,8 @@ public final class Constants {
     public static final int kPotentiometerAnalogIN = 3;
 
     public static final double kShooterPositionUp = 0.37; 
-    public static final double kShooterPositionDown = 0.275; 
-
+    public static final double kShooterPositionDown = 0.245; 
+    public static final double kShooterPositionNoteB = 0.266;
     public static final double kShooterMaxHeight = 0.4; // observed max is roughly
     public static final double kShooterMinHeight = 0.16; //  observed min without hitting transition 
 
@@ -166,12 +166,12 @@ public final class Constants {
 
     public enum Objective{
         SITSTILL ("LookPretty"),
-        START1LEAVE ("Start1&Leave"),
-        LEAVEANDSHOOT ("shootAndLeave"),
-        Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B"),
-        Shoot2 ("Shoot2"),
-        Shoot3 ("Shoot3"),
-        Shoot1IntakeBSpeakerBIntakeASpeakerA ("Shoot 1, Intake B, score B, Intake C, score C"),
+        START1LEAVE ("1, Leave"),
+        LEAVEANDSHOOT ("1, Shoot, Leave"),
+        Shoot1IntakeBSpeakerB ("1, B"),
+        Shoot2 ("2, Shoot"),
+        Shoot3 ("3, Shoot"),
+        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
         testCoordinate ("testcoordinate");
 
       public static final Objective Default = SITSTILL;
