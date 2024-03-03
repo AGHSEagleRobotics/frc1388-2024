@@ -58,12 +58,21 @@ public class ShooterAngleCommand extends Command {
 
       double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
 
-      if (m_limelight.getDistance() < LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM) {
-      goToAngle = LimelightConstants.SLOPE_MATH_SUBLIFER_TO_PODIUM * m_limelight.getDistance() + LimelightConstants.SHOOTER_OFFSET_SUB;
-       goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionDown, ShooterAngleSubsystemConstants.kShooterPositionUp);
+      // mycurvefit numbers for quadratic interpolation
+
+      // goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
+      //             LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * m_limelight.getDistance() +
+      //             LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * Math.pow(m_limelight.getDistance(), 2);
+      
+      if (m_limelight.getDistance() > 0 && m_limelight.getDistance() < LimelightConstants.DISTANCE_FROM_APRILTAG_POSITIONB) {
+      goToAngle = (LimelightConstants.SLOPE_MATH_SUBLIFER_TO_POSITIONB * m_limelight.getDistance()) + LimelightConstants.SHOOTER_OFFSET_SUBTOB;
+       goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionNoteB, ShooterAngleSubsystemConstants.kShooterPositionUp);
+      }
+      else if (m_limelight.getDistance() > LimelightConstants.DISTANCE_FROM_APRILTAG_POSITIONB && m_limelight.getDistance() < LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM) {
+        goToAngle = (LimelightConstants.SLOPE_MATH_POSITIONB_TO_PODIUM * m_limelight.getDistance()) + LimelightConstants.SHOOTER_OFFSET_B_TO_POD;
       }
       else if (m_limelight.getDistance() > LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM && m_limelight.getDistance() < LimelightConstants.DISTANCE_FROM_APRILTAG_WING) {
-        goToAngle = LimelightConstants.SLOPE_MATH_PODIUM_TO_WING * m_limelight.getDistance() + LimelightConstants.SHOOTER_OFFSET_WING;
+        goToAngle = (LimelightConstants.SLOPE_MATH_PODIUM_TO_WING * m_limelight.getDistance()) + LimelightConstants.SHOOTER_OFFSET_WING;
         goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionWing, ShooterAngleSubsystemConstants.kShooterPositionDown);
       }
    

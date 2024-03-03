@@ -75,8 +75,10 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_FF = 0;
 
     public static final double SPEAKER_SHOT_RPM = 3000;
-    public static final double AMP_SHOT_RPM = 1000;
+    public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
+    public static final int kShooterMotor1CANID = 0;
+    public static final int kShooterMotor2CANID = 0;
 
   }
 
@@ -95,12 +97,13 @@ public final class Constants {
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionUp = 0.38; // 0.37 seems like a good sublifer angle
-    public static final double kShooterPositionDown = 0.275; // 0.25 seem good for podium
-    public static final double kShooterPositionWing = 0.22;
+    public static final double kShooterPositionUp = 0.37; // 0.37 seems like a good sublifer angle
+    public static final double kShooterPositionDown = 0.245; // 0.25 seem good for podium
+    public static final double kShooterPositionNoteB = 0.266;
+    public static final double kShooterPositionWing = 0.2;
 
-    public static final double kShooterMaxHeight = 0.4; // observed max is roughly 0.4
-    public static final double kShooterMinHeight = 0.14; // observed min without hitting transition is 0.14
+    public static final double kShooterMaxHeight = 0.4; // observed max is roughly
+    public static final double kShooterMinHeight = 0.16; //  observed min without hitting transition 
 
     public static final int kShooterAngleMotorCANID = 22;
 
@@ -115,11 +118,14 @@ public final class Constants {
     public static final int BEAM_BREAK_DIO = 1;
 
     public static final double ROLLER_MOTOR_SPEED_IN_INTAKING = 0.7;
-    public static final double ROLLER_MOTOR_SPEED_IN_TRANSITION = 0.5;
+    public static final double ROLLER_MOTOR_SPEED_IN_TRANSITION = 0.4;
     public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
 
-    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4; // XXX increase for final design
-    public static final double LIFTER_MOTOR_SPEED_UP = 0.5; // XXX increase for final design
+    public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4;
+    public static final double LIFTER_MOTOR_SPEED_UP = 0.5;
+
+    /** The amount of consecutive tick the beambreak must be triggered for the intake to retract. */
+    public static final int TICKS_BEFORE_RETRACTING_INTAKE = 4;
   }
 
   public static class FieldConstants {
@@ -137,14 +143,27 @@ public final class Constants {
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
     public static final double TX_OFFSET = 0.0;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
-    public static final double DISTANCE_FROM_APRILTAG_SUBLIFER = 1.375;
+    public static final double DISTANCE_FROM_APRILTAG_SUBWOOFER = 1.35;
+    public static final double DISTANCE_FROM_APRILTAG_POSITIONB = 2.54;
     public static final double DISTANCE_FROM_APRILTAG_WING = 5.87248;
-    public static final double SLOPE_MATH_SUBLIFER_TO_PODIUM = (ShooterAngleSubsystemConstants.kShooterPositionDown - 
-    ShooterAngleSubsystemConstants.kShooterPositionUp) / (DISTANCE_FROM_APRILTAG_PODIUM - DISTANCE_FROM_APRILTAG_SUBLIFER);
-    public static final double SHOOTER_OFFSET_SUB = 0.486;
+    public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
+    ShooterAngleSubsystemConstants.kShooterPositionUp) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);
+    public static final double SHOOTER_OFFSET_SUBTOB = 0.5177895;
+    public static final double SLOPE_MATH_POSITIONB_TO_PODIUM = (ShooterAngleSubsystemConstants.kShooterPositionDown - 
+    ShooterAngleSubsystemConstants.kShooterPositionNoteB) / (DISTANCE_FROM_APRILTAG_PODIUM - DISTANCE_FROM_APRILTAG_POSITIONB);
+    public static final double SHOOTER_OFFSET_B_TO_POD = 0.1149024;
     public static final double SLOPE_MATH_PODIUM_TO_WING = (ShooterAngleSubsystemConstants.kShooterPositionWing - 
     ShooterAngleSubsystemConstants.kShooterPositionDown) / (DISTANCE_FROM_APRILTAG_WING - DISTANCE_FROM_APRILTAG_PODIUM);
-    public static final double SHOOTER_OFFSET_WING = 0.331;
+    public static final double SHOOTER_OFFSET_WING = 0.3305;
+
+    // mycurvefit numbers for quadratic interpolation based on X Distance values and Y Shooter angles
+    // values = 
+    // Subwoofer (1.375, 0.38), 
+    // Podium (2.95, 0.275), 
+    // Back of the Wing (5.87, 0.22)
+    public static final double QUADRATIC_AUTO_SHOOTER_A = -0.514829; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.112688; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.01064095;
   }
 
   public static class LEDConstants {
@@ -172,14 +191,18 @@ public final class Constants {
     public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
 
-    public static final double LEAVE_ZONE_FROM_SUB_DIST = -1.5;
+    public static final double LEAVE_ZONE_FROM_SUB_DIST = -1  ;
 
-    public enum Objective {
-      SITSTILL("LookPretty"),
-      START1LEAVE("Start1&Leave"),
-      LEAVEANDSHOOT("shootAndLeave"),
-      Shoot1IntakeBSpeakerB("Shoot 1, Intake B, score B"),
-      LimelightShoot1IntakeBSpeakerB("Shoot 1, Intake B, Score B");
+    public enum Objective{
+        SITSTILL ("LookPretty"),
+        START1LEAVE ("Start1&Leave"),
+        LEAVEANDSHOOT ("shootAndLeave"),
+        Shoot1IntakeBSpeakerB ("Shoot 1, Intake B, score B"),
+        Shoot2 ("Shoot2"),
+        Shoot3 ("Shoot3"),
+        LimelightShoot1IntakeBSpeakerB("Shoot 1, Intake B, Score B"),
+        Shoot1IntakeBSpeakerBIntakeASpeakerA ("Shoot 1, Intake B, score B, Intake C, score C"),
+        testCoordinate ("testcoordinate");
 
       public static final Objective Default = SITSTILL;
 
