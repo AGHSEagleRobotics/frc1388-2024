@@ -136,7 +136,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public double getDistance() {
-    double[] targetSpace = m_shooterTable.getEntry("camerapose_targetspace")
+    double[] targetSpace = m_shooterTable.getEntry("targetpose_cameraspace")
         .getDoubleArray(new double[] {});
     // finds distance in meters (needs callibration from limelight) needs to see the
     // april tag (needs testing)

@@ -74,7 +74,7 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SPEAKER_SHOT_RPM = 3000;
+    public static final double SPEAKER_SHOT_RPM = 3500;
     public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
@@ -107,7 +107,7 @@ public final class Constants {
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.01;
+    public static final double P_TOLERANCE = 0.005;
   }
 
   public static class IntakeConstants {
@@ -141,10 +141,11 @@ public final class Constants {
     public static final double TURN_P_VALUE_AUTO_TRACKING = 0.003;
     public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
-    public static final double TX_OFFSET = 0.0;
+    public static final double TX_OFFSET = 6.47;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
     public static final double DISTANCE_FROM_APRILTAG_SUBWOOFER = 1.35;
     public static final double DISTANCE_FROM_APRILTAG_POSITIONB = 2.54;
+    public static final double DISTANCE_FROM_APRILTAG_STARTLINE = 2.40;
     public static final double DISTANCE_FROM_APRILTAG_WING = 5.87248;
     public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
     ShooterAngleSubsystemConstants.kShooterPositionUp) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);
@@ -158,12 +159,12 @@ public final class Constants {
 
     // mycurvefit numbers for quadratic interpolation based on X Distance values and Y Shooter angles
     // values = 
-    // Subwoofer (1.375, 0.38), 
-    // Podium (2.95, 0.275), 
-    // Back of the Wing (5.87, 0.22)
-    public static final double QUADRATIC_AUTO_SHOOTER_A = -0.514829; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.112688; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.01064095;
+    // Subwoofer (1.375, 0.37), 
+    // NoteB (2.54, 0.266), 
+    // Podium (2.95, 0.245)
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5655117; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.1753465; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.02260965;
   }
 
   public static class LEDConstants {
