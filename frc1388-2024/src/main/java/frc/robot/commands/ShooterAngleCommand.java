@@ -46,20 +46,20 @@ public class ShooterAngleCommand extends Command {
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     if (m_yButton.get()) {
       m_manualMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionSpeaker);
       // m_ShooterAngleSubsystem.setPosition(0.4);
     } else if (m_aButton.get()) {
       m_manualMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionPodium);
     } else if (m_bButton.get()) {
       m_manualMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMaxHeight);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMax);
     } else if (leftY < 0) {
       m_manualMode = true;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMaxHeight);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMax);
     } else if (leftY > 0) {
       m_manualMode = true;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMinHeight);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMin);
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     }

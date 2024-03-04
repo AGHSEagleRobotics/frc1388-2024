@@ -101,11 +101,12 @@ public final class Constants {
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionUp = 0.37; 
-    public static final double kShooterPositionDown = 0.245; 
+    public static final double kShooterPositionSpeaker = 0.37; 
+    public static final double kShooterPositionPodium = 0.245; 
+    public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.266;
-    public static final double kShooterMaxHeight = 0.4; // observed max is roughly
-    public static final double kShooterMinHeight = 0.16; //  observed min without hitting transition 
+    public static final double kShooterPositionMax = 0.4; // observed max is roughly
+    public static final double kShooterPositionMin = 0.16; //  observed min without hitting transition 
 
     public static final int kShooterAngleMotorCANID = 22;
 
