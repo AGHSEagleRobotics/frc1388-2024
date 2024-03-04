@@ -155,6 +155,16 @@ public class Limelight extends SubsystemBase {
     return getAprilTagTx();
   }
 
+  public void setLimelightLEDsOn(Boolean on) {
+    if (on) {
+      m_shooterTable.getEntry("ledMode").setNumber(LimelightConstants.LED_FORCE_BLINK);
+      m_intakeTable.getEntry("ledMode").setNumber(LimelightConstants.LED_FORCE_BLINK);
+    } else {
+      m_shooterTable.getEntry("ledMode").setNumber(LimelightConstants.LED_FORCE_OFF);
+      m_intakeTable.getEntry("ledMode").setNumber(LimelightConstants.LED_FORCE_OFF);
+    }
+  }
+
   @Override
   public void periodic() {
     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {

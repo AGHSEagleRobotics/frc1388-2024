@@ -48,7 +48,7 @@ public class DeployIntakeCommand extends Command {
     m_intakeSubsystem.setRollerMotor(0);
     
     if (!interrupted && m_intakeSubsystem.isNoteDetected()) {
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true).schedule();
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem).schedule();
     }
   }
 

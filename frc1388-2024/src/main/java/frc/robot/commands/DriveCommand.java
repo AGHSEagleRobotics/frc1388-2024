@@ -94,7 +94,7 @@ public class DriveCommand extends Command {
       omega = scale(rightX, 2.5);
       m_autoTracking = false;
       m_goingToAngle = false;
-    } else if (m_a.get()) {
+    } else if (m_y.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
       m_angleSetPoint = 180;
@@ -106,7 +106,7 @@ public class DriveCommand extends Command {
       m_goingToAngle = true;
       m_autoTracking = false;
       m_angleSetPoint = 120;
-    } else if (m_y.get()) {
+    } else if (m_a.get()) {
       m_autoTracking = false;
       m_goingToAngle = true;
       if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {

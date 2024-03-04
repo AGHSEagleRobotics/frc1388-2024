@@ -14,14 +14,13 @@ public class RetractIntakeCommand extends Command {
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
 
-  private final boolean m_autoRetracting;
+  private double m_intakeSpeed = IntakeConstants.LIFTER_MOTOR_SPEED_UP;
 
-  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem, boolean autoRetracting) {
+  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intakeSubsystem = intakeSubsystem;
     m_transitionSubsystem = transitionSubsystem;
 
-    m_autoRetracting = autoRetracting;
     addRequirements(m_intakeSubsystem, m_transitionSubsystem);
   }
 
@@ -33,17 +32,20 @@ public class RetractIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // TODO increase lifter motor speed
-    m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
+    if (! m_intakeSubsystem.atUpperLimit()) {
+      m_intakeSubsystem.setLifterMotor(m_intakeSpeed);
+    }
+    else {
+      m_intakeSubsystem.setLifterMotor(0);
+      m_intakeSpeed = IntakeConstants.LIFTER_MOTOR_SPEED_UP_HOLD;
+    }
+
     m_intakeSubsystem.setRollerMotor(0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (!interrupted && m_autoRetracting) {
-      new PullToTransition(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0).schedule();
-    }
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);
   }
@@ -51,6 +53,6 @@ public class RetractIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.atUpperLimit();
+    return false;
   }
 }

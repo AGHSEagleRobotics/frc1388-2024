@@ -10,6 +10,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.vision.Limelight;
 
 public class IntakeTransitionCommand extends Command {
 
@@ -22,16 +23,20 @@ public class IntakeTransitionCommand extends Command {
 
   private final boolean m_pullToTransition;
 
+  private final Limelight m_Limelight;
+
   IntakeSubsystem m_intakeSubsystem;
   private int m_ticksNoteIsDetectedInIntake = 0;
   TransitionSubsystem m_transitionSubsystem;
 
   /** Creates a new IntakeTransitionCommand. */
-  public IntakeTransitionCommand(IntakeTransState initialState, boolean pullToTransition, IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
+  public IntakeTransitionCommand(IntakeTransState initialState, boolean pullToTransition, IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem, Limelight limelight) {
 
     m_initialState = initialState;
 
     m_pullToTransition = pullToTransition;
+
+    m_Limelight = limelight;
 
     m_intakeSubsystem = intakeSubsystem;
     m_transitionSubsystem = transitionSubsystem;
@@ -71,6 +76,7 @@ public class IntakeTransitionCommand extends Command {
 
 
       case RETRACTING:
+      m_Limelight.setLimelightLEDsOn(true);
         m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
         m_intakeSubsystem.setRollerMotor(0);
         if (m_intakeSubsystem.atUpperLimit()) {
@@ -87,6 +93,7 @@ public class IntakeTransitionCommand extends Command {
         break;
       
       case TRANSITION:
+        m_Limelight.setLimelightLEDsOn(false);
         m_transitionSubsystem.set(TransitionConstants.TRANSITION_MOTOR_POWER_IN);
         m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_TRANSITION);
         if (m_transitionSubsystem.isNoteDetected()) {
@@ -109,6 +116,7 @@ public class IntakeTransitionCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_Limelight.setLimelightLEDsOn(false);
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);
     m_transitionSubsystem.set(0);

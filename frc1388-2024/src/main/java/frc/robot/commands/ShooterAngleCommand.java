@@ -61,7 +61,7 @@ public class ShooterAngleCommand extends Command {
       double distance2 = distance * distance;
 
       // mycurvefit numbers for quadratic interpolation
-      if ((distance > 0) && (distance < 4)) {
+      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
@@ -92,23 +92,23 @@ public class ShooterAngleCommand extends Command {
     if (m_yButton.get()) {
       m_manualMode = false;
       m_autoMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionUp);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionSpeaker);
     } else if (m_aButton.get()) {
       m_manualMode = false;
       m_autoMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDown);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionPodium);
     } else if (m_bButton.get()) {
       m_manualMode = false;
       m_autoMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMaxHeight);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMax);
     } else if (leftY < 0) {
       m_manualMode = true;
       m_autoMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMaxHeight);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMax);
     } else if (leftY > 0) {
       m_manualMode = true;
       m_autoMode = false;
-      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterMinHeight);
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMin);
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     } else if (m_autoMode == true) {

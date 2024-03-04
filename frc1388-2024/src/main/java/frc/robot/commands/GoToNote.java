@@ -57,7 +57,7 @@ public class GoToNote extends Command {
     double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? LimelightConstants.METERS_PER_SECOND / 2
         : LimelightConstants.METERS_PER_SECOND;
     if (m_limelight.getIsNoteFound()) {
-      m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(xVelocity, 0, omega, new Rotation2d()));
+      m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(-xVelocity, 0, omega, new Rotation2d()));
     } else {
       m_driveTrain.drive(0, 0, 0);
     }
