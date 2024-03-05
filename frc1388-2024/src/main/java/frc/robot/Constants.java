@@ -167,7 +167,7 @@ public final class Constants {
         START1LEAVE ("1, Leave"),
         LEAVEANDSHOOT ("1, Shoot, Leave"),
         Shoot1IntakeBSpeakerB ("1, B"),
-        Shoot123 ("Shoot from any pos");
+        Shoot123 ("1 Shoot");
 //        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
 //        testCoordinate ("testcoordinate");
 
