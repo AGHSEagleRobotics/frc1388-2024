@@ -202,6 +202,14 @@ public class RobotContainer {
     // m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
     m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
 
+    m_driverController.back().whileTrue(
+      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      .andThen(
+        new ShooterCommand(ShooterConstants.DREW_SAUCY_SHOT, m_shooterSubsystem) // speaker shot rmp
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
+    
     // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger(0.9).whileTrue(
       new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)

@@ -77,6 +77,8 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_FF = 0;
 
     public static final double SPEAKER_SHOT_RPM = 3500;
+        public static final double DREW_SAUCY_SHOT = 5500;
+
     public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
