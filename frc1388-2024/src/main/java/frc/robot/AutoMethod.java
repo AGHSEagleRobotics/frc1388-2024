@@ -68,20 +68,33 @@ public class AutoMethod {
 
   public Command Start123Shoot(){
     return new SequentialCommandGroup(
-      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionUp, m_shooterAngleSubsystem),
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
     );
   }
 
+  // needs testing
   public Command Shoot3Leave(){
     return new SequentialCommandGroup(
-     new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionUp, m_shooterAngleSubsystem),
+     new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-      new AutoGoToPoint(2, -1.27, m_driveTrainSubsystem)
+      new AutoGoToPoint(2, -1.27, 135, m_driveTrainSubsystem)
     );
   }
+  
+  // needs testing
+  public Command Shoot2Leave(){
+    return new SequentialCommandGroup(
+     new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
+     new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+       .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+      new AutoGoToPoint(2, -1.27, 135, m_driveTrainSubsystem)
+    );
+  }
+  
+
 
 
   public Command Shoot1IntakeBSpeakerB(){
@@ -257,8 +270,8 @@ public class AutoMethod {
           case Shoot123:
             return Start123Shoot();
 
-          case Shoot3Leave:
-            return Shoot3Leave();
+          // case Shoot3Leave:
+          //   return Shoot3Leave();
 
           // case Shoot1IntakeBSpeakerBIntakeASpeakerA:
           //   return Shoot1IntakeBSpeakerB();

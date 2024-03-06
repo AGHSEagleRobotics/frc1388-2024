@@ -16,7 +16,7 @@ public class AutoDrive extends Command {
   private final double m_setPoint;
   private double m_start;
 
-  private final PIDController m_driveController = new PIDController(0.3, 0.015, 0);
+  private final PIDController m_driveController = new PIDController(0.06, 0.015, 0);
   private final SlewRateLimiter m_accelerationLimiter = new SlewRateLimiter(0.4);
 
   /** Creates a new AutoDrive. */
