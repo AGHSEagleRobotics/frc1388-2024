@@ -25,6 +25,8 @@ public final class Constants {
   public static class SwerveModuleConstants {
     public static final double DIST_PER_TICK = (1.0 / 6.75) * (0.3192); // ask calvin about the math
 
+    public static final double DIST_PER_MOTOR_ROTATION  = 5.65 / 131.14;
+
     public static final double DRIVE_MOTOR_P = 0.001;
     public static final double DRIVE_MOTOR_I = 0;
     public static final double DRIVE_MOTOR_D = 0;
@@ -90,24 +92,23 @@ public final class Constants {
     /** ejecting in direction opposite of the shooter. */
     public static final double TRANSITION_MOTOR_POWER_OUT = -1.0;
   }
-  
 
   public static class ShooterAngleSubsystemConstants {
     public static final double kShooterAngleP = 45;
-    public static final double kShooterAngleI = 0; 
     public static final double kShooterAngleD = 0;
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionUp = 0.37; 
-    public static final double kShooterPositionDown = 0.245; 
+    public static final double kShooterPositionSpeaker = 0.37; 
+    public static final double kShooterPositionPodium = 0.245; 
+    public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.266;
-    public static final double kShooterMaxHeight = 0.4; // observed max is roughly
-    public static final double kShooterMinHeight = 0.16; //  observed min without hitting transition 
+    public static final double kShooterPositionMax = 0.4; // observed max is roughly
+    public static final double kShooterPositionMin = 0.16; //  observed min without hitting transition 
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.01;
+    public static final double P_TOLERANCE = 0.005;
   }
 
   public static class IntakeConstants {
@@ -123,6 +124,7 @@ public final class Constants {
 
     public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4;
     public static final double LIFTER_MOTOR_SPEED_UP = 0.5;
+    public static final double LIFTER_MOTOR_SPEED_UP_HOLD = 0.2;
 
     /** The amount of consecutive tick the beambreak must be triggered for the intake to retract. */
     public static final int TICKS_BEFORE_RETRACTING_INTAKE = 4;
@@ -131,9 +133,44 @@ public final class Constants {
   public static class FieldConstants {
     public static final double ROBOT_WIDTH = 0.552; // in meters, with bumpers? find out
     public static final double ROBOT_LENGTH = 0.552; // in meters, with bumpers? find out
+    public static final double SUBLIFER_LENGTH = 0.91;
   }
 
   public static class LimelightConstants {
+    public static final double MAX_TY_VALUE = 8.5;
+    public static final double SLOW_DOWN = 0.5;
+    public static final double METERS_PER_SECOND = 0.2;
+    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.003;
+    public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
+    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
+    public static final double TX_OFFSET = 6.47;
+    public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
+    public static final double DISTANCE_FROM_APRILTAG_SUBWOOFER = 1.35;
+    public static final double DISTANCE_FROM_APRILTAG_POSITIONB = 2.54;
+    public static final double DISTANCE_FROM_APRILTAG_STARTLINE = 2.40;
+    public static final double DISTANCE_FROM_APRILTAG_WING = 5.87248;
+    public static final double LED_USE_PIPELINE = 0;
+    public static final double LED_FORCE_OFF = 1;
+    public static final double LED_FORCE_BLINK = 2;
+    public static final double LED_FORCE_ON = 3;
+    // public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
+    // ShooterAngleSubsystemConstants.kShooterPositionSpeaker) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);
+    // public static final double SHOOTER_OFFSET_SUBTOB = 0.5177895;
+    // public static final double SLOPE_MATH_POSITIONB_TO_PODIUM = (ShooterAngleSubsystemConstants.kShooterPositionPodium - 
+    // ShooterAngleSubsystemConstants.kShooterPositionNoteB) / (DISTANCE_FROM_APRILTAG_PODIUM - DISTANCE_FROM_APRILTAG_POSITIONB);
+    // public static final double SHOOTER_OFFSET_B_TO_POD = 0.1149024;
+    // public static final double SLOPE_MATH_PODIUM_TO_WING = (ShooterAngleSubsystemConstants.kShooterPositionWing - 
+    // ShooterAngleSubsystemConstants.kShooterPositionPodium) / (DISTANCE_FROM_APRILTAG_WING - DISTANCE_FROM_APRILTAG_PODIUM);
+    // public static final double SHOOTER_OFFSET_WING = 0.3305;
+
+    // mycurvefit numbers for quadratic interpolation based on X Distance values and Y Shooter angles
+    // values = 
+    // Subwoofer (1.375, 0.37), 
+    // NoteB (2.54, 0.266), 
+    // Podium (2.95, 0.245)
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5655117; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.1753465; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.02260965;
   }
 
   public static class LEDConstants {
@@ -146,7 +183,8 @@ public final class Constants {
 
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.003;
-    public static final double TURN_P_TOLERANCE = 1.25;
+
+    public static final double TURN_P_TOLERANCE = 0.25;
     public static final double TURN_I_VALUE = 0.003;
     public static final double TURN_D_VALUE = 0.004;
 
@@ -184,7 +222,5 @@ public final class Constants {
         return m_dashboardDescript;
       }
     }
-
   }
 }
-

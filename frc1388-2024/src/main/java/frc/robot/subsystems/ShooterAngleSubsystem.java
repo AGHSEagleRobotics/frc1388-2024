@@ -38,7 +38,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_targetPosition = MathUtil.clamp(m_targetPosition, ShooterAngleSubsystemConstants.kShooterMinHeight, ShooterAngleSubsystemConstants.kShooterMaxHeight);
+    m_targetPosition = MathUtil.clamp(m_targetPosition, ShooterAngleSubsystemConstants.kShooterPositionMin, ShooterAngleSubsystemConstants.kShooterPositionMax);
     
     double currentPosition = getCurrentPosition();
     double error = m_targetPosition - currentPosition;
@@ -48,6 +48,8 @@ public class ShooterAngleSubsystem extends SubsystemBase {
       speed = 0;
     }
     m_angleMotor.set(speed);
+    SmartDashboard.putNumber("error", error);
+    SmartDashboard.putNumber("shooter speed", speed);
 
 
     // if (currentPosition < m_targetPosition - 0.01) {

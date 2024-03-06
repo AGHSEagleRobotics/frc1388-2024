@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShooterAngleLimelight;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoShooterAngle;
@@ -22,6 +23,9 @@ import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.commands.FeedShooter;
+import frc.robot.commands.GoToNote;
+import frc.robot.commands.LineUpWithAprilTag;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
@@ -30,6 +34,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
+import frc.robot.vision.Limelight;
 public class AutoMethod {
 
   /** Creates a new AutoMethod. */
@@ -40,13 +45,16 @@ public class AutoMethod {
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
+  private final Limelight m_limelight;
 
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition, ShooterAngleSubsystem shooterAngle) {
+ 
+  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition, ShooterAngleSubsystem shooterAngle, Limelight limelight) {
     m_driveTrainSubsystem = driveTrainSubsystem;
     m_dashboard = dashboard;
     m_shooter = shooter;
     m_intakeSubsystem = intake;
     m_transitionSubsystem = transition;
+    m_limelight = limelight;
     m_shooterAngleSubsystem = shooterAngle;
   }
 
@@ -78,14 +86,15 @@ public class AutoMethod {
 
   public Command Shoot1IntakeBSpeakerB(){
     return new SequentialCommandGroup(
-      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionUp, m_shooterAngleSubsystem),
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
       new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionNoteB, m_shooterAngleSubsystem)
-        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem)
-          .deadlineWith(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem))), 
+        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)))), 
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))         
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)) 
     );
   }
   
@@ -107,7 +116,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -125,7 +134,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new AutoGoToPoint(-1.75,0, m_driveTrainSubsystem)
+      new AutoGoToPoint(-1.75,0, 180, m_driveTrainSubsystem)
     )
     .alongWith(
       new WaitCommand(1.0)
@@ -134,16 +143,16 @@ public class AutoMethod {
       new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)
     )
     .andThen(
-      new AutoGoToPoint(0,-2, m_driveTrainSubsystem)
+      new AutoGoToPoint(0,-2, 180, m_driveTrainSubsystem)
     )
     .alongWith(
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
     )
     .andThen(
-      new AutoGoToPoint(1.75, 0, m_driveTrainSubsystem)    
+      new AutoGoToPoint(1.75, 0, 180, m_driveTrainSubsystem)    
     )
     .andThen(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -160,7 +169,7 @@ public class AutoMethod {
   }
 
   public Command testCoordinate(){
-    return new AutoGoToPoint(0, 1, m_driveTrainSubsystem);
+    return new AutoGoToPoint(0, 1, 180, m_driveTrainSubsystem);
   }
 
   public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
@@ -181,7 +190,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -195,6 +204,19 @@ public class AutoMethod {
     .alongWith(
       new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
     );
+  }
+  
+  public Command LimelightShoot1IntakeBSpeakerB() {
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+        .alongWith(
+          new SequentialCommandGroup(
+            new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
+                .alongWith(
+                    new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2.0)),
+            new GoToNote(m_driveTrainSubsystem, m_limelight, m_intakeSubsystem)
+                .deadlineWith(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)),
+            new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter)
+                .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
   }
   
   public Command ShootAndLeave(){

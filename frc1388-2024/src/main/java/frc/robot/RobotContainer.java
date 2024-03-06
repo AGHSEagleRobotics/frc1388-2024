@@ -13,17 +13,20 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.AutoGoToPoint;
+import frc.robot.commands.ShooterAngleLimelight;
+import frc.robot.commands.AutoTracking;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
+import frc.robot.commands.GoToNote;
 import frc.robot.commands.IntakeTransitionCommand;
+import frc.robot.commands.LineUpWithAprilTag;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.SwerveAutoTesting;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
 import frc.robot.commands.ShooterAngleCommand;
-import frc.robot.subsystems.LoggingSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
@@ -38,7 +41,6 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,7 +49,6 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -63,11 +64,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final Dashboard m_dashboard = new Dashboard();
-    public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-        new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-            MotorType.kBrushless),
-        new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
-            MotorType.kBrushless));
+  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
+      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+          MotorType.kBrushless),
+      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+          MotorType.kBrushless));
     
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -93,7 +94,7 @@ public class RobotContainer {
       new AHRS(SerialPort.Port.kUSB) // navx
   );
 
-  public final ShooterAngleSubsystem m_ShooterAngleSubsystem = new ShooterAngleSubsystem(
+  public final ShooterAngleSubsystem m_shooterAngleSubsystem = new ShooterAngleSubsystem(
       new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
       new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
 
@@ -109,50 +110,58 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem, m_ShooterAngleSubsystem);
     
-  private final Limelight m_limelight = new Limelight(m_driveTrain);
 
-  private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
+    
+  // private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
+
+  private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
+
+    private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     DriveCommand m_driveCommand = new DriveCommand(
-      m_driveTrain,
-      m_limelight,
-      () -> m_driverController.getLeftY(),
-      () -> m_driverController.getLeftX(),
+        m_driveTrain,
+        m_limelight,
+        () -> m_driverController.getLeftY(),
+        () -> m_driverController.getLeftX(),
       () -> m_driverController.getRightX(),
-      () -> m_driverController.getHID().getAButton(),
+            () -> m_driverController.getHID().getAButton(),
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
       () -> m_driverController.getHID().getRightStickButton()
     );
-
+      
     m_driveTrain.setDefaultCommand(m_driveCommand);
+
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
         () -> m_operatorController.getHID().getYButton(),
         () -> m_operatorController.getHID().getAButton(),
         () -> m_operatorController.getHID().getBButton(),
         () -> m_operatorController.getLeftY(),
-        m_ShooterAngleSubsystem);
+        () -> m_operatorController.getHID().getStartButton(),
+        m_shooterAngleSubsystem, m_limelight);
+        
+    m_shooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
-    m_ShooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
         m_driveTrain,
         () -> m_driverController.getLeftY(),
         () -> m_driverController.getLeftX(),
         () -> m_driverController.getRightX());
-
+        
     m_driveTrain.setDefaultCommand(m_driveCommand);
+        
+    m_intakeSubsystem.setDefaultCommand(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
 
     // Configure the trigger bindings
     configureBindings();
@@ -188,24 +197,24 @@ public class RobotContainer {
 
     // DRIVER CONTROLS
     // m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
-    m_driverController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem));
-
+    m_driverController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    
     // m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
-    m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem));
+    m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
 
     // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger(0.9).whileTrue(
-      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem)
+      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
-    
+           
 
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
-      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem)
+      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
       .andThen(
         new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
@@ -213,16 +222,20 @@ public class RobotContainer {
     );
 
     // RESET GYRO CONTROL
+
     m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(180)));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem));
-    m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem));
+    m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
     m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     m_operatorController.rightTrigger().onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
     
+    // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
+    // m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
+    // m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 0, 0));
   }
 
   public void setAllEncoderOffsets() {
