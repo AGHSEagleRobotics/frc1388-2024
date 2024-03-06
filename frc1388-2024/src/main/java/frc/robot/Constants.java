@@ -62,6 +62,7 @@ public final class Constants {
     public static final String BACK_RIGHT_ENCODER_OFFSET_KEY = "2024/backRightEncoderOffset";
 
     public static final double CONTROLLER_DEADBAND = 0.1;
+    public static final double MANUAL_CONTROL_ANGLE_DEADBAND = 0.5;
     public static final double LEFT_STICK_SCALE = 2.5;
     public static final double RIGHT_STICK_SCALE = 5;
   }

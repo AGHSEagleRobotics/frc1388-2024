@@ -54,7 +54,7 @@ public class ShooterAngleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.MANUAL_CONTROL_ANGLE_DEADBAND);
 
       double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
       double distance = m_limelight.getDistance();
