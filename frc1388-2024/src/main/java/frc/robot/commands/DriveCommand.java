@@ -125,8 +125,10 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
+      if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
       double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
       omega = speed;
+      }
     }
 
     SmartDashboard.putBoolean("going to angle", m_goingToAngle);
