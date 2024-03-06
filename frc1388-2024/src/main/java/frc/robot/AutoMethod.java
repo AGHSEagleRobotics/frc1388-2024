@@ -59,11 +59,22 @@ public class AutoMethod {
   }
 
   public Command Start123Shoot(){
-    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2)
-      .alongWith(
-        new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
-    );  
+    return new SequentialCommandGroup(
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionUp, m_shooterAngleSubsystem),
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+    );
   }
+
+  public Command Shoot3Leave(){
+    return new SequentialCommandGroup(
+     new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionUp, m_shooterAngleSubsystem),
+     new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+       .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+      new AutoGoToPoint(2, -1.27, m_driveTrainSubsystem)
+    );
+  }
+
 
   public Command Shoot1IntakeBSpeakerB(){
     return new SequentialCommandGroup(
@@ -223,6 +234,9 @@ public class AutoMethod {
 
           case Shoot123:
             return Start123Shoot();
+
+          case Shoot3Leave:
+            return Shoot3Leave();
 
           // case Shoot1IntakeBSpeakerBIntakeASpeakerA:
           //   return Shoot1IntakeBSpeakerB();
