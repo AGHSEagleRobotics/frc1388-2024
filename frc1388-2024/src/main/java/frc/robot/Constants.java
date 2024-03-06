@@ -200,17 +200,17 @@ public final class Constants {
     public static final double TURN_MIN_SPEED_MOVING = 0.4;
     public static final double TURN_MIN_SPEED_THRESHOLD = 2;
 
-    public static final double LEAVE_ZONE_FROM_SUB_DIST = -1  ;
+    public static final double LEAVE_ZONE_FROM_SUB_DIST = -1.0  ;
 
     public enum Objective{
         SITSTILL ("LookPretty"),
         START1LEAVE ("1, Leave"),
         LEAVEANDSHOOT ("1, Shoot, Leave"),
         Shoot1IntakeBSpeakerB ("1, B"),
-        Shoot2 ("2, Shoot"),
-        Shoot3 ("3, Shoot"),
-        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
-        testCoordinate ("testcoordinate");
+        Shoot123 ("1 Shoot");
+//        Shoot3Leave ("3 Leave"); // needs testing
+//        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
+//        testCoordinate ("testcoordinate");
 
       public static final Objective Default = SITSTILL;
 
