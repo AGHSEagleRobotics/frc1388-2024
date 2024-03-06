@@ -77,8 +77,6 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_FF = 0;
 
     public static final double SPEAKER_SHOT_RPM = 3500;
-        public static final double DREW_SAUCY_SHOT = 5500;
-
     public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
@@ -101,8 +99,8 @@ public final class Constants {
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionDrewSaucyShot = 0.33; 
     public static final double kShooterPositionSpeaker = 0.37; 
+    public static final double kShooterPositionDrewSaucyShot = 0.33; 
     public static final double kShooterPositionPodium = 0.245; 
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.266;
