@@ -23,6 +23,7 @@ import frc.robot.commands.GoToNote;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.LineUpWithAprilTag;
 import frc.robot.commands.RetractIntakeCommand;
+import frc.robot.commands.RumbleIntakeTransitionCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.SwerveAutoTesting;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
@@ -46,6 +47,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -143,6 +145,7 @@ public class RobotContainer {
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
+        () -> m_operatorController.getHID().getXButton(),
         () -> m_operatorController.getHID().getYButton(),
         () -> m_operatorController.getHID().getAButton(),
         () -> m_operatorController.getHID().getBButton(),
@@ -197,11 +200,12 @@ public class RobotContainer {
 
     // DRIVER CONTROLS
     // m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
-    m_driverController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    m_driverController.leftBumper().onTrue(new RumbleIntakeTransitionCommand(m_driverController ,IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
     
     // m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
     m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
 
+    
     // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger(0.9).whileTrue(
       new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
@@ -228,7 +232,7 @@ public class RobotContainer {
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    m_operatorController.leftBumper().onTrue(new RumbleIntakeTransitionCommand(m_driverController ,IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
     m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
     m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
     m_operatorController.rightTrigger().onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));

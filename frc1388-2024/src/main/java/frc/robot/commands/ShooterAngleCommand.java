@@ -7,7 +7,6 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveTrainConstants;
@@ -18,6 +17,7 @@ import frc.robot.vision.Limelight;
 
 public class ShooterAngleCommand extends Command {
 
+  private final Supplier<Boolean> m_xButton;
   private final Supplier<Boolean> m_yButton;
   private final Supplier<Boolean> m_aButton;
   private final Supplier<Boolean> m_bButton;
@@ -29,9 +29,11 @@ public class ShooterAngleCommand extends Command {
   private boolean m_autoMode;
 
   /** Creates a new ShooterAngleCommand. */
-  public ShooterAngleCommand(Supplier<Boolean> yButton, Supplier<Boolean> aButton, Supplier<Boolean> bButton,
+  public ShooterAngleCommand(Supplier<Boolean> xButton, Supplier<Boolean> yButton, Supplier<Boolean> aButton, Supplier<Boolean> bButton,
       Supplier<Double> leftY, Supplier<Boolean> start, ShooterAngleSubsystem shooterAngleSubsystem,
       Limelight limelight) {
+
+    m_xButton = xButton;
     m_yButton = yButton;
     m_aButton = aButton;
     m_bButton = bButton;
@@ -101,6 +103,10 @@ public class ShooterAngleCommand extends Command {
       m_manualMode = false;
       m_autoMode = false;
       m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionMax);
+    } else if (m_xButton.get()) {
+      m_manualMode = false;
+      m_autoMode = false;
+      m_shooterAngleSubsystem.setPosition(ShooterAngleSubsystemConstants.kShooterPositionDrewSaucyShot);
     } else if (leftY < 0) {
       m_manualMode = true;
       m_autoMode = false;

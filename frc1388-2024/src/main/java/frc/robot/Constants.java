@@ -101,6 +101,7 @@ public final class Constants {
     public static final int kPotentiometerAnalogIN = 3;
 
     public static final double kShooterPositionSpeaker = 0.37; 
+    public static final double kShooterPositionDrewSaucyShot = 0.33; 
     public static final double kShooterPositionPodium = 0.245; 
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.266;
