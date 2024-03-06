@@ -73,6 +73,13 @@ public class AutoMethod {
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
     );
   }
+  public Command ShootAndLeave(){
+    return new SequentialCommandGroup(
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+        new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem));
+  }
 
   // needs testing
   public Command Shoot3Leave(){
@@ -232,18 +239,6 @@ public class AutoMethod {
                 .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
   }
   
-  public Command ShootAndLeave(){
-    return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2)
-    .alongWith(
-      new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
-    )
-    .alongWith(
-      new WaitCommand(1)
-    )
-    .andThen(
-      new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
-    );
-  }
 
   public Command getAutonomousCommand() {
         AutoConstants.Objective objective = m_dashboard.getObjective();
