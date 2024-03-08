@@ -147,6 +147,7 @@ public final class Constants {
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
     public static final double TX_OFFSET = 6.47;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
+    public static final double DISTANCE_FROM_APRILTAG_AUTOSHOOTER = 4;
     public static final double DISTANCE_FROM_APRILTAG_SUBWOOFER = 1.35;
     public static final double DISTANCE_FROM_APRILTAG_POSITIONB = 2.54;
     public static final double DISTANCE_FROM_APRILTAG_STARTLINE = 2.40;

@@ -28,9 +28,9 @@ public class Dashboard {
         m_shuffleboardTab =  Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
         Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
 
-        HttpCamera limelightShooterCamera = new HttpCamera("limelight", "http://limelight-shooter.local:5800");
-        CameraServer.addCamera(limelightShooterCamera);
-        Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightShooterCamera)
+        HttpCamera limelightIntakeCamera = new HttpCamera("limelight-intake", "http://limelight-intake.local:5800/");
+        CameraServer.addCamera(limelightIntakeCamera);
+        Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add(limelightIntakeCamera)
         .withPosition(0, 0)
         .withSize(20, 14);
 
