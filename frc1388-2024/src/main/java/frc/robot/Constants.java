@@ -104,7 +104,7 @@ public final class Constants {
     public static final double kShooterPositionDrewSaucyShot = 0.33; 
     public static final double kShooterPositionPodium = 0.245; 
     public static final double kShooterPositionStartLine = 0.277;
-    public static final double kShooterPositionNoteB = 0.266;
+    public static final double kShooterPositionNoteB = 0.261; // previously 0.266 for practice matches
     public static final double kShooterPositionMax = 0.4; // observed max is roughly
     public static final double kShooterPositionMin = 0.16; //  observed min without hitting transition 
 

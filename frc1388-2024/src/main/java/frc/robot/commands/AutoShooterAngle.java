@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 
 public class AutoShooterAngle extends Command {
@@ -38,7 +39,7 @@ private double m_shooterAngle;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if( Math.abs(m_shooterAngle - m_shooterAngleSubsystem.getCurrentPosition()) < 0.02){
+    if( Math.abs(m_shooterAngle - m_shooterAngleSubsystem.getCurrentPosition()) < ShooterAngleSubsystemConstants.P_TOLERANCE){
       return true;
     }
     else{
