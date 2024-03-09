@@ -102,7 +102,7 @@ public final class Constants {
 
     public static final double kShooterPositionSpeaker = 0.35; // previously 0.37 for competition matches
     public static final double kShooterPositionDrewSaucyShot = 0.33; 
-    public static final double kShooterPositionPodium = 0.245; 
+    public static final double kShooterPositionPodium = 0.23; 
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.25; // previously 0.266 for practice matches
     public static final double kShooterPositionMax = 0.4; // observed max is roughly
