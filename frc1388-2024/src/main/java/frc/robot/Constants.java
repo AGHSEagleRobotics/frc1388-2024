@@ -168,12 +168,12 @@ public final class Constants {
 
     // mycurvefit numbers for quadratic interpolation based on X Distance values and Y Shooter angles
     // values = 
-    // Subwoofer (1.375, 0.37), 
-    // NoteB (2.54, 0.266), 
-    // Podium (2.95, 0.245)
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.510435; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.121087; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.004347826;
+    // Subwoofer (1.35, 0.355), 
+    // NoteB (2.69, 0.253), 
+    // Podium (3, 0.245)
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5684954; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.1993099; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.0304927;
   }
 
   public static class LEDConstants {

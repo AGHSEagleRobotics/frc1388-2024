@@ -173,7 +173,7 @@ public class Limelight extends SubsystemBase {
     else {
       setShooterPipeline(1);
     }
-      SmartDashboard.putNumber("Distance to April Tag: ", getDistance()); // it calculates in meters
+      SmartDashboard.putNumber("Distance to April Tag", getDistance()); // it calculates in meters
       SmartDashboard.putBoolean("Is the target found", getApriltagTargetFound());
       SmartDashboard.putNumber("Get April Tag Tx", getAprilTagTx());
       SmartDashboard.putNumber("Get Note Tx", getNoteTx());
