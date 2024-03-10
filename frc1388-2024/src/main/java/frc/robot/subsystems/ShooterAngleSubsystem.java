@@ -43,13 +43,13 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     double currentPosition = getCurrentPosition();
     double error = m_targetPosition - currentPosition;
     double speed = error * ShooterAngleSubsystemConstants.kShooterAngleP;
-    SmartDashboard.putNumber("error", error);
+    // SmartDashboard.putNumber("error", error);
     if (Math.abs(error) <= ShooterAngleSubsystemConstants.P_TOLERANCE) {
       speed = 0;
     }
     m_angleMotor.set(speed);
-    SmartDashboard.putNumber("error", error);
-    SmartDashboard.putNumber("shooter speed", speed);
+    SmartDashboard.putNumber("shooter angle subsystem/error", error);
+    SmartDashboard.putNumber("shooter angle subsystem/shooter speed", speed);
 
 
     // if (currentPosition < m_targetPosition - 0.01) {
@@ -58,9 +58,9 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     // else if (currentPosition > m_targetPosition + 0.01) {
     //   m_angleMotor.set(-1);
     // }
-    SmartDashboard.putNumber("potentiometerPosition", currentPosition);
-    SmartDashboard.putNumber("target position", m_targetPosition);
-    SmartDashboard.putNumber("speed", speed);
+    SmartDashboard.putNumber("shooter angle subsystem/potentiometerPosition", currentPosition);
+    SmartDashboard.putNumber("shooter angle subsystem/target position", m_targetPosition);
+    SmartDashboard.putNumber("shooter angle subsystem/speed", speed);
     // This method will be called once per scheduler run
   }
 }

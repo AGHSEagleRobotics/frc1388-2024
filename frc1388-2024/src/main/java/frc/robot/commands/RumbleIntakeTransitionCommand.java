@@ -117,7 +117,7 @@ public class RumbleIntakeTransitionCommand extends Command {
 
         break;
     }
-    SmartDashboard.putString("intake transition state", m_state.name());
+    SmartDashboard.putString("rumble intake transition state", m_state.name());
   }
 
   // Called once the command ends or is interrupted.

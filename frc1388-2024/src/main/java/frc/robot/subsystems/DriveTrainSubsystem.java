@@ -276,14 +276,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_frontLeft.periodic();
     m_backLeft.periodic();
     m_backRight.periodic();
-    SmartDashboard.putNumber("odo x", getPose().getX());
-    SmartDashboard.putNumber("odo y", getPose().getY());
+    SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
+    SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
 
     SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
 
     // System.out.println("is odo null?" + (m_odometry == null));
 
-    SmartDashboard.putNumber("gyro angle", getAngle());
+    SmartDashboard.putNumber("drivetrain/gyro angle", getAngle());
 
   }
 }
