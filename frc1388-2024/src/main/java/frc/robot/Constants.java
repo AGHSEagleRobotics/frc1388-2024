@@ -171,9 +171,9 @@ public final class Constants {
     // Subwoofer (1.35, 0.355), 
     // NoteB (2.69, 0.253), 
     // Podium (3, 0.245)
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5684954; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.1993099; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.0304927;
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.4519931; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.07601399; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.0003433488;
   }
 
   public static class LEDConstants {
