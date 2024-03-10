@@ -81,6 +81,14 @@ public class AutoMethod {
         new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem));
   }
 
+  public Command ShootAndLeaveFromSideWithLonger(){
+    return new SequentialCommandGroup(
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+        new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem));
+  }
+
   // needs testing
   public Command Shoot3Leave(){
     return new SequentialCommandGroup(
@@ -264,6 +272,9 @@ public class AutoMethod {
 
           case Shoot123:
             return Start123Shoot();
+
+          case ShootAndLeaveFromSideWithLonger:
+            return ShootAndLeaveFromSideWithLonger();
 
           // case Shoot3Leave:
           //   return Shoot3Leave();
