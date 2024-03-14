@@ -279,7 +279,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
     SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
 
-    SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
+    SmartDashboard.putString("drivetrain/robot relative speeds", getRobotRelativeSpeeds().toString());
 
     // System.out.println("is odo null?" + (m_odometry == null));
 
