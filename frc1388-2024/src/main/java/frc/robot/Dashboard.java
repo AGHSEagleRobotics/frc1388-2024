@@ -34,17 +34,8 @@ public class Dashboard {
         .withPosition(0, 0)
         .withSize(20, 14);
 
-        // possibly add later when we have a way to detect if we can succesfully make a shot
-        // m_canYouShoot = m_shuffleboardTab.add("Can You Shoot?", false)
-        // .withWidget(BuiltInWidgets.kBooleanBox)
-        // .withSize(8, 4)
-        // .withPosition(20, 0)
-        // .getEntry();
 
-        // m_shooterPosition = m_shuffleboardTab.add("Shooter Position", m_shooterAngleSubsystem.getCurrentPosition())
-        //     .withWidget(BuiltInWidgets.kNumberBar)
-        //     .withSize(4, 4)
-        //     .withPosition(5, 2);
+        
 
         //objectives
         for (AutoConstants.Objective o : Objective.values()) {
@@ -58,10 +49,6 @@ public class Dashboard {
             .withPosition(20, 4);
 
     } //end constructor
-
-    // public void setIfCanShoot(boolean isReset) {
-    //     m_canYouShoot.setBoolean(isReset);
-    // }
 
     public Objective getObjective() {
         return m_autoObjective.getSelected();
