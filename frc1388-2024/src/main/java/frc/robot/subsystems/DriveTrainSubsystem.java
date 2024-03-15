@@ -115,18 +115,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.setSwerveModuleStates(states[3]);
     // do the divide by 3 speed here 
 
-    // odometry updating
-    if (m_odometry != null) {
-      m_odometry.update(
-        getGyroHeading(),
-        new SwerveModulePosition[] {
-            m_frontRight.getPosition(),
-            m_frontLeft.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        }
-      );
-    }
+   
   }
     /**
      * Applies offset to ALL swerve modules.
@@ -215,18 +204,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backLeft.setSwerveModuleStates(states[2]);
     m_backRight.setSwerveModuleStates(states[3]);
 
-
-    if (m_odometry != null) {
-      m_odometry.update(
-        getGyroHeading(),
-        new SwerveModulePosition[] {
-            m_frontRight.getPosition(),
-            m_frontLeft.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        });
-        // System.out.println("odo is being updated");
-    }
   }
 
   public double getDistTraveled() {
@@ -275,7 +252,21 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_frontRight.periodic();
     m_frontLeft.periodic();
     m_backLeft.periodic();
-    m_backRight.periodic();
+    m_backRight.periodic(); 
+    
+    // odometry updating
+    if (m_odometry != null) {
+      m_odometry.update(
+        getGyroHeading(),
+        new SwerveModulePosition[] {
+            m_frontRight.getPosition(),
+            m_frontLeft.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        }
+      );
+    }
+    
     SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
     SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
 

@@ -42,6 +42,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -255,6 +256,11 @@ public class RobotContainer {
     return m_autoMethod.getAutonomousCommand();
   }
 
+  public void resetPose() {
+    m_driveTrain.resetPose(new Pose2d());
+    new Pose2d(0, 0, m_driveTrain.getGyroHeading());
+  }
+    
   public void resetGyro() {
     m_driveTrain.resetGyroHeading(180);
   }

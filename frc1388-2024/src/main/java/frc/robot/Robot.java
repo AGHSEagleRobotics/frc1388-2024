@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     if (getBlueButton()) {
       m_robotContainer.resetGyro();
+      m_robotContainer.resetPose();
       RobotController.setRadioLEDState(RadioLEDState.kGreen);
     } else {
       RobotController.setRadioLEDState(RadioLEDState.kOff);
