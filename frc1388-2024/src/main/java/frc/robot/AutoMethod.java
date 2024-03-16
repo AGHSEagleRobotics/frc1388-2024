@@ -108,9 +108,6 @@ public class AutoMethod {
       new AutoGoToPoint(2, -1.27, 135, m_driveTrainSubsystem)
     );
   }
-  
-
-
 
   public Command Shoot1IntakeBSpeakerB(){
     return new SequentialCommandGroup(
@@ -197,7 +194,7 @@ public class AutoMethod {
   }
 
   public Command testCoordinate(){
-    return new AutoGoToPoint(0, 1, 180, m_driveTrainSubsystem);
+    return new AutoGoToPoint(7.32, 4.3, 180, m_driveTrainSubsystem);
   }
 
   public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
@@ -276,15 +273,15 @@ public class AutoMethod {
           case ShootAndLeaveFromSideWithLonger:
             return ShootAndLeaveFromSideWithLonger();
 
+          case testCoordinate:
+            return testCoordinate();
+
           // case Shoot3Leave:
           //   return Shoot3Leave();
 
           // case Shoot1IntakeBSpeakerBIntakeASpeakerA:
           //   return Shoot1IntakeBSpeakerB();
 
-          // case testCoordinate:
-          //   return testCoordinate();
-            
         }
         return null;
       }

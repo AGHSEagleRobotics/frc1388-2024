@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.vision.Limelight;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
@@ -56,11 +57,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_swerveTranslation2d);
   /** The odometry object keeps track of the robots position */
   private SwerveDriveOdometry m_odometry;
+  private Limelight m_limelight;
 
   /** gyro for detecting rotation angle */
   private final AHRS m_navxGyro;
 
-  public DriveTrainSubsystem(SwerveModule frontRight, SwerveModule frontLeft, SwerveModule backLeft, SwerveModule backRight, AHRS gyro) {
+  public DriveTrainSubsystem(SwerveModule frontRight, SwerveModule frontLeft, SwerveModule backLeft, SwerveModule backRight, AHRS gyro, Limelight limelight) {
 
     m_frontRight = frontRight;
     m_frontLeft = frontLeft;
@@ -68,6 +70,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight = backRight;
 
     m_navxGyro = gyro;
+
+    m_limelight = limelight;
     
     //gyro and odometry setup code I copied from a youtube video <br> https://www.youtube.com/watch?v=0Xi9yb1IMyA
     new Thread(() -> {
@@ -116,19 +120,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.setSwerveModuleStates(states[3]);
     // do the divide by 3 speed here 
 
-    // odometry updating
-    if (m_odometry != null) {
-      m_odometry.update(
-        getGyroHeading(),
-        new SwerveModulePosition[] {
-            m_frontRight.getPosition(),
-            m_frontLeft.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
+   
         }
-      );
-    }
-  }
     /**
      * Applies offset to ALL swerve modules.
      * <p>
@@ -164,8 +157,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_gyroOffset = offset;
     m_navxGyro.reset();
   }
-
+  
   public void resetPose(Pose2d pose) {
+    if (m_limelight.getApriltagTargetFound()) {
+      limelightResetPose();
+    } else {
+      swerveOnlyResetPose(pose);
+    }
+  }
+
+  public void swerveOnlyResetPose(Pose2d pose) {
     m_odometry.resetPosition(getGyroHeading(),
         new SwerveModulePosition[] {
             m_frontRight.getPosition(),
@@ -175,12 +176,26 @@ public class DriveTrainSubsystem extends SubsystemBase {
         },
         pose);
   }
+  
+
+  public void limelightResetPose() {
+        double[] botPose = m_limelight.getBotPose();
+      Pose2d pose2d = new Pose2d(botPose[0], botPose[1], getGyroHeading());
+      SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
+            m_frontRight.getPosition(),
+            m_frontLeft.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        };
+        if (m_odometry != null) {
+    m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, pose2d);
+        }
+  }
 
   public Pose2d getPose() {
     if (m_odometry != null) {
       return m_odometry.getPoseMeters();
     }
-    
     // return new Pose2d(123, 432, m_lastRotation2D);
     return new Pose2d(0, 0, getGyroHeading());
   }
@@ -216,19 +231,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backLeft.setSwerveModuleStates(states[2]);
     m_backRight.setSwerveModuleStates(states[3]);
 
-
-    if (m_odometry != null) {
-      m_odometry.update(
-        getGyroHeading(),
-        new SwerveModulePosition[] {
-            m_frontRight.getPosition(),
-            m_frontLeft.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        });
-        // System.out.println("odo is being updated");
     }
-  }
 
   public double getDistTraveled() {
     return m_frontRight.getPosition().distanceMeters;
@@ -277,8 +280,29 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_frontLeft.periodic();
     m_backLeft.periodic();
     m_backRight.periodic();
+    
+    double[] botPose = m_limelight.getBotPose();
+    // reset pose based on if we have an apriltag in view
+    if ((m_limelight.getApriltagTargetFound()) && (botPose[10] > 0.065)) {
+      limelightResetPose();
+    }
+    // odometry updating
+    else if (m_odometry != null) {
+      m_odometry.update(
+        getGyroHeading(),
+        new SwerveModulePosition[] {
+            m_frontRight.getPosition(),
+            m_frontLeft.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        }
+      );
+    }
+    
     SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
     SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
+
+    SmartDashboard.putString("drivetrain/robot relative speeds", getRobotRelativeSpeeds().toString());
 
     // System.out.println("is odo null?" + (m_odometry == null));
 

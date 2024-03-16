@@ -46,6 +46,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -73,6 +74,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
 
 
   Field2d m_Field2d = new Field2d();
@@ -105,7 +108,8 @@ public class RobotContainer {
           new TalonFX(DriveTrainConstants.BACK_RIGHT_ROTATION_MOTOR_CANID),
           new CANcoder(DriveTrainConstants.BACK_RIGHT_CANCODER),
           Preferences.getDouble(DriveTrainConstants.BACK_RIGHT_ENCODER_OFFSET_KEY, 0)),
-      new AHRS(SerialPort.Port.kUSB) // navx
+      new AHRS(SerialPort.Port.kUSB), // navx
+      m_limelight
   );
 
   public final ShooterAngleSubsystem m_shooterAngleSubsystem;
@@ -122,16 +126,13 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-    
-
-    
   // private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
-  private final Limelight m_limelight;
+  
 
     private final AutoMethod m_autoMethod;
 
@@ -292,7 +293,7 @@ public class RobotContainer {
           .onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
     }
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
-    // m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
+    // m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
     // m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 0, 0));
   }
 
@@ -331,6 +332,19 @@ public class RobotContainer {
     );
   }
 
+  public void autonomousInit() {
+    m_limelight.setAllianceColor(DriverStation.getAlliance().get());
+  }
+
+  public void teleopInit() {
+    m_limelight.setAllianceColor(DriverStation.getAlliance().get());
+  }
+
+  public void resetPose() {
+    m_driveTrain.resetPose(new Pose2d());
+    new Pose2d(0, 0, m_driveTrain.getGyroHeading());
+  }
+    
   public void resetGyro() {
     m_driveTrain.resetGyroHeading(180);
   }
