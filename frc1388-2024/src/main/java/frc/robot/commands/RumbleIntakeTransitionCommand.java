@@ -14,12 +14,14 @@ import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.vision.Limelight;
+import edu.wpi.first.wpilibj.Timer;
 
 public class RumbleIntakeTransitionCommand extends Command {
 
   private IntakeTransState m_state;
   private IntakeTransState m_initialState;
 
+  private Timer m_deployIntakeTimer = new Timer();
 
   private final boolean m_pullToTransition;
 
@@ -54,6 +56,7 @@ public class RumbleIntakeTransitionCommand extends Command {
   public void initialize() {
     m_state = m_initialState;
     System.out.println(m_state.name());
+    m_deployIntakeTimer.restart();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -63,7 +66,12 @@ public class RumbleIntakeTransitionCommand extends Command {
 
 
       case DEPLOYING:
-        m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+      if (m_deployIntakeTimer.hasElapsed(IntakeConstants.LIFTER_MOTOR_TIME_DOWN)) {
+        m_intakeSubsystem.setLifterMotor(0);
+      } else {
+         m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+      }
+
         if (m_intakeSubsystem.isNoteDetected()) {
           m_ticksNoteIsDetectedInIntake++;
           m_intakeSubsystem.setRollerMotor(0);

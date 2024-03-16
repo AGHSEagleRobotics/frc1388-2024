@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
@@ -19,7 +20,7 @@ public class IntakeTransitionCommand extends Command {
   }
   private IntakeTransState m_state;
   private IntakeTransState m_initialState;
-
+  private Timer m_deployIntakeTimer = new Timer();
 
   private final boolean m_pullToTransition;
 
@@ -50,6 +51,7 @@ public class IntakeTransitionCommand extends Command {
   public void initialize() {
     m_state = m_initialState;
     System.out.println(m_state.name());
+    m_deployIntakeTimer.restart();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -59,7 +61,23 @@ public class IntakeTransitionCommand extends Command {
 
 
       case DEPLOYING:
+      if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN) {
         m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+      } 
+      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.1) {
+        m_intakeSubsystem.setLifterMotor(0); 
+      }
+      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.8) {
+        m_intakeSubsystem.setBrakeMode(false); 
+      }
+      else {
+        m_intakeSubsystem.setBrakeMode(true); 
+      } 
+      // if (m_deployIntakeTimer.hasElapsed(IntakeConstants.LIFTER_MOTOR_TIME_DOWN)) {
+      //  m_intakeSubsystem.setLifterMotor(0);
+      // } else {
+      //   m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+      // }
         if (m_intakeSubsystem.isNoteDetected()) {
           m_ticksNoteIsDetectedInIntake++;
           m_intakeSubsystem.setRollerMotor(0);
