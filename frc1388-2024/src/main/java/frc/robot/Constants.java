@@ -39,7 +39,7 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = 0.25; // meters per second
+    public static final double ROBOT_MAX_SPEED = 3.0; // meters per second
 
     public static final int FRONT_RIGHT_DRIVE_MOTOR_CANID = 1;
     public static final int FRONT_RIGHT_ROTATION_MOTOR_CANID = 5;

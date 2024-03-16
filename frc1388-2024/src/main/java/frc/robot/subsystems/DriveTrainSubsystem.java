@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
@@ -278,8 +279,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.periodic();
     SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
     SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
-
-    SmartDashboard.putString("auto speeds", getRobotRelativeSpeeds().toString());
 
     // System.out.println("is odo null?" + (m_odometry == null));
 
