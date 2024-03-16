@@ -34,7 +34,7 @@ public class GoToNote extends Command {
     m_limelight = limelight;
     m_intakeSubsystem = intakeSubsystem;
     m_initialPose = m_driveTrain.getPose();
-    addRequirements(m_driveTrain, m_intakeSubsystem);
+    addRequirements(m_intakeSubsystem, m_driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -48,15 +48,17 @@ public class GoToNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!m_canSeePieceDebouncer.calculate(m_limelight.getApriltagTargetFound())) {
-      m_driveTrain.drive(0, 0, 0);
-      return;
-    }
-
-    double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker());
+    boolean isNoteFound = m_canSeePieceDebouncer.calculate(m_limelight.getIsNoteFound());
+    
+    // if (!m_canSeePieceDebouncer.calculate(m_limelight.getIsNoteFound())) {
+    //   m_driveTrain.drive(0, 0, 0);
+    //   return;
+    // }
+    
+    double omega = m_rotationPIDController.calculate(m_limelight.getNoteTx());
     double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? LimelightConstants.METERS_PER_SECOND / 2
         : LimelightConstants.METERS_PER_SECOND;
-    if (m_limelight.getIsNoteFound()) {
+    if (isNoteFound) {
       m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(-xVelocity, 0, omega, new Rotation2d()));
     } else {
       m_driveTrain.drive(0, 0, 0);
@@ -82,6 +84,6 @@ public class GoToNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.isNoteDetected() || isDistanceTooFar();
+    return m_intakeSubsystem.isNoteDetected();
   }
 }

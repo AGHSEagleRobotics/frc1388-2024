@@ -194,7 +194,7 @@ public class AutoMethod {
   }
 
   public Command testCoordinate(){
-    return new AutoGoToPoint(4.06, 0, 180, m_driveTrainSubsystem);
+    return new AutoGoToPoint(7.32, 4.3, 180, m_driveTrainSubsystem);
   }
 
   public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
