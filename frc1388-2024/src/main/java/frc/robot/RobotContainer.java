@@ -311,13 +311,13 @@ public class RobotContainer {
     // return m_autoMethod.getAutonomousCommand();
 
 
-    ChoreoTrajectory path = Choreo.getTrajectory("path1");
+    ChoreoTrajectory path = Choreo.getTrajectory("get-center-note");
     m_driveTrain.resetPose(path.getInitialPose());
     return Choreo.choreoSwerveCommand (
       path, 
       () -> m_driveTrain.getPose(), 
-      new PIDController(0.5, 0, 0),
-      new PIDController(0.5, 0, 0),
+      new PIDController(0.05, 0, 0),
+      new PIDController(0.05, 0, 0),
       new PIDController(0, 0, 0),
       (ChassisSpeeds speeds) -> 
         m_driveTrain.driveRobotRelative(speeds),
@@ -326,7 +326,7 @@ public class RobotContainer {
       //     return true;
       //   } else return false;
       // },
-      () -> false,
+      () -> true,
       m_driveTrain
     );
   }
