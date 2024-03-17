@@ -61,6 +61,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -80,7 +83,7 @@ public class RobotContainer {
 
   Field2d m_Field2d = new Field2d();
 
-  private final boolean option8 = false;
+  private final boolean option8 = true;
   private final Dashboard m_dashboard = new Dashboard();
   
   public final ShooterSubsystem m_shooterSubsystem;
@@ -148,7 +151,6 @@ public class RobotContainer {
     SmartDashboard.putData(m_Field2d);
 
     if (option8) {
-      m_limelight = new Limelight("limelight-shooter", "limelight-intake");
       m_shooterSubsystem = new ShooterSubsystem(
           new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
               MotorType.kBrushless),
@@ -161,7 +163,6 @@ public class RobotContainer {
       m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem,
           m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
     } else {
-      m_limelight = null;
       m_shooterSubsystem = null;
       m_shooterAngleSubsystem = null;
       m_autoMethod = null;
@@ -312,33 +313,39 @@ public class RobotContainer {
     // return m_autoMethod.getAutonomousCommand();
 
 
-    ChoreoTrajectory path = Choreo.getTrajectory("get-center-note");
+    ChoreoTrajectory path = Choreo.getTrajectory("get_center_note");
     m_driveTrain.resetPose(path.getInitialPose());
-    return Choreo.choreoSwerveCommand (
-      path, 
-      () -> m_driveTrain.getPose(), 
-      new PIDController(0.05, 0, 0),
-      new PIDController(0.05, 0, 0),
-      new PIDController(0, 0, 0),
-      (ChassisSpeeds speeds) -> 
-        m_driveTrain.driveRobotRelative(speeds),
-      // () -> {
-      //   if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      //     return true;
-      //   } else return false;
-      // },
-      () -> true,
-      m_driveTrain
+    return new ParallelCommandGroup(
+      new SequentialCommandGroup(new WaitCommand(1.5), new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)),
+      Choreo.choreoSwerveCommand (
+        path, 
+        () -> m_driveTrain.getPose(), 
+        new PIDController(0.1, 0, 0),
+        new PIDController(0.1, 0, 0),
+        new PIDController(0, 0, 0),
+        (ChassisSpeeds speeds) -> 
+          m_driveTrain.driveRobotRelative(speeds),
+        () -> {
+          if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        m_driveTrain
+      )
+
     );
+    
   }
 
-  public void autonomousInit() {
-    m_limelight.setAllianceColor(DriverStation.getAlliance().get());
-  }
+  // public void autonomousInit() {
+  //   m_limelight.setAllianceColor(DriverStation.getAlliance().get());
+  // }
 
-  public void teleopInit() {
-    m_limelight.setAllianceColor(DriverStation.getAlliance().get());
-  }
+  // public void teleopInit() {
+  //   m_limelight.setAllianceColor(DriverStation.getAlliance().get());
+  // }
 
   public void resetPose() {
     m_driveTrain.resetPose(new Pose2d());

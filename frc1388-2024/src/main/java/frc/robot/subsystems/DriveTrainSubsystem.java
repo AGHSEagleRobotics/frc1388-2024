@@ -14,6 +14,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -26,6 +29,8 @@ import frc.robot.vision.Limelight;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
+  StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish(); 
+
   /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
 
@@ -37,7 +42,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   /** The distance in <strong>meters</strong> from the center of rotation of the left wheel to the center of rotation of the right wheel */
   private final double ROBOT_TRACK_WIDTH = FieldConstants.ROBOT_WIDTH;
 
-  private double m_gyroOffset = 180;
+  private double m_gyroOffset = 0;
 
   // these are the translations from the center of rotation of the robot to the center of rotation of each swerve module
   private final Translation2d m_frontRightTranslation = new Translation2d(ROBOT_WHEEL_BASE / 2, -ROBOT_TRACK_WIDTH / 2);
@@ -179,17 +184,19 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
 
   public void limelightResetPose() {
-        double[] botPose = m_limelight.getBotPose();
-      Pose2d pose2d = new Pose2d(botPose[0], botPose[1], getGyroHeading());
-      SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
-            m_frontRight.getPosition(),
-            m_frontLeft.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-        };
-        if (m_odometry != null) {
-    m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, pose2d);
-        }
+    double[] botPose = m_limelight.getBotPose();
+    m_gyroOffset = botPose[5] - getRawGyroAngle();
+    Pose2d pose2d = new Pose2d(botPose[0], botPose[1], getGyroHeading());
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
+        m_frontRight.getPosition(),
+        m_frontLeft.getPosition(),
+        m_backLeft.getPosition(),
+        m_backRight.getPosition()
+    };
+    if (m_odometry != null) {
+      m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, pose2d);
+    }
+
   }
 
   public Pose2d getPose() {
@@ -239,11 +246,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   public double getAngle() {
     if (!m_navxGyro.isCalibrating()) {
-      double angle = (-m_navxGyro.getAngle() + m_gyroOffset) % 360;
+      double angle = (getRawGyroAngle() + m_gyroOffset) % 360;
       if (angle < 0) {
         angle += 360;
       }
       return angle;
+    }
+    return 0;
+  }
+
+  public double getRawGyroAngle () {
+    if (!m_navxGyro.isCalibrating()) {
+      return -m_navxGyro.getAngle();
     }
     return 0;
   }
@@ -283,7 +297,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     
     double[] botPose = m_limelight.getBotPose();
     // reset pose based on if we have an apriltag in view
-    if ((m_limelight.getApriltagTargetFound()) && (botPose[10] > 0.065)) {
+    if ((m_limelight.getApriltagTargetFound()) && ((botPose[10] > 0.1) || (botPose[7] >= 2))) {
       limelightResetPose();
     }
     // odometry updating
@@ -307,6 +321,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // System.out.println("is odo null?" + (m_odometry == null));
 
     SmartDashboard.putNumber("drivetrain/gyro angle", getAngle());
+
+    publisher.set(getPose());
 
   }
 }

@@ -139,18 +139,14 @@ public class Limelight extends SubsystemBase {
     m_shooterTable.getEntry("tl").setValue(0.0);
   }
 
-  public void setAllianceColor(DriverStation.Alliance color) {
-    m_allianceColor = color;
-  }
+  // public void setAllianceColor(DriverStation.Alliance color) {
+  //   m_allianceColor = color;
+  // }
 
   public double[] getBotPose() {
     double[] botPose;
-    if (m_allianceColor == DriverStation.Alliance.Blue) {
       botPose = m_shooterTable.getEntry("botpose_wpiblue").getDoubleArray(new double[] {});
-    }
-    else {
-      botPose = m_shooterTable.getEntry("botpose_wpired").getDoubleArray(new double[] {});
-    }
+
         if (botPose.length >= 11) {
         return botPose;
         }
