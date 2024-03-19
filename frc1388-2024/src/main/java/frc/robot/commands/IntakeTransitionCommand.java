@@ -4,9 +4,11 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.TransitionConstants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -30,8 +32,15 @@ public class IntakeTransitionCommand extends Command {
   private int m_ticksNoteIsDetectedInIntake = 0;
   TransitionSubsystem m_transitionSubsystem;
 
+  private CommandXboxController m_driverController = null;
+  private CommandXboxController m_operatorController = null;
+
   /** Creates a new IntakeTransitionCommand. */
-  public IntakeTransitionCommand(IntakeTransState initialState, boolean pullToTransition, IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem, Limelight limelight) {
+  public IntakeTransitionCommand(IntakeTransState initialState,
+                                 boolean pullToTransition,
+                                 IntakeSubsystem intakeSubsystem,
+                                 TransitionSubsystem transitionSubsystem,
+                                 Limelight limelight) {
 
     m_initialState = initialState;
 
@@ -46,6 +55,24 @@ public class IntakeTransitionCommand extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  //this constructor is used for controller rumble
+  public IntakeTransitionCommand(IntakeTransState initialState,
+                                 boolean pullToTransition,
+                                 IntakeSubsystem intakeSubsystem,
+                                 TransitionSubsystem transitionSubsystem,
+                                 Limelight limelight,
+                                 CommandXboxController operatorController,
+                                 CommandXboxController driverController
+                                 ) {
+    this(initialState,
+        pullToTransition,
+        intakeSubsystem,
+        transitionSubsystem,
+        limelight);
+
+    m_driverController = driverController;
+    m_operatorController = operatorController;
+  }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -59,25 +86,23 @@ public class IntakeTransitionCommand extends Command {
   public void execute() {
     switch (m_state) {
 
-
       case DEPLOYING:
       if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN) {
         m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+        System.out.println(m_deployIntakeTimer.get() + "  deploying");
       } 
       else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.1) {
         m_intakeSubsystem.setLifterMotor(0); 
+        System.out.println(m_deployIntakeTimer.get() + "  stopping");
       }
       else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.8) {
         m_intakeSubsystem.setBrakeMode(false); 
+        System.out.println(m_deployIntakeTimer.get() + "  brakefalse");
       }
       else {
         m_intakeSubsystem.setBrakeMode(true); 
+        System.out.println(m_deployIntakeTimer.get() + "  braketrue");
       } 
-      // if (m_deployIntakeTimer.hasElapsed(IntakeConstants.LIFTER_MOTOR_TIME_DOWN)) {
-      //  m_intakeSubsystem.setLifterMotor(0);
-      // } else {
-      //   m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
-      // }
         if (m_intakeSubsystem.isNoteDetected()) {
           m_ticksNoteIsDetectedInIntake++;
           m_intakeSubsystem.setRollerMotor(0);
@@ -89,6 +114,12 @@ public class IntakeTransitionCommand extends Command {
           m_state = IntakeTransState.RETRACTING;
               System.out.println(m_state.name());
 
+              if(m_driverController != null) {
+                m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1);
+              }
+              if(m_operatorController != null) {
+                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 1);
+              }
         }
         break;
 
@@ -101,6 +132,13 @@ public class IntakeTransitionCommand extends Command {
           if (m_pullToTransition) {
             m_state = IntakeTransState.TRANSITION;
                 System.out.println(m_state.name());
+                if(m_driverController != null) {
+                  m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0);
+                }
+                if(m_operatorController != null) {
+                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0);
+              }
+      
 
           } else {
             m_state = IntakeTransState.DONE;
@@ -138,6 +176,14 @@ public class IntakeTransitionCommand extends Command {
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);
     m_transitionSubsystem.set(0);
+
+    if(m_driverController != null) {
+      m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0);
+    }
+
+    if(m_operatorController != null) {
+       m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0);
+   }
   }
 
   // Returns true when the command should end.

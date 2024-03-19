@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
+
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.wpilibj.Timer;
 
 public class DeployIntakeCommand extends Command {
@@ -42,7 +45,7 @@ public class DeployIntakeCommand extends Command {
       m_intakeSubsystem.setLifterMotor(0); 
     }
     else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.8) {
-      m_intakeSubsystem.setBrakeMode(false); 
+      m_intakeSubsystem.setBrakeMode(false);
     }
     else {
       m_intakeSubsystem.setBrakeMode(true); 
