@@ -61,9 +61,8 @@ public class DriveCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // TEMP removed
-    // m_limelightPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
-    // m_limelightPIDController.enableContinuousInput(0, 360);
+    m_limelightPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
+    m_limelightPIDController.enableContinuousInput(0, 360);
 
     m_rotationController.enableContinuousInput(0, 360);
   }

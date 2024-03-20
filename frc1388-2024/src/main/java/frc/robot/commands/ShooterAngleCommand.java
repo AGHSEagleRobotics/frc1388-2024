@@ -59,18 +59,16 @@ public class ShooterAngleCommand extends Command {
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.MANUAL_CONTROL_ANGLE_DEADBAND);
 
       double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-      // TEMP removed
-      // double distance = m_limelight.getDistance();
-      // double distance2 = distance * distance;
+      double distance = m_limelight.getDistance();
+      double distance2 = distance * distance;
 
-      // TEMP removed
-      // mycurvefit numbers for quadratic interpolation
-      // if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
-      // goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
-      //             (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
-      //             (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
-      // }
-
+      
+      mycurvefit numbers for quadratic interpolation
+      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
+      goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
+      }
 
       // if ( (distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_POSITIONB)) {
       // goToAngle = (LimelightConstants.SLOPE_MATH_SUBLIFER_TO_POSITIONB * distance) + LimelightConstants.SHOOTER_OFFSET_SUBTOB;

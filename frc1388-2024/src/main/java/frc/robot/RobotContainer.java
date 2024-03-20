@@ -160,8 +160,10 @@ public class RobotContainer {
       m_shooterAngleSubsystem = new ShooterAngleSubsystem(
           new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
           new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
+
       m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem,
           m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
+
     } else {
       m_shooterSubsystem = null;
       m_shooterAngleSubsystem = null;
@@ -206,7 +208,7 @@ public class RobotContainer {
         
     m_driveTrain.setDefaultCommand(m_driveCommand);
         
-    // m_intakeSubsystem.setDefaultCommand(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_intakeSubsystem.setDefaultCommand(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
 
     // Configure the trigger bindings
     configureBindings();
@@ -215,7 +217,7 @@ public class RobotContainer {
     public void setBrakeMode(boolean brakeMode){
       m_driveTrain.setBrakeMode(brakeMode);
       m_intakeSubsystem.setBrakeMode(brakeMode);
-      // m_transitionSubsystem.setBrakeMode(brakeMode);
+      m_transitionSubsystem.setBrakeMode(brakeMode);
     }
 
   /**
@@ -233,9 +235,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
-    m_driverController.a().whileFalse(new InstantCommand(() -> m_Field2d.setRobotPose(m_driveTrain.getPose())));
-
     DriverStation.silenceJoystickConnectionWarning(true);
     // ========MAYBE RE-ADD THESE CONTROLS?========
     // m_driverController.rightBumper().whileTrue(new RunCommand(() ->
@@ -313,18 +312,15 @@ public class RobotContainer {
     // return m_autoMethod.getAutonomousCommand();
 
 
-    ChoreoTrajectory path = Choreo.getTrajectory("get_center_note");
+    ChoreoTrajectory path = Choreo.getTrajectory("test");
     m_driveTrain.resetPose(path.getInitialPose());
-    return new ParallelCommandGroup(
-      new SequentialCommandGroup(new WaitCommand(1.5), new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)),
-      Choreo.choreoSwerveCommand (
-        path, 
-        () -> m_driveTrain.getPose(), 
+    return Choreo.choreoSwerveCommand(
+        path,
+        () -> m_driveTrain.getPose(),
         new PIDController(0.1, 0, 0),
         new PIDController(0.1, 0, 0),
-        new PIDController(0, 0, 0),
-        (ChassisSpeeds speeds) -> 
-          m_driveTrain.driveRobotRelative(speeds),
+        new PIDController(0.1, 0, 0),
+        (ChassisSpeeds speeds) -> m_driveTrain.driveRobotRelative(speeds),
         () -> {
           if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
             return true;
@@ -332,10 +328,28 @@ public class RobotContainer {
             return false;
           }
         },
-        m_driveTrain
-      )
+        m_driveTrain);
+    // return new ParallelCommandGroup(
+    //   new SequentialCommandGroup(new WaitCommand(1.5), new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)),
+    //   Choreo.choreoSwerveCommand (
+    //     path, 
+    //     () -> m_driveTrain.getPose(), 
+    //     new PIDController(0.1, 0, 0),
+    //     new PIDController(0.1, 0, 0),
+    //     new PIDController(0, 0, 0),
+    //     (ChassisSpeeds speeds) -> 
+    //       m_driveTrain.driveRobotRelative(speeds),
+    //     () -> {
+    //       if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+    //         return true;
+    //       } else {
+    //         return false;
+    //       }
+    //     },
+    //     m_driveTrain
+    //   )
 
-    );
+    // );
     
   }
 
