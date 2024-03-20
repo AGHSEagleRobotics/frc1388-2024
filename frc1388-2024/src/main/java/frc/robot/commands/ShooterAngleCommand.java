@@ -63,7 +63,7 @@ public class ShooterAngleCommand extends Command {
       double distance2 = distance * distance;
 
       
-      mycurvefit numbers for quadratic interpolation
+      // mycurvefit numbers for quadratic interpolation
       if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
