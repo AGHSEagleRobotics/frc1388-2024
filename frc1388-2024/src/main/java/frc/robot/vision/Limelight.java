@@ -160,7 +160,7 @@ public class Limelight extends SubsystemBase {
     // april tag (needs testing)
     // might also need to add values like where the limelight is although we might be able to do that in the pipeline
 
-    if (targetSpace != null) {
+    if (targetSpace.length >= 6) {
       double distance;
       distance = targetSpace[2];
 

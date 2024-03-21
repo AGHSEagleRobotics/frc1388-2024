@@ -91,7 +91,7 @@ public class DriveCommand extends Command {
 
     // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
-      omega = scale(rightX, 2.5);
+      omega = 2 * Math.PI * scale(rightX, 2.5);
       m_autoTracking = false;
       m_goingToAngle = false;
     } else if (m_y.get()) {

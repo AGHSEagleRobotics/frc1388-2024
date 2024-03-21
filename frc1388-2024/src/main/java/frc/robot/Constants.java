@@ -185,7 +185,7 @@ public final class Constants {
   }
 
   public static class AutoConstants {
-    public static final double TURN_P_VALUE = 0.003;
+    public static final double TURN_P_VALUE = 0.036;
 
     public static final double TURN_P_TOLERANCE = 0.25;
     public static final double TURN_I_VALUE = 0.003;

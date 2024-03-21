@@ -83,7 +83,7 @@ public class RobotContainer {
 
   Field2d m_Field2d = new Field2d();
 
-  private final boolean option8 = true;
+  private final boolean option8 = false;
   private final Dashboard m_dashboard = new Dashboard();
   
   public final ShooterSubsystem m_shooterSubsystem;
@@ -319,7 +319,7 @@ public class RobotContainer {
         () -> m_driveTrain.getPose(),
         new PIDController(0.1, 0, 0),
         new PIDController(0.1, 0, 0),
-        new PIDController(0.1, 0, 0),
+        new PIDController(10, 0, 0),
         (ChassisSpeeds speeds) -> m_driveTrain.driveRobotRelative(speeds),
         () -> {
           if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
