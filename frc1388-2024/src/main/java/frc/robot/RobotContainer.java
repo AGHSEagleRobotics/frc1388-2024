@@ -144,11 +144,11 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    ChoreoTrajectory path = Choreo.getTrajectory("path1");
+    // ChoreoTrajectory path = Choreo.getTrajectory("path1");
 
-    m_Field2d.getObject("path1").setPoses(path.getInitialPose(), path.getFinalPose());
-    m_Field2d.getObject("pathposes").setPoses(path.getPoses());
-    SmartDashboard.putData(m_Field2d);
+    // m_Field2d.getObject("path1").setPoses(path.getInitialPose(), path.getFinalPose());
+    // m_Field2d.getObject("pathposes").setPoses(path.getPoses());
+    // SmartDashboard.putData(m_Field2d);
 
     if (option8) {
       m_shooterSubsystem = new ShooterSubsystem(
@@ -309,26 +309,26 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
 
-    // return m_autoMethod.getAutonomousCommand();
+    return m_autoMethod.getAutonomousCommand();
 
 
-    ChoreoTrajectory path = Choreo.getTrajectory("test");
-    m_driveTrain.resetPose(path.getInitialPose());
-    return Choreo.choreoSwerveCommand(
-        path,
-        () -> m_driveTrain.getPose(),
-        new PIDController(0.1, 0, 0),
-        new PIDController(0.1, 0, 0),
-        new PIDController(0.1, 0, 0),
-        (ChassisSpeeds speeds) -> m_driveTrain.driveRobotRelative(speeds),
-        () -> {
-          if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-        m_driveTrain);
+    // ChoreoTrajectory path = Choreo.getTrajectory("test");
+    // m_driveTrain.resetPose(path.getInitialPose());
+    // return Choreo.choreoSwerveCommand(
+    //     path,
+    //     () -> m_driveTrain.getPose(),
+    //     new PIDController(0.1, 0, 0),
+    //     new PIDController(0.1, 0, 0),
+    //     new PIDController(0.1, 0, 0),
+    //     (ChassisSpeeds speeds) -> m_driveTrain.driveRobotRelative(speeds),
+    //     () -> {
+    //       if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+    //         return true;
+    //       } else {
+    //         return false;
+    //       }
+    //     },
+    //     m_driveTrain);
     // return new ParallelCommandGroup(
     //   new SequentialCommandGroup(new WaitCommand(1.5), new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)),
     //   Choreo.choreoSwerveCommand (

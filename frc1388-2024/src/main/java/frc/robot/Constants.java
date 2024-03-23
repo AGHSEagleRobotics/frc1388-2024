@@ -105,8 +105,8 @@ public final class Constants {
     public static final double kShooterPositionPodium = 0.23; 
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.25; // previously 0.266 for practice matches
-    public static final double kShooterPositionMax = 0.4; // observed max is roughly
-    public static final double kShooterPositionMin = 0.16; //  observed min without hitting transition 
+    public static final double kShooterPositionMax = 4.0; // observed max is roughly
+    public static final double kShooterPositionMin = 0; //  observed min without hitting transition 
 
     public static final int kShooterAngleMotorCANID = 22;
 
@@ -142,9 +142,9 @@ public final class Constants {
     public static final double MAX_TY_VALUE = 8.5;
     public static final double SLOW_DOWN = 0.5;
     public static final double METERS_PER_SECOND = 0.2;
-    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.003;
-    public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
-    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
+    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.036;
+    public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000012;
+    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000012;
     public static final double TX_OFFSET = 6.47;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
     public static final double DISTANCE_FROM_APRILTAG_AUTOSHOOTER = 4;
@@ -156,6 +156,26 @@ public final class Constants {
     public static final double LED_FORCE_OFF = 1;
     public static final double LED_FORCE_BLINK = 2;
     public static final double LED_FORCE_ON = 3;
+
+    public static final int BOTPOSE_X = 0;
+    public static final int BOTPOSE_Y = 1;
+    public static final int BOTPOSE_Z = 2;
+    public static final int BOTPOSE_ROLL = 3;
+    public static final int BOTPOSE_PITCH = 4;
+    public static final int BOTPOSE_YAW = 5;
+    public static final int BOTPOSE_LATENCY = 6;
+    public static final int BOTPOSE_TOTAL_APRILTAGS_SEEN = 7;
+    public static final int BOTPOSE_DISTANCE_BETWEEN_TAGS = 8;
+    public static final int BOTPOSE_AVERAGE_DISTANCE_FROM_CAMERA = 9;
+    public static final int BOTPOSE_AVERAGE_TAG_AREA = 10;
+    public static final int BOTPOSE_TAG_ID = 11;
+    public static final int BOTPOSE_TX_RAW_TARGET_ANGLE = 12;
+    public static final int BOTPOSE_TY_RAW_TARGET_ANGLE = 13;
+    public static final int BOTPOSE_TARGET_AREA = 14;
+    public static final int BOTPOSE_DISTANCE_TO_CAMERA = 15;
+    public static final int BOTPOSE_DISTANCE_TO_ROBOT = 16;
+    public static final int BOTPOSE_AMBIGUITY = 17;
+
     // public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
     // ShooterAngleSubsystemConstants.kShooterPositionSpeaker) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);
     // public static final double SHOOTER_OFFSET_SUBTOB = 0.5177895;

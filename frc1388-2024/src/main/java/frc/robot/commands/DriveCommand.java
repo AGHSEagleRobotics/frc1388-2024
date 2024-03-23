@@ -70,16 +70,22 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // controller inputs    
+    // controller inputs
     double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
-    
+
     // velocities from controller inputs
     double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, DriveTrainConstants.LEFT_STICK_SCALE);
     double yVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftX, DriveTrainConstants.LEFT_STICK_SCALE);
     /** angular velocity */
     double omega = 0;
+
+    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      m_limelight.setPriorityID(4);
+    } else {
+      m_limelight.setPriorityID(7);
+    }
 
     boolean rightStickButton = m_rightStick.get();
 
@@ -91,7 +97,7 @@ public class DriveCommand extends Command {
 
     // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
-      omega = scale(rightX, 2.5);
+      omega = 2 * Math.PI * scale(rightX, 2.5);
       m_autoTracking = false;
       m_goingToAngle = false;
     } else if (m_y.get()) {
@@ -125,10 +131,8 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
-      if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
       double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
       omega = speed;
-      }
     }
 
     SmartDashboard.putBoolean("going to angle", m_goingToAngle);

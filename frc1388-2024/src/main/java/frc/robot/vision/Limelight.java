@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.Module.SetupContext;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -45,6 +48,12 @@ public class Limelight extends SubsystemBase {
     return m_tid;
    }
 
+   public void setPriorityID(int setID) {
+    NetworkTableEntry priorityID = m_shooterTable.getEntry("camerapose_robotspace_set");
+    priorityID.setNumber(setID);
+   }
+
+
   public boolean getApriltagTargetFound() {
     NetworkTableEntry tv = m_shooterTable.getEntry("tv");
     double m_tv = tv.getDouble(0);
@@ -53,6 +62,12 @@ public class Limelight extends SubsystemBase {
     } else {
       return true;
     }
+  }
+
+    public double getDistanceToSpeaker() {
+    double[] botPose = getBotPose();
+    double distance = new Translation2d().getDistance(new Translation2d(botPose[0], botPose[1]));;
+    return distance;
   }
 
   public boolean getIsNoteFound() {
@@ -85,14 +100,12 @@ public class Limelight extends SubsystemBase {
   public double getAprilTagTx() {
     NetworkTableEntry tx = m_shooterTable.getEntry("tx");
     double m_tx = tx.getDouble(0.0);
-    m_tx += LimelightConstants.TX_OFFSET;
     return m_tx;
   }
 
   public double getNoteTx() {
     NetworkTableEntry tx = m_intakeTable.getEntry("tx");
     double m_tx = tx.getDouble(0.0);
-    m_tx += LimelightConstants.TX_OFFSET;
     return m_tx;
   }
 
@@ -192,6 +205,7 @@ public class Limelight extends SubsystemBase {
     //   setShooterPipeline(1);
     // }
     setShooterPipeline(0);
+    double[] botPose = getBotPose();
 
       SmartDashboard.putNumber("Distance to April Tag", getDistance()); // it calculates in meters
       SmartDashboard.putBoolean("Is the target found", getApriltagTargetFound());
@@ -205,6 +219,8 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Vertical Degree", getAprilTagTx());
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
+      SmartDashboard.putNumber("DISTANCE VALUE", getDistanceToSpeaker());
+      SmartDashboard.putNumber("Distance to Robot", botPose[LimelightConstants.BOTPOSE_DISTANCE_TO_ROBOT]);
       
 
   }

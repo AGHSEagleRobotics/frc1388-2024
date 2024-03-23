@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveTrainConstants;
@@ -59,11 +60,19 @@ public class ShooterAngleCommand extends Command {
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.MANUAL_CONTROL_ANGLE_DEADBAND);
 
       double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-      double distance = m_limelight.getDistance();
+
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        m_limelight.setPriorityID(4);
+      } else {
+        m_limelight.setPriorityID(7);
+      }
+      double[] botPose = m_limelight.getBotPose();
+
+      double distance = botPose[LimelightConstants.BOTPOSE_DISTANCE_TO_ROBOT];
       double distance2 = distance * distance;
 
       
-      mycurvefit numbers for quadratic interpolation
+      // mycurvefit numbers for quadratic interpolation
       if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
@@ -120,9 +129,7 @@ public class ShooterAngleCommand extends Command {
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     } else if (m_autoMode == true) {
-      if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
         m_shooterAngleSubsystem.setPosition(goToAngle);
-      }
     }
   }
 

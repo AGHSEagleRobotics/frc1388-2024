@@ -194,7 +194,10 @@ public class AutoMethod {
   }
 
   public Command testCoordinate(){
-    return new AutoGoToPoint(7.32, 4.3, 180, m_driveTrainSubsystem);
+     return new SequentialCommandGroup(
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25),
+          new GoToNote(m_driveTrainSubsystem, m_limelight, m_intakeSubsystem)));
   }
 
   public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
