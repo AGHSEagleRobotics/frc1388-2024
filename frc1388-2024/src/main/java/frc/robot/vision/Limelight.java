@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.Module.SetupContext;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,7 +24,7 @@ public class Limelight extends SubsystemBase {
   private static NetworkTable m_shooterTable;
   private static NetworkTable m_intakeTable;
   private DriverStation.Alliance m_allianceColor;
-  private static double[] botPose0 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  private static double[] botPose0 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
   /** Creates a new Limelight. */
   public Limelight(String shooterName, String intakeName) {
@@ -45,6 +48,16 @@ public class Limelight extends SubsystemBase {
     return m_tid;
    }
 
+   public void setPriorityID(double setID) {
+    m_shooterTable.getEntry("priorityid").setNumber(setID);
+   }
+
+   public double getPriorityID() {
+    NetworkTableEntry tid = m_shooterTable.getEntry("priorityid");
+    double m_priorityID = tid.getDouble(0);
+    return m_priorityID;
+   }
+
   public boolean getApriltagTargetFound() {
     NetworkTableEntry tv = m_shooterTable.getEntry("tv");
     double m_tv = tv.getDouble(0);
@@ -53,6 +66,12 @@ public class Limelight extends SubsystemBase {
     } else {
       return true;
     }
+  }
+
+    public double getDistanceToSpeaker() {
+    double[] botPose = getBotPose();
+    double distance = new Translation2d().getDistance(new Translation2d(botPose[0], botPose[1]));;
+    return distance;
   }
 
   public boolean getIsNoteFound() {
@@ -85,14 +104,12 @@ public class Limelight extends SubsystemBase {
   public double getAprilTagTx() {
     NetworkTableEntry tx = m_shooterTable.getEntry("tx");
     double m_tx = tx.getDouble(0.0);
-    m_tx += LimelightConstants.TX_OFFSET;
     return m_tx;
   }
 
   public double getNoteTx() {
     NetworkTableEntry tx = m_intakeTable.getEntry("tx");
     double m_tx = tx.getDouble(0.0);
-    m_tx += LimelightConstants.TX_OFFSET;
     return m_tx;
   }
 
@@ -147,14 +164,39 @@ public class Limelight extends SubsystemBase {
     double[] botPose;
       botPose = m_shooterTable.getEntry("botpose_wpiblue").getDoubleArray(new double[] {});
 
-        if (botPose.length >= 11) {
+        if (botPose.length >= 18) {
         return botPose;
         }
         return botPose0;
   }
 
+  public double getTxOfTagID(int tagID) {
+    return getValueOfTagID(tagID, LimelightConstants.BOTPOSE_RELATIVE_TX_RAW_TARGET_ANGLE);
+  }
+
+  public double getDistanceOfTagId(int tagID) {
+    return getValueOfTagID(tagID, LimelightConstants.BOTPOSE_RELATIVE_DISTANCE_TO_CAMERA);
+  }
+
+  public double getValueOfTagID(int tagID, int value) {
+    double[] botPose = getBotPose();
+    int numberOfAprilTags = (int) (getBotPoseValue(botPose, LimelightConstants.BOTPOSE_TOTAL_APRILTAGS_SEEN));
+    int botPoseAprilTagIndex = LimelightConstants.BOTPOSE_TAG_ID;
+
+    if (numberOfAprilTags > 0) {
+      for (int aprilTagIndex = 1; aprilTagIndex < numberOfAprilTags + 1; aprilTagIndex++) {
+        if ((int) (getBotPoseValue(botPose, botPoseAprilTagIndex)) == tagID) {
+          return getBotPoseValue(botPose, botPoseAprilTagIndex + value);
+        } else {
+          botPoseAprilTagIndex += LimelightConstants.BOTPOSE_NEXT_INDEX_OF_TAG_ID;
+        }
+      }
+    }
+    return 0;
+  }
+
   public double getDistance() {
-    double[] targetSpace = m_shooterTable.getEntry("targetpose_cameraspace")
+    double[] targetSpace = m_shooterTable.getEntry("targetpose_robotspace")
         .getDoubleArray(new double[] {});
     // finds distance in meters (needs callibration from limelight) needs to see the
     // april tag (needs testing)
@@ -183,6 +225,14 @@ public class Limelight extends SubsystemBase {
     }
   }
 
+  public double getBotPoseValue(double[] botPose, int index) {
+    if (index < botPose.length) {
+      return botPose[index];
+    } else {
+      return 0.0;
+    }
+  }
+
   @Override
   public void periodic() {
     // if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
@@ -192,6 +242,9 @@ public class Limelight extends SubsystemBase {
     //   setShooterPipeline(1);
     // }
     setShooterPipeline(0);
+    setPriorityID(4);
+    double[] botPose = getBotPose();
+    
 
       SmartDashboard.putNumber("Distance to April Tag", getDistance()); // it calculates in meters
       SmartDashboard.putBoolean("Is the target found", getApriltagTargetFound());
@@ -205,7 +258,9 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get Vertical Degree", getAprilTagTx());
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
-      
-
+      SmartDashboard.putNumber("DISTANCE VALUE", getDistanceOfTagId(4));
+      SmartDashboard.putNumber("TX VALUE", getTxOfTagID(4));
+      SmartDashboard.putNumber("Priority ID", getPriorityID());
+    
   }
 }

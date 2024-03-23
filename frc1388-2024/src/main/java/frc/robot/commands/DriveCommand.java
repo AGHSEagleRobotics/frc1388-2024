@@ -71,7 +71,7 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // controller inputs    
+    // controller inputs
     double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
@@ -131,11 +131,15 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
-      if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
-      double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
+      double tx;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+       tx = m_limelight.getTxOfTagID(4);
+    } else {
+       tx = m_limelight.getTxOfTagID(7);
+    }
+      double speed = m_limelightPIDController.calculate(tx);
       omega = speed;
       }
-    }
 
     SmartDashboard.putBoolean("going to angle", m_goingToAngle);
 

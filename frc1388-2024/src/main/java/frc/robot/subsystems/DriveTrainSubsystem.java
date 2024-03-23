@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.vision.Limelight;
 
 public class DriveTrainSubsystem extends SubsystemBase {
@@ -298,8 +299,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.periodic();
     
     double[] botPose = m_limelight.getBotPose();
+    double ambiguity = (m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_AMBIGUITY));
+    double aprilTagsSeen = m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_TOTAL_APRILTAGS_SEEN);
     // reset pose based on if we have an apriltag in view
-    if ((m_limelight.getApriltagTargetFound()) && ((botPose[10] > 0.1) || (botPose[7] >= 2))) {
+    if ((aprilTagsSeen > 1) || ((ambiguity < 0.9) && (ambiguity > 0))) {
       limelightResetPose();
     }
     // odometry updating

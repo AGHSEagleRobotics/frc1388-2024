@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
@@ -36,19 +37,23 @@ public class ShooterAngleLimelight extends Command {
   public void execute() {
     double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
 
-    double distance = m_limelight.getDistance();
-    double distance2 = distance * distance;
+    double distance;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        distance = m_limelight.getDistanceOfTagId(4);
+      } else {
+        distance = m_limelight.getDistanceOfTagId(7);
+      }
 
-    // mycurvefit numbers for quadratic interpolation
-    if ((distance > 0) && (distance < 4)) {
-    goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
-                (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
-                (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
-    }
-  
-    if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
-    m_shooterAngleSubsystem.setPosition(goToAngle);
-    }
+      double distance2 = distance * distance;
+
+      
+      // mycurvefit numbers for quadratic interpolation
+      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
+      goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
+      }
+      m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
   // Called once the command ends or is interrupted.

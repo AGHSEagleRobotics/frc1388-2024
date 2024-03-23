@@ -146,12 +146,11 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
+    // ChoreoTrajectory path = Choreo.getTrajectory("path1");
 
-    ChoreoTrajectory path = Choreo.getTrajectory("path1");
-
-    m_Field2d.getObject("path1").setPoses(path.getInitialPose(), path.getFinalPose());
-    m_Field2d.getObject("pathposes").setPoses(path.getPoses());
-    SmartDashboard.putData(m_Field2d);
+    // m_Field2d.getObject("path1").setPoses(path.getInitialPose(), path.getFinalPose());
+    // m_Field2d.getObject("pathposes").setPoses(path.getPoses());
+    // SmartDashboard.putData(m_Field2d);
 
     if (option8) {
       m_shooterSubsystem = new ShooterSubsystem(
