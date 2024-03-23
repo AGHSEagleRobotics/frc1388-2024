@@ -44,26 +44,33 @@ public class AutoAngleShoooterAndTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      m_limelight.setPriorityID(4);
-    } else {
-      m_limelight.setPriorityID(7);
-    }
-      double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
+    double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
+    double distance;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        distance = m_limelight.getDistanceOfTagId(4);
+      } else {
+        distance = m_limelight.getDistanceOfTagId(7);
+      }
 
-      double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-
-      double[] botPose = m_limelight.getBotPose();
-
-      double distance = botPose[LimelightConstants.BOTPOSE_DISTANCE_TO_ROBOT];
       double distance2 = distance * distance;
 
+      
       // mycurvefit numbers for quadratic interpolation
       if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
       }
+      double tx;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+       tx = m_limelight.getTxOfTagID(4);
+    } else {
+       tx = m_limelight.getTxOfTagID(7);
+    }
+      double speed = m_rotationPIDController.calculate(tx);
+
+      m_driveTrain.drive(0, 0, speed);
+      m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
   // Called once the command ends or is interrupted.

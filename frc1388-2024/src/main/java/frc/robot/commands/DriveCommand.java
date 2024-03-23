@@ -81,12 +81,6 @@ public class DriveCommand extends Command {
     /** angular velocity */
     double omega = 0;
 
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      m_limelight.setPriorityID(4);
-    } else {
-      m_limelight.setPriorityID(7);
-    }
-
     boolean rightStickButton = m_rightStick.get();
 
     // if back button is pressed then run auto tracking
@@ -131,7 +125,13 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
-      double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
+      double tx;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+       tx = m_limelight.getTxOfTagID(4);
+    } else {
+       tx = m_limelight.getTxOfTagID(7);
+    }
+      double speed = m_limelightPIDController.calculate(tx);
       omega = speed;
     }
 

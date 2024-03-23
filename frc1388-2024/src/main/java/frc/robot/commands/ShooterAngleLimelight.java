@@ -37,23 +37,23 @@ public class ShooterAngleLimelight extends Command {
   public void execute() {
     double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
 
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      m_limelight.setPriorityID(4);
-    } else {
-      m_limelight.setPriorityID(7);
-    }
+    double distance;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        distance = m_limelight.getDistanceOfTagId(4);
+      } else {
+        distance = m_limelight.getDistanceOfTagId(7);
+      }
 
-    double[] botPose = m_limelight.getBotPose();
+      double distance2 = distance * distance;
 
-    double distance = botPose[LimelightConstants.BOTPOSE_DISTANCE_TO_ROBOT];
-    double distance2 = distance * distance;
-
-    // mycurvefit numbers for quadratic interpolation
-    if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
+      
+      // mycurvefit numbers for quadratic interpolation
+      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
-          (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
-          (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
-    }
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
+      }
+      m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
   // Called once the command ends or is interrupted.

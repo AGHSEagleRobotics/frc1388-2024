@@ -61,13 +61,13 @@ public class ShooterAngleCommand extends Command {
 
       double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
 
+      double distance;
       if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        m_limelight.setPriorityID(4);
+        distance = m_limelight.getDistanceOfTagId(4);
       } else {
-        m_limelight.setPriorityID(7);
+        distance = m_limelight.getDistanceOfTagId(7);
       }
 
-      double distance = m_limelight.getDistance();
       double distance2 = distance * distance;
 
       
@@ -91,7 +91,7 @@ public class ShooterAngleCommand extends Command {
       //   goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionWing, ShooterAngleSubsystemConstants.kShooterPositionDown);
       // }
    
-    SmartDashboard.putNumber("/Auto Tracking Shooter Angle", goToAngle); 
+    SmartDashboard.putNumber("Shooter Angle Subsystem/Auto Tracking Shooter Angle", goToAngle); 
 
     boolean startButton = m_start.get();
     if (startButton) {
@@ -128,6 +128,7 @@ public class ShooterAngleCommand extends Command {
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     } else if (m_autoMode == true) {
+      
         m_shooterAngleSubsystem.setPosition(goToAngle);
     }
   }

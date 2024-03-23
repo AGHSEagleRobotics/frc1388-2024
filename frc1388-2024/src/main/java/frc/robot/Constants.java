@@ -176,6 +176,17 @@ public final class Constants {
     public static final int BOTPOSE_DISTANCE_TO_ROBOT = 16;
     public static final int BOTPOSE_AMBIGUITY = 17;
 
+    public static final int BOTPOSE_NEXT_INDEX_OF_TAG_ID = 7;
+    public static final int BOTPOSE_RELATIVE_TAG_ID = 0;
+    public static final int BOTPOSE_RELATIVE_TX_RAW_TARGET_ANGLE = 1;
+    public static final int BOTPOSE_RELATIVE_TY_RAW_TARGET_ANGLE = 2;
+    public static final int BOTPOSE_RELATIVE_TARGET_AREA = 3;
+    public static final int BOTPOSE_RELATIVE_DISTANCE_TO_CAMERA = 4;
+    public static final int BOTPOSE_RELATIVE_DISTANCE_TO_ROBOT = 5;
+    public static final int BOTPOSE_RELATIVE_AMBIGUITY = 6;
+
+    public static final double DISTANCE_OFFSET_CAMERA = 0.15;
+
     // public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
     // ShooterAngleSubsystemConstants.kShooterPositionSpeaker) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);
     // public static final double SHOOTER_OFFSET_SUBTOB = 0.5177895;
