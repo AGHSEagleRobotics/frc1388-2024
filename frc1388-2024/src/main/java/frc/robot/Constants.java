@@ -199,9 +199,13 @@ public final class Constants {
 
     // mycurvefit numbers for quadratic interpolation based on X Distance values and Y Shooter angles
     // values = 
-    // Subwoofer (1.35, 0.355), 
-    // NoteB (2.69, 0.253), 
-    // Podium (3, 0.245)
+    // 1.35, 0.325
+    // 1.76 0.27
+    // 2.18 0.232
+    // 2.45 .21
+    // 2.81 .177
+    // 2.96 .173
+
     public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5362329; 
     public static final double QUADRATIC_AUTO_SHOOTER_B = -0.186216; 
     public static final double QUADRATIC_AUTO_SHOOTER_C = 0.02114048;
