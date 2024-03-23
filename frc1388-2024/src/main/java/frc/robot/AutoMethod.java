@@ -99,6 +99,42 @@ public class AutoMethod {
         new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem));
   }
 
+  public Command FourNote() {
+    return new SequentialCommandGroup(
+      Start123Shoot(),
+      
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionNoteB, m_shooterAngleSubsystem)
+        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(makeSwerveAutoCommand("4_note.1")))), 
+
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem)
+        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(makeSwerveAutoCommand("4_note.2")))), 
+      
+      makeSwerveAutoCommand("4_note.3"),
+
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+
+      
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(makeSwerveAutoCommand("4_note.4"))),
+      
+      makeSwerveAutoCommand("4_note.5"),
+
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+
+      
+    );
+  }
+
   // needs testing
   public Command Shoot3Leave(){
     return new SequentialCommandGroup(
@@ -207,7 +243,7 @@ public class AutoMethod {
     return new AutoGoToPoint(7.32, 4.3, 180, m_driveTrainSubsystem);
   }
 
-  public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
+  public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC() {
     return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
     .alongWith(
       new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
@@ -283,6 +319,9 @@ public class AutoMethod {
           case ShootAndLeaveFromSideWithLonger:
             return ShootAndLeaveFromSideWithLonger();
 
+          case FourNote:
+            return FourNote();
+
           case testCoordinate:
             return testCoordinate();
 
@@ -296,15 +335,14 @@ public class AutoMethod {
         return null;
       }
 
-      public Command makeSwerveAutoCommand(String pathName) {
-
-        ChoreoTrajectory path = Choreo.getTrajectory(pathName);
+      public Command makeSwerveAutoCommand(String pathString) {
+        ChoreoTrajectory path = Choreo.getTrajectory(pathString);
 
         return Choreo.choreoSwerveCommand(
             path,
             () -> m_driveTrainSubsystem.getPose(),
-            new PIDController(0.1, 0, 0),
-            new PIDController(0.1, 0, 0),
+            new PIDController(1.0, 0, 0),
+            new PIDController(1.0, 0, 0),
             new PIDController(10, 0, 0),
             (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),
             () -> {
@@ -317,7 +355,10 @@ public class AutoMethod {
             m_driveTrainSubsystem);
       }
 
-      public void resetPose(ChoreoTrajectory path) {
+      public void resetPose(String pathString) {
+
+        ChoreoTrajectory path = Choreo.getTrajectory(pathString);
+
         double initRotation = path.getInitialPose().getRotation().getRadians() + Math.toRadians(getGyroResetAngle());
         if (initRotation > 2 * Math.PI) {
           initRotation -= 2 * Math.PI;

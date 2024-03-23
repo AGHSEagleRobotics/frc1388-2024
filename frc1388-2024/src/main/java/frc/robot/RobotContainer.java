@@ -85,7 +85,7 @@ public class RobotContainer {
 
   Field2d m_Field2d = new Field2d();
 
-  private final boolean option8 = false;
+  private final boolean option8 = true;
   private final Dashboard m_dashboard = new Dashboard();
   
   public final ShooterSubsystem m_shooterSubsystem;
@@ -311,50 +311,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
 
-    // return m_autoMethod.getAutonomousCommand();
-
-
-    ChoreoTrajectory path1 = Choreo.getTrajectory("4_note");
-
-
-    double initRotation = path1.getInitialPose().getRotation().getRadians() + Math.toRadians(getGyroResetAngle());
-    if (initRotation > 2 * Math.PI) {
-      initRotation -= 2 * Math.PI;
-    }
-
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      m_driveTrain.swerveOnlyResetPose(new Pose2d(
-        new Translation2d(path1.flipped().getInitialPose().getX(), path1.flipped().getInitialPose().getY()),
-        // new Translation2d(15.78, 2.341),
-        new Rotation2d(initRotation)
-      ));
-    } else {
-      m_driveTrain.swerveOnlyResetPose(new Pose2d(
-        new Translation2d(path1.getInitialPose().getX(), path1.getInitialPose().getY()),
-        // new Translation2d(15.78, 2.341),
-        new Rotation2d(initRotation)
-      ));
-    }
-
-
-    ChoreoTrajectory path = Choreo.getTrajectory("4_note");
-
-        return Choreo.choreoSwerveCommand(
-        path,
-        () -> m_driveTrain.getPose(),
-        new PIDController(0.1, 0, 0),
-        new PIDController(0.1, 0, 0),
-        new PIDController(10, 0, 0),
-        (ChassisSpeeds speeds) -> m_driveTrain.driveRobotRelative(speeds),
-        () -> {
-          if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-        m_driveTrain);
-        
+    return m_autoMethod.getAutonomousCommand();
+  
   }
 
   // public void autonomousInit() {
@@ -386,9 +344,9 @@ public class RobotContainer {
 
   private double getGyroResetAngle() {
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
-      return 0;
-    } else {
       return 180;
+    } else {
+      return 0;
     }
   }
 

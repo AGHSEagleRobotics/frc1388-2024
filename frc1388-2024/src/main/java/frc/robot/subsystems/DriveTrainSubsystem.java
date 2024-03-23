@@ -230,8 +230,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
   // auto stuff
   public void driveRobotRelative(ChassisSpeeds speeds) {
-    speeds.vxMetersPerSecond = -speeds.vxMetersPerSecond;
-    speeds.vyMetersPerSecond = -speeds.vyMetersPerSecond;
+    // speeds.vxMetersPerSecond = -speeds.vxMetersPerSecond;
+    // speeds.vyMetersPerSecond = -speeds.vyMetersPerSecond;
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveTrainConstants.ROBOT_MAX_SPEED);
     //check desaturate constants
