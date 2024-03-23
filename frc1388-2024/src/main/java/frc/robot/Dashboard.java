@@ -25,11 +25,20 @@ public class Dashboard {
     // private final GenericEntry m_canYouShoot;
     // private final SimpleWidget m_shooterPosition;
     private final ComplexWidget m_complexWidgetObjective;
+    // private final ComplexWidget m_complexWidgetDelay;
     private static SendableChooser<Objective> m_autoObjective = new SendableChooser<>();
+    // private static SendableChooser<Objective> m_autoDelay = new SendableChooser<>();
     // public final ShooterAngleSubsystem m_shooterAngleSubsystem = new ShooterAngleSubsystem(null, new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
 
-    static GenericEntry numWait = (Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add("AutoDelay", 0.0).withPosition(20, 8).withSize(8, 4).getEntry());
-    static double numSec = numWait.getDouble(0.0);
+
+
+    static GenericEntry numWait = (Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME)
+     .add("AutoDelay", 0.0)
+     .withWidget(BuiltInWidgets.kNumberSlider)
+     .withProperties(Map.of("min", 0, "max", 10))
+     .withPosition(20, 10)
+     .withSize(8, 4)
+     .getEntry());    
     
     public Dashboard() {
         m_shuffleboardTab =  Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
@@ -41,28 +50,29 @@ public class Dashboard {
         .withPosition(0, 0)
         .withSize(20, 14);
 
-        SmartDashboard.putNumber("numberOfSecTestSee", numSec);
         
         //objectives
         for (AutoConstants.Objective o : Objective.values()) {
             m_autoObjective.addOption(o.getDashboardDescript(), o);
         }
-
-
+        
+        
         m_autoObjective.setDefaultOption(Objective.Default.getDashboardDescript(), Objective.Default);
         m_complexWidgetObjective = m_shuffleboardTab.add( "AutoObjective", m_autoObjective)
-            .withWidget(BuiltInWidgets.kComboBoxChooser)
-            .withSize(8, 4)
-            .withPosition(20, 4);
-
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withSize(8, 4)
+        .withPosition(20, 4);
+        
     } //end constructor
     
-
+    
     public Objective getObjective() {
         return m_autoObjective.getSelected();
     }
-
+    
     public double getWaitTime(){
-        return numSec;
+        double numSec = numWait.getDouble(0);
+        SmartDashboard.putNumber("numberOfSecTestSee", numSec);
+        return numWait.getDouble(0);
     }
 }
