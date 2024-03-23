@@ -253,7 +253,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new WaitCommand(Dashboard.getWaitTime()).andThen(m_autoMethod.getAutonomousCommand()) ;
+    return new WaitCommand(m_dashboard.getWaitTime()).andThen(m_autoMethod.getAutonomousCommand()) ;
   }
 
   public void resetGyro() {

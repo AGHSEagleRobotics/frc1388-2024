@@ -28,7 +28,7 @@ public class Dashboard {
     private static SendableChooser<Objective> m_autoObjective = new SendableChooser<>();
     // public final ShooterAngleSubsystem m_shooterAngleSubsystem = new ShooterAngleSubsystem(null, new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
 
-    final static GenericEntry numWait = (Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add("AutoDelay", 15.0).withWidget(BuiltInWidgets.kNumberSlider).getEntry());
+    static GenericEntry numWait = (Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME).add("AutoDelay", 0.0).withPosition(20, 8).withSize(8, 4).getEntry());
     static double numSec = numWait.getDouble(0.0);
     
     public Dashboard() {
@@ -41,9 +41,7 @@ public class Dashboard {
         .withPosition(0, 0)
         .withSize(20, 14);
 
-        for (int i = 0; i <= 15; i++){
-            
-        }
+        SmartDashboard.putNumber("numberOfSecTestSee", numSec);
         
         //objectives
         for (AutoConstants.Objective o : Objective.values()) {
@@ -63,7 +61,8 @@ public class Dashboard {
     public Objective getObjective() {
         return m_autoObjective.getSelected();
     }
-    public static double getWaitTime(){
+
+    public double getWaitTime(){
         return numSec;
     }
 }
