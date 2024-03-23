@@ -173,7 +173,7 @@ public class Limelight extends SubsystemBase {
     // april tag (needs testing)
     // might also need to add values like where the limelight is although we might be able to do that in the pipeline
 
-    if (targetSpace != null) {
+    if (targetSpace.length >= 6) {
       double distance;
       distance = targetSpace[2];
 
@@ -220,8 +220,6 @@ public class Limelight extends SubsystemBase {
 
       SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
       SmartDashboard.putNumber("DISTANCE VALUE", getDistanceToSpeaker());
-      SmartDashboard.putNumber("Distance to Robot", botPose[LimelightConstants.BOTPOSE_DISTANCE_TO_ROBOT]);
-      
-
+    
   }
 }

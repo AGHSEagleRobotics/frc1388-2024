@@ -77,7 +77,7 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SPEAKER_SHOT_RPM = 3500;
+    public static final double SPEAKER_SHOT_RPM = 4000;
     public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
@@ -102,7 +102,7 @@ public final class Constants {
 
     public static final double kShooterPositionSpeaker = 0.35; // previously 0.37 for competition matches
     public static final double kShooterPositionDrewSaucyShot = 0.33; 
-    public static final double kShooterPositionPodium = 0.23; 
+    public static final double kShooterPositionPodium = 0.173; 
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.25; // previously 0.266 for practice matches
     public static final double kShooterPositionMax = 4.0; // observed max is roughly
@@ -110,7 +110,7 @@ public final class Constants {
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.005;
+    public static final double P_TOLERANCE = 0.003;
   }
 
   public static class IntakeConstants {
@@ -191,9 +191,9 @@ public final class Constants {
     // Subwoofer (1.35, 0.355), 
     // NoteB (2.69, 0.253), 
     // Podium (3, 0.245)
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.4519931; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.07601399; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.0003433488;
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5362329; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.186216; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.02114048;
   }
 
   public static class LEDConstants {

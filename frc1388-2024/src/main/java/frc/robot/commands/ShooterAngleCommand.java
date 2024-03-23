@@ -66,9 +66,8 @@ public class ShooterAngleCommand extends Command {
       } else {
         m_limelight.setPriorityID(7);
       }
-      double[] botPose = m_limelight.getBotPose();
 
-      double distance = botPose[LimelightConstants.BOTPOSE_DISTANCE_TO_ROBOT];
+      double distance = m_limelight.getDistance();
       double distance2 = distance * distance;
 
       
