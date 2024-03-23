@@ -4,7 +4,17 @@ package frc.robot;
 // the WPILib BSD license file in the root directory of this project.
 
 
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -284,5 +294,53 @@ public class AutoMethod {
 
         }
         return null;
+      }
+
+      public Command makeSwerveAutoCommand(String pathName) {
+
+        ChoreoTrajectory path = Choreo.getTrajectory(pathName);
+
+        return Choreo.choreoSwerveCommand(
+            path,
+            () -> m_driveTrainSubsystem.getPose(),
+            new PIDController(0.1, 0, 0),
+            new PIDController(0.1, 0, 0),
+            new PIDController(10, 0, 0),
+            (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),
+            () -> {
+              if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            m_driveTrainSubsystem);
+      }
+
+      public void resetPose(ChoreoTrajectory path) {
+        double initRotation = path.getInitialPose().getRotation().getRadians() + Math.toRadians(getGyroResetAngle());
+        if (initRotation > 2 * Math.PI) {
+          initRotation -= 2 * Math.PI;
+        }
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+          m_driveTrainSubsystem.swerveOnlyResetPose(new Pose2d(
+              new Translation2d(path.flipped().getInitialPose().getX(), path.flipped().getInitialPose().getY()),
+              // new Translation2d(15.78, 2.341),
+              new Rotation2d(initRotation)));
+        } else {
+          m_driveTrainSubsystem.swerveOnlyResetPose(new Pose2d(
+              new Translation2d(path.getInitialPose().getX(), path.getInitialPose().getY()),
+              // new Translation2d(15.78, 2.341),
+              new Rotation2d(initRotation)));
+        }
+      }
+
+      private double getGyroResetAngle() {
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+          return 0;
+        } else {
+          return 180;
+        }
       }
 }

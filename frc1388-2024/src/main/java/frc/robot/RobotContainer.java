@@ -47,6 +47,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -143,6 +145,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
 
     ChoreoTrajectory path = Choreo.getTrajectory("path1");
 
@@ -263,7 +266,6 @@ public class RobotContainer {
       )
     );
     }
-           
 
     // SHOOT AMP COMMAND SEQUENCE
     if (option8) {
@@ -278,7 +280,7 @@ public class RobotContainer {
 
     // RESET GYRO CONTROL
 
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(180)));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(getGyroResetAngle())));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
@@ -312,9 +314,32 @@ public class RobotContainer {
     // return m_autoMethod.getAutonomousCommand();
 
 
-    ChoreoTrajectory path = Choreo.getTrajectory("test");
-    m_driveTrain.resetPose(path.getInitialPose());
-    return Choreo.choreoSwerveCommand(
+    ChoreoTrajectory path1 = Choreo.getTrajectory("4_note");
+
+
+    double initRotation = path1.getInitialPose().getRotation().getRadians() + Math.toRadians(getGyroResetAngle());
+    if (initRotation > 2 * Math.PI) {
+      initRotation -= 2 * Math.PI;
+    }
+
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      m_driveTrain.swerveOnlyResetPose(new Pose2d(
+        new Translation2d(path1.flipped().getInitialPose().getX(), path1.flipped().getInitialPose().getY()),
+        // new Translation2d(15.78, 2.341),
+        new Rotation2d(initRotation)
+      ));
+    } else {
+      m_driveTrain.swerveOnlyResetPose(new Pose2d(
+        new Translation2d(path1.getInitialPose().getX(), path1.getInitialPose().getY()),
+        // new Translation2d(15.78, 2.341),
+        new Rotation2d(initRotation)
+      ));
+    }
+
+
+    ChoreoTrajectory path = Choreo.getTrajectory("4_note");
+
+        return Choreo.choreoSwerveCommand(
         path,
         () -> m_driveTrain.getPose(),
         new PIDController(0.1, 0, 0),
@@ -329,28 +354,7 @@ public class RobotContainer {
           }
         },
         m_driveTrain);
-    // return new ParallelCommandGroup(
-    //   new SequentialCommandGroup(new WaitCommand(1.5), new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)),
-    //   Choreo.choreoSwerveCommand (
-    //     path, 
-    //     () -> m_driveTrain.getPose(), 
-    //     new PIDController(0.1, 0, 0),
-    //     new PIDController(0.1, 0, 0),
-    //     new PIDController(0, 0, 0),
-    //     (ChassisSpeeds speeds) -> 
-    //       m_driveTrain.driveRobotRelative(speeds),
-    //     () -> {
-    //       if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-    //         return true;
-    //       } else {
-    //         return false;
-    //       }
-    //     },
-    //     m_driveTrain
-    //   )
-
-    // );
-    
+        
   }
 
   // public void autonomousInit() {
@@ -378,6 +382,14 @@ public class RobotContainer {
   }
   public boolean getDPadRight() {
     return m_driverController.getHID().getPOV() == 90;
+  }
+
+  private double getGyroResetAngle() {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+      return 0;
+    } else {
+      return 180;
+    }
   }
 
 }

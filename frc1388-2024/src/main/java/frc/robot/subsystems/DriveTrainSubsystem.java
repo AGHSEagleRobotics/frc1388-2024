@@ -29,7 +29,7 @@ import frc.robot.vision.Limelight;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
-  StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish(); 
+  StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish();
 
   /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
@@ -230,6 +230,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
   // auto stuff
   public void driveRobotRelative(ChassisSpeeds speeds) {
+    speeds.vxMetersPerSecond = -speeds.vxMetersPerSecond;
+    speeds.vyMetersPerSecond = -speeds.vyMetersPerSecond;
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveTrainConstants.ROBOT_MAX_SPEED);
     //check desaturate constants
