@@ -190,18 +190,22 @@ public class RobotContainer {
     // DRIVER CONTROLS
     // m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
     m_driverController.leftBumper().onTrue(new IntakeTransitionCommand
-          (IntakeTransState.DEPLOYING,
-          true,
-          m_intakeSubsystem,
-          m_transitionSubsystem,
-          m_limelight,
-          m_operatorController,
-          m_driverController));
+      (IntakeTransState.DEPLOYING,
+      true,
+      m_intakeSubsystem,
+      m_transitionSubsystem,
+      m_limelight,
+      m_operatorController,
+      m_driverController));
     
     // m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
-    m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand
+      (IntakeTransState.RETRACTING,
+      false, 
+      m_intakeSubsystem, 
+      m_transitionSubsystem, 
+      m_limelight));
 
-    
     // SHOOT SPEAKER COMMAND SEQUENCE
     m_driverController.rightTrigger(0.9).whileTrue(
       new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
@@ -210,8 +214,7 @@ public class RobotContainer {
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
-           
-
+          
     // SHOOT AMP COMMAND SEQUENCE
     m_driverController.rightBumper().whileTrue(
       new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
@@ -228,10 +231,29 @@ public class RobotContainer {
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight, m_operatorController, m_driverController));
-    m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
-    m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
-    m_operatorController.rightTrigger().onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
+    m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand
+      (IntakeTransState.DEPLOYING,
+      true,
+      m_intakeSubsystem,
+      m_transitionSubsystem,
+      m_limelight,
+      m_operatorController, 
+      m_driverController));
+
+    m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand
+      (IntakeTransState.RETRACTING,
+      false,
+      m_intakeSubsystem,
+      m_transitionSubsystem, 
+      m_limelight));
+
+    m_operatorController.rightBumper().whileTrue(new Eject
+      (m_intakeSubsystem, 
+      m_transitionSubsystem));
+
+    m_operatorController.rightTrigger().onTrue(new ShooterCommand
+      (ShooterConstants.SPEAKER_SHOT_RPM, 
+      m_shooterSubsystem));
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     // m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));

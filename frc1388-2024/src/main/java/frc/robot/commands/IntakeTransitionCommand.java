@@ -89,20 +89,17 @@ public class IntakeTransitionCommand extends Command {
       case DEPLOYING:
       if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN) {
         m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
-        System.out.println(m_deployIntakeTimer.get() + "  deploying");
       } 
-      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.1) {
+      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_OFF) {
         m_intakeSubsystem.setLifterMotor(0); 
-        System.out.println(m_deployIntakeTimer.get() + "  stopping");
       }
-      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.8) {
+      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_COAST) {
         m_intakeSubsystem.setBrakeMode(false); 
-        System.out.println(m_deployIntakeTimer.get() + "  brakefalse");
       }
       else {
         m_intakeSubsystem.setBrakeMode(true); 
-        System.out.println(m_deployIntakeTimer.get() + "  braketrue");
       } 
+
         if (m_intakeSubsystem.isNoteDetected()) {
           m_ticksNoteIsDetectedInIntake++;
           m_intakeSubsystem.setRollerMotor(0);
@@ -110,6 +107,7 @@ public class IntakeTransitionCommand extends Command {
           m_ticksNoteIsDetectedInIntake = 0;
           m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_INTAKING);
         }
+        
         if (m_ticksNoteIsDetectedInIntake > IntakeConstants.TICKS_BEFORE_RETRACTING_INTAKE) {
           m_state = IntakeTransState.RETRACTING;
               System.out.println(m_state.name());
@@ -117,6 +115,7 @@ public class IntakeTransitionCommand extends Command {
               if(m_driverController != null) {
                 m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1);
               }
+
               if(m_operatorController != null) {
                 m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 1);
               }

@@ -41,10 +41,10 @@ public class DeployIntakeCommand extends Command {
     if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN) {
       m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
     } 
-    else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.1) {
+    else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_OFF) {
       m_intakeSubsystem.setLifterMotor(0); 
     }
-    else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN + 0.8) {
+    else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_COAST) {
       m_intakeSubsystem.setBrakeMode(false);
     }
     else {
