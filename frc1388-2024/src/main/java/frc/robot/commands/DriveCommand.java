@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
@@ -70,10 +71,15 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // controller inputs    
+    // controller inputs
     double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      leftX = -leftX;
+      leftY = -leftY;
+    }
     
     // velocities from controller inputs
     double xVelocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftY, DriveTrainConstants.LEFT_STICK_SCALE);
@@ -91,7 +97,7 @@ public class DriveCommand extends Command {
 
     // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
-      omega = scale(rightX, 2.5);
+      omega = 2 * Math.PI * scale(rightX, 2.5);
       m_autoTracking = false;
       m_goingToAngle = false;
     } else if (m_y.get()) {
@@ -125,13 +131,17 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
-      if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
-      double speed = m_limelightPIDController.calculate(m_limelight.getAngleFromSpeaker());
+      double tx;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+       tx = m_limelight.getTxOfTagID(4);
+    } else {
+       tx = m_limelight.getTxOfTagID(7);
+    }
+      double speed = m_limelightPIDController.calculate(tx);
       omega = speed;
       }
-    }
 
-    SmartDashboard.putBoolean("going to angle", m_goingToAngle);
+    // SmartDashboard.putBoolean("DriveCommand/going to angle", m_goingToAngle);
 
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }

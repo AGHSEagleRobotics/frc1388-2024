@@ -175,6 +175,7 @@ public class IntakeTransitionCommand extends Command {
     m_intakeSubsystem.setLifterMotor(0);
     m_intakeSubsystem.setRollerMotor(0);
     m_transitionSubsystem.set(0);
+    m_intakeSubsystem.setBrakeMode(true);
 
     if(m_driverController != null) {
       m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0);

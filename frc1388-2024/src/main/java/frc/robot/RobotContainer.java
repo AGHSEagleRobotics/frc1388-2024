@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
+import com.choreo.lib.*;
+
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -34,13 +38,25 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -58,12 +74,15 @@ public class RobotContainer {
 
   private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
 
+
+  Field2d m_Field2d = new Field2d();
+
+  private final boolean option8 = true;
   private final Dashboard m_dashboard = new Dashboard();
-  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
-      new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-          MotorType.kBrushless),
-      new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
-          MotorType.kBrushless));
+    
+  public final ShooterSubsystem m_shooterSubsystem;
+
+
     
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -90,10 +109,8 @@ public class RobotContainer {
       m_limelight
   );
 
-  public final ShooterAngleSubsystem m_shooterAngleSubsystem = new ShooterAngleSubsystem(
-      new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
-      new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
-
+  public final ShooterAngleSubsystem m_shooterAngleSubsystem;
+  
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
       new CANSparkMax(IntakeConstants.ROLLER_MOTOR_CANID, MotorType.kBrushless),
       new CANSparkMax(IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless),
@@ -114,12 +131,41 @@ public class RobotContainer {
 
   
 
-    private final AutoMethod m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem, m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
+    private final AutoMethod m_autoMethod;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    // ChoreoTrajectory path = Choreo.getTrajectory("path1");
+
+    // m_Field2d.getObject("path1").setPoses(path.getInitialPose(), path.getFinalPose());
+    // m_Field2d.getObject("pathposes").setPoses(path.getPoses());
+    // SmartDashboard.putData(m_Field2d);
+
+    if (option8) {
+      m_shooterSubsystem = new ShooterSubsystem(
+          new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+              MotorType.kBrushless),
+          new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+              MotorType.kBrushless));
+
+      m_shooterAngleSubsystem = new ShooterAngleSubsystem(
+          new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
+          new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
+
+      m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem,
+          m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
+
+    } else {
+      m_shooterSubsystem = null;
+      m_shooterAngleSubsystem = null;
+      m_autoMethod = null;
+    }
+
+
+
     DriveCommand m_driveCommand = new DriveCommand(
         m_driveTrain,
         m_limelight,
@@ -135,6 +181,7 @@ public class RobotContainer {
       
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
+    if (option8) {
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
         () -> m_operatorController.getHID().getXButton(),
         () -> m_operatorController.getHID().getYButton(),
@@ -145,7 +192,7 @@ public class RobotContainer {
         m_shooterAngleSubsystem, m_limelight);
         
     m_shooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
-
+    }
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
         m_driveTrain,
@@ -190,7 +237,9 @@ public class RobotContainer {
     // m_limelight.goToCenterOfSpeaker()));
 
     // DRIVER CONTROLS
-    // m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+
+    
+    if (option8) {
     m_driverController.leftBumper().onTrue(new IntakeTransitionCommand
       (IntakeTransState.DEPLOYING,
       true,
@@ -199,16 +248,16 @@ public class RobotContainer {
       m_limelight,
       m_operatorController,
       m_driverController));
-    
-    // m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
+
     m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand
       (IntakeTransState.RETRACTING,
       false, 
       m_intakeSubsystem, 
       m_transitionSubsystem, 
       m_limelight));
-
+    }    
     // SHOOT SPEAKER COMMAND SEQUENCE
+    if (option8) {
     m_driverController.rightTrigger(0.9).whileTrue(
       new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
       .andThen(
@@ -216,23 +265,26 @@ public class RobotContainer {
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
-          
+    }
     // SHOOT AMP COMMAND SEQUENCE
+    if (option8) {
+
     m_driverController.rightBumper().whileTrue(
-      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem,
+              m_limelight)
       .andThen(
         new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
-        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-      )
-    );
+                      .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+    }
 
     // RESET GYRO CONTROL
 
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(180)));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(getGyroResetAngle())));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
+    if (option8) {
     m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand
       (IntakeTransState.DEPLOYING,
       true,
@@ -241,21 +293,22 @@ public class RobotContainer {
       m_limelight,
       m_operatorController, 
       m_driverController));
-
+  
     m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand
       (IntakeTransState.RETRACTING,
       false,
       m_intakeSubsystem,
       m_transitionSubsystem, 
       m_limelight));
-
+  
     m_operatorController.rightBumper().whileTrue(new Eject
       (m_intakeSubsystem, 
       m_transitionSubsystem));
-
+  
     m_operatorController.rightTrigger().onTrue(new ShooterCommand
       (ShooterConstants.SPEAKER_SHOT_RPM, 
       m_shooterSubsystem));
+    }
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     // m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
@@ -273,15 +326,16 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new WaitCommand(m_dashboard.getWaitTime()).andThen(m_autoMethod.getAutonomousCommand()) ;
+  
   }
 
-  public void autonomousInit() {
-    m_limelight.setAllianceColor(DriverStation.getAlliance().get());
-  }
+  // public void autonomousInit() {
+  //   m_limelight.setAllianceColor(DriverStation.getAlliance().get());
+  // }
 
-  public void teleopInit() {
-    m_limelight.setAllianceColor(DriverStation.getAlliance().get());
-  }
+  // public void teleopInit() {
+  //   m_limelight.setAllianceColor(DriverStation.getAlliance().get());
+  // }
 
   public void resetPose() {
     m_driveTrain.resetPose(new Pose2d());
@@ -301,4 +355,13 @@ public class RobotContainer {
   public boolean getDPadRight() {
     return m_driverController.getHID().getPOV() == 90;
   }
+
+  private double getGyroResetAngle() {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+      return 180;
+    } else {
+      return 0;
+    }
+  }
+
 }

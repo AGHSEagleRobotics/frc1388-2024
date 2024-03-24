@@ -102,8 +102,8 @@ public class ShooterSubsystem extends SubsystemBase {
     double bottomMotorVelocity = getBottomMotorVelocity();
     double topMotorVelocity = getTopMotorVelocity();
 
-    SmartDashboard.putNumber("bottom shooter rpm", bottomMotorVelocity);
-    SmartDashboard.putNumber("top shooter rpm", topMotorVelocity);
+    SmartDashboard.putNumber("Shooter/bottom rpm", bottomMotorVelocity);
+    SmartDashboard.putNumber("Shooter/top rpm", topMotorVelocity);
 
     if (bottomMotorVelocity != 0) {
       m_logBottomShooterMotorVelocity.append(bottomMotorVelocity);

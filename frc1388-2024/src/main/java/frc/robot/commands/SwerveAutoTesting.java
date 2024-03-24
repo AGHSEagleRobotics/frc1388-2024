@@ -49,10 +49,10 @@ public class SwerveAutoTesting extends Command {
 
     // auto driving test
     m_driveTrain.driveRobotRelative(new ChassisSpeeds(xVelocity, yVelocity, omega));
-    SmartDashboard.putNumber("input y", yVelocity);
-    SmartDashboard.putNumber("drivetrain/robot relative omega", m_driveTrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
-    SmartDashboard.putNumber("drivetrain/robot relative x vel", m_driveTrain.getRobotRelativeSpeeds().vxMetersPerSecond);
-    SmartDashboard.putNumber("drivetrain/robot relative y vel", m_driveTrain.getRobotRelativeSpeeds().vyMetersPerSecond);
+    SmartDashboard.putNumber("SwerveAutoTesting/input y", yVelocity);
+    SmartDashboard.putNumber("SwerveAutoTesting/drivetrain/robot relative omega", m_driveTrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
+    SmartDashboard.putNumber("SwerveAutoTesting/drivetrain/robot relative x vel", m_driveTrain.getRobotRelativeSpeeds().vxMetersPerSecond);
+    SmartDashboard.putNumber("SwerveAutoTesting/drivetrain/robot relative y vel", m_driveTrain.getRobotRelativeSpeeds().vyMetersPerSecond);
 
 
   }

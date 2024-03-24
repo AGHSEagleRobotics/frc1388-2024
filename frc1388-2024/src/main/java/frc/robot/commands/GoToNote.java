@@ -63,7 +63,7 @@ public class GoToNote extends Command {
     } else {
       m_driveTrain.drive(0, 0, 0);
     }
-    SmartDashboard.putNumber("xVelocity", xVelocity);
+    SmartDashboard.putNumber("GoToNote/xVelocity", xVelocity);
   }
 
   // Called once the command ends or is interrupted.

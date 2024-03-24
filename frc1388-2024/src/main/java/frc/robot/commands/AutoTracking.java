@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -34,10 +35,14 @@ public class AutoTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
-    if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
-    m_driveTrain.drive(0, 0, omega);
+    double tx;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+       tx = m_limelight.getTxOfTagID(4);
+    } else {
+       tx = m_limelight.getTxOfTagID(7);
     }
+      double speed = m_rotationPIDController.calculate(tx);
+      m_driveTrain.drive(0, 0, speed);
   }
 
   // Called once the command ends or is interrupted.

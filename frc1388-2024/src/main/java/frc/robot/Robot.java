@@ -135,8 +135,6 @@ public class Robot extends TimedRobot {
     m_robotContainer.setBrakeMode(true);
     DataLogManager.log("done setting neutral mode");
 
-    m_robotContainer.autonomousInit();
-
     // schedule the autonomous command
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -175,7 +173,6 @@ public class Robot extends TimedRobot {
    
      m_robotContainer.setBrakeMode(true); 
 
-    m_robotContainer.teleopInit();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

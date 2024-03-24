@@ -42,10 +42,10 @@ public class AutoDrive extends Command {
     // SmartDashboard.putString("auto drive info", "setpoint" + m_setPoint + "dt.getdist" + m_driveTrain.getDistTraveled() + "start" + m_start);
     double pidOutput = m_driveController.calculate(m_driveTrain.getDistTraveled() - m_start, m_setPoint);
     double slewOutput = m_accelerationLimiter.calculate(pidOutput);
-    SmartDashboard.putNumber("drive slew", slewOutput);
+    SmartDashboard.putNumber("AutoDrive/drive slew", slewOutput);
     m_driveTrain.differentialDrive(slewOutput);
-    SmartDashboard.putNumber("dist traveled", m_driveTrain.getDistTraveled() - m_start);
-    SmartDashboard.putNumber("total dist traveled", m_driveTrain.getDistTraveled());
+    SmartDashboard.putNumber("AutoDrive/dist traveled", m_driveTrain.getDistTraveled() - m_start);
+    SmartDashboard.putNumber("AutoDrive/total dist traveled", m_driveTrain.getDistTraveled());
 
   }
 

@@ -4,7 +4,17 @@ package frc.robot;
 // the WPILib BSD license file in the root directory of this project.
 
 
+import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -16,6 +26,7 @@ import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShooterAngleLimelight;
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoFeedShooter;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoShooterAngle;
 import frc.robot.commands.AutoShooterCommand;
@@ -87,6 +98,71 @@ public class AutoMethod {
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
         new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem));
+  }
+
+  public Command FourNote() {
+    return new SequentialCommandGroup(
+      Start123Shoot(),
+      
+      new AutoShooterAngle(0.212, m_shooterAngleSubsystem)
+        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(makeSwerveAutoCommand("4_note.1")))), 
+
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+
+      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem)
+        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(makeSwerveAutoCommand("4_note.2")))), 
+      
+      makeSwerveAutoCommand("4_note.3"),
+
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+
+      
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)
+            .andThen(makeSwerveAutoCommand("4_note.4"))),
+      
+      makeSwerveAutoCommand("4_note.5"),
+
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+
+      
+    );
+  }
+
+  public Command ThreeFarNote() {
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    // .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
+    .alongWith(new SequentialCommandGroup(
+      // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+      
+      makeSwerveAutoCommand("3_note.1"),
+        // .alongWith(
+        //   new WaitCommand(1.5)
+        //   .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+        //   .deadlineWith(new WaitCommand(0.25))),
+      
+      makeSwerveAutoCommand("3_note.2"),
+
+      // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+
+      makeSwerveAutoCommand("3_note.3"),
+      // .alongWith(
+      //     new WaitCommand(1.5)
+      //     .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      //     .deadlineWith(new WaitCommand(0.25))),
+      
+      makeSwerveAutoCommand("3_note.4")
+
+            // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
+      
+    ));
   }
 
   // needs testing
@@ -194,10 +270,13 @@ public class AutoMethod {
   }
 
   public Command testCoordinate(){
-    return new AutoGoToPoint(7.32, 4.3, 180, m_driveTrainSubsystem);
+     return new SequentialCommandGroup(
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25),
+          new GoToNote(m_driveTrainSubsystem, m_limelight, m_intakeSubsystem)));
   }
 
-  public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC(){
+  public Command Shoot1IntakeBSpeakerBIntakeCSpeakerC() {
     return new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
     .alongWith(
       new FeedShooter(m_transitionSubsystem, m_intakeSubsystem).withTimeout(2)
@@ -273,6 +352,12 @@ public class AutoMethod {
           case ShootAndLeaveFromSideWithLonger:
             return ShootAndLeaveFromSideWithLonger();
 
+          case FourNote:
+            return FourNote();
+        
+          case ThreeNote:
+            return ThreeFarNote();
+
           case testCoordinate:
             return testCoordinate();
 
@@ -284,5 +369,55 @@ public class AutoMethod {
 
         }
         return null;
+      }
+
+      public Command makeSwerveAutoCommand(String pathString) {
+        ChoreoTrajectory path = Choreo.getTrajectory(pathString);
+
+        return Choreo.choreoSwerveCommand(
+            path,
+            () -> m_driveTrainSubsystem.getPose(),
+            new PIDController(1.0, 0, 0),
+            new PIDController(0.9, 0, 0),
+            new PIDController(1.1, 0, 0),
+            (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),
+            () -> {
+              if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            m_driveTrainSubsystem);
+      }
+
+      public void resetPose(String pathString) {
+
+        ChoreoTrajectory path = Choreo.getTrajectory(pathString);
+
+        double initRotation = path.getInitialPose().getRotation().getRadians() + Math.toRadians(getGyroResetAngle());
+        if (initRotation > 2 * Math.PI) {
+          initRotation -= 2 * Math.PI;
+        }
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+          m_driveTrainSubsystem.swerveOnlyResetPose(new Pose2d(
+              new Translation2d(path.flipped().getInitialPose().getX(), path.flipped().getInitialPose().getY()),
+              // new Translation2d(15.78, 2.341),
+              new Rotation2d(initRotation)));
+        } else {
+          m_driveTrainSubsystem.swerveOnlyResetPose(new Pose2d(
+              new Translation2d(path.getInitialPose().getX(), path.getInitialPose().getY()),
+              // new Translation2d(15.78, 2.341),
+              new Rotation2d(initRotation)));
+        }
+      }
+
+      private double getGyroResetAngle() {
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+          return 0;
+        } else {
+          return 180;
+        }
       }
 }

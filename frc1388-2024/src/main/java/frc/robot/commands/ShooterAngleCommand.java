@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveTrainConstants;
@@ -59,15 +60,24 @@ public class ShooterAngleCommand extends Command {
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.MANUAL_CONTROL_ANGLE_DEADBAND);
 
       double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-      double distance = m_limelight.getDistance();
+
+      double distance;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        distance = m_limelight.getDistanceOfTagId(4);
+      } else {
+        distance = m_limelight.getDistanceOfTagId(7);
+      }
+
       double distance2 = distance * distance;
 
+      
       // mycurvefit numbers for quadratic interpolation
       if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
       }
+
       // if ( (distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_POSITIONB)) {
       // goToAngle = (LimelightConstants.SLOPE_MATH_SUBLIFER_TO_POSITIONB * distance) + LimelightConstants.SHOOTER_OFFSET_SUBTOB;
       //  goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionNoteB, ShooterAngleSubsystemConstants.kShooterPositionUp);
@@ -81,7 +91,7 @@ public class ShooterAngleCommand extends Command {
       //   goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionWing, ShooterAngleSubsystemConstants.kShooterPositionDown);
       // }
    
-    SmartDashboard.putNumber("/Auto Tracking Shooter Angle", goToAngle); 
+    SmartDashboard.putNumber("Shooter/Auto Tracking Shooter Angle", goToAngle); 
 
     boolean startButton = m_start.get();
     if (startButton) {
@@ -118,11 +128,10 @@ public class ShooterAngleCommand extends Command {
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     } else if (m_autoMode == true) {
-      if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
+      
         m_shooterAngleSubsystem.setPosition(goToAngle);
       }
     }
-  }
 
   // Called once the command ends or is interrupted.
   @Override

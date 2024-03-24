@@ -39,7 +39,7 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = 0.25; // meters per second
+    public static final double ROBOT_MAX_SPEED = 4.0; // meters per second
 
     public static final int FRONT_RIGHT_DRIVE_MOTOR_CANID = 1;
     public static final int FRONT_RIGHT_ROTATION_MOTOR_CANID = 5;
@@ -77,7 +77,7 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_D = 0;
     public static final double SHOOTER_MOTOR_FF = 0;
 
-    public static final double SPEAKER_SHOT_RPM = 3500;
+    public static final double SPEAKER_SHOT_RPM = 4000;
     public static final double AMP_SHOT_RPM = 500;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
@@ -102,15 +102,15 @@ public final class Constants {
 
     public static final double kShooterPositionSpeaker = 0.35; // previously 0.37 for competition matches
     public static final double kShooterPositionDrewSaucyShot = 0.33; 
-    public static final double kShooterPositionPodium = 0.23; 
+    public static final double kShooterPositionPodium = 0.173; 
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.25; // previously 0.266 for practice matches
     public static final double kShooterPositionMax = 0.4; // observed max is roughly
-    public static final double kShooterPositionMin = 0.16; //  observed min without hitting transition 
+    public static final double kShooterPositionMin = 0; //  observed min without hitting transition 
 
     public static final int kShooterAngleMotorCANID = 22;
 
-    public static final double P_TOLERANCE = 0.005;
+    public static final double P_TOLERANCE = 0.003;
   }
 
   public static class IntakeConstants {
@@ -146,9 +146,9 @@ public final class Constants {
     public static final double MAX_TY_VALUE = 8.5;
     public static final double SLOW_DOWN = 0.5;
     public static final double METERS_PER_SECOND = 0.2;
-    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.003;
-    public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000001;
-    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000001;
+    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.036;
+    public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000012;
+    public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000012;
     public static final double TX_OFFSET = 6.47;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
     public static final double DISTANCE_FROM_APRILTAG_AUTOSHOOTER = 4;
@@ -160,6 +160,37 @@ public final class Constants {
     public static final double LED_FORCE_OFF = 1;
     public static final double LED_FORCE_BLINK = 2;
     public static final double LED_FORCE_ON = 3;
+
+    public static final int BOTPOSE_X = 0;
+    public static final int BOTPOSE_Y = 1;
+    public static final int BOTPOSE_Z = 2;
+    public static final int BOTPOSE_ROLL = 3;
+    public static final int BOTPOSE_PITCH = 4;
+    public static final int BOTPOSE_YAW = 5;
+    public static final int BOTPOSE_LATENCY = 6;
+    public static final int BOTPOSE_TOTAL_APRILTAGS_SEEN = 7;
+    public static final int BOTPOSE_DISTANCE_BETWEEN_TAGS = 8;
+    public static final int BOTPOSE_AVERAGE_DISTANCE_FROM_CAMERA = 9;
+    public static final int BOTPOSE_AVERAGE_TAG_AREA = 10;
+    public static final int BOTPOSE_TAG_ID = 11;
+    public static final int BOTPOSE_TX_RAW_TARGET_ANGLE = 12;
+    public static final int BOTPOSE_TY_RAW_TARGET_ANGLE = 13;
+    public static final int BOTPOSE_TARGET_AREA = 14;
+    public static final int BOTPOSE_DISTANCE_TO_CAMERA = 15;
+    public static final int BOTPOSE_DISTANCE_TO_ROBOT = 16;
+    public static final int BOTPOSE_AMBIGUITY = 17;
+
+    public static final int BOTPOSE_NEXT_INDEX_OF_TAG_ID = 7;
+    public static final int BOTPOSE_RELATIVE_TAG_ID = 0;
+    public static final int BOTPOSE_RELATIVE_TX_RAW_TARGET_ANGLE = 1;
+    public static final int BOTPOSE_RELATIVE_TY_RAW_TARGET_ANGLE = 2;
+    public static final int BOTPOSE_RELATIVE_TARGET_AREA = 3;
+    public static final int BOTPOSE_RELATIVE_DISTANCE_TO_CAMERA = 4;
+    public static final int BOTPOSE_RELATIVE_DISTANCE_TO_ROBOT = 5;
+    public static final int BOTPOSE_RELATIVE_AMBIGUITY = 6;
+
+    public static final double DISTANCE_OFFSET_CAMERA = 0.15;
+
     // public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
     // ShooterAngleSubsystemConstants.kShooterPositionSpeaker) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);
     // public static final double SHOOTER_OFFSET_SUBTOB = 0.5177895;
@@ -172,12 +203,16 @@ public final class Constants {
 
     // mycurvefit numbers for quadratic interpolation based on X Distance values and Y Shooter angles
     // values = 
-    // Subwoofer (1.35, 0.355), 
-    // NoteB (2.69, 0.253), 
-    // Podium (3, 0.245)
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.4519931; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.07601399; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.0003433488;
+    // 1.35, 0.325
+    // 1.76 0.27
+    // 2.18 0.232
+    // 2.45 .21
+    // 2.81 .177
+    // 2.96 .173
+
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5362329; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.186216; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.02114048;
   }
 
   public static class LEDConstants {
@@ -189,7 +224,7 @@ public final class Constants {
   }
 
   public static class AutoConstants {
-    public static final double TURN_P_VALUE = 0.003;
+    public static final double TURN_P_VALUE = 0.036;
 
     public static final double TURN_P_TOLERANCE = 0.25;
     public static final double TURN_I_VALUE = 0.003;
@@ -215,6 +250,8 @@ public final class Constants {
         Shoot1IntakeBSpeakerB ("1, B"),
         Shoot123 ("1 Shoot"),
         ShootAndLeaveFromSideWithLonger("2 and leave"),
+        FourNote ("4 note auto "),
+        ThreeNote ("3 note auto "),
         testCoordinate("TEST DELETE ME");
 //        Shoot3Leave ("3 Leave"); // needs testing
 //        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
