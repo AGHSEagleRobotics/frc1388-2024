@@ -130,8 +130,9 @@ public class Robot extends TimedRobot {
     DataLogManager.log("####### Autonomous Init");
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // System.out.println("setting neutral mode");
+    DataLogManager.log("setting neutral mode");
     m_robotContainer.setBrakeMode(true);
+    DataLogManager.log("done setting neutral mode");
 
    
     // schedule the autonomous command

@@ -66,7 +66,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
-  private final boolean option8 = false;
   private final Dashboard m_dashboard = new Dashboard();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem(
       new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
@@ -146,7 +145,6 @@ public class RobotContainer {
       
     m_driveTrain.setDefaultCommand(m_driveCommand);
 
-    if (option8) {
     ShooterAngleCommand m_ShooterAngleCommand = new ShooterAngleCommand(
         () -> m_operatorController.getHID().getXButton(),
         () -> m_operatorController.getHID().getYButton(),
@@ -157,7 +155,6 @@ public class RobotContainer {
         m_shooterAngleSubsystem, m_limelight);
         
     m_shooterAngleSubsystem.setDefaultCommand(m_ShooterAngleCommand);
-    }
 
 
     SwerveAutoTesting m_swerveAutoTesting = new SwerveAutoTesting(
@@ -211,7 +208,6 @@ public class RobotContainer {
 
     
     // SHOOT SPEAKER COMMAND SEQUENCE
-    if (option8) {
     m_driverController.rightTrigger(0.9).whileTrue(
       new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
       .andThen(
@@ -219,19 +215,16 @@ public class RobotContainer {
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
       )
     );
-    }
            
 
     // SHOOT AMP COMMAND SEQUENCE
-    if (option8) {
-
     m_driverController.rightBumper().whileTrue(
-          new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem,
-              m_limelight)
+      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
       .andThen(
         new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
-                      .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
-    }
+        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      )
+    );
 
     // RESET GYRO CONTROL
 
@@ -240,15 +233,11 @@ public class RobotContainer {
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
     // OPERATOR CONTROLS
-    if (option8) {
-      m_operatorController.leftBumper().onTrue(new RumbleIntakeTransitionCommand(m_driverController,
-          IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
-      m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false,
-          m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    m_operatorController.leftBumper().onTrue(new RumbleIntakeTransitionCommand(m_driverController ,IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
     m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
-      m_operatorController.rightTrigger()
-          .onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
-    }
+    m_operatorController.rightTrigger().onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
+    
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     // m_operatorController.a().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
     // m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 0, 0));
