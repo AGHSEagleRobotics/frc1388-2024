@@ -25,6 +25,8 @@ public class IntakeTransitionCommand extends Command {
   private Timer m_deployIntakeTimer = new Timer();
 
   private final boolean m_pullToTransition;
+  
+  private final boolean m_retractIntakeFlag;
 
   private final Limelight m_Limelight;
 
@@ -38,6 +40,7 @@ public class IntakeTransitionCommand extends Command {
   /** Creates a new IntakeTransitionCommand. */
   public IntakeTransitionCommand(IntakeTransState initialState,
                                  boolean pullToTransition,
+                                 boolean retractInTakeFlag,
                                  IntakeSubsystem intakeSubsystem,
                                  TransitionSubsystem transitionSubsystem,
                                  Limelight limelight) {
@@ -45,6 +48,8 @@ public class IntakeTransitionCommand extends Command {
     m_initialState = initialState;
 
     m_pullToTransition = pullToTransition;
+
+    m_retractIntakeFlag = retractInTakeFlag;
 
     m_Limelight = limelight;
 
@@ -58,6 +63,7 @@ public class IntakeTransitionCommand extends Command {
   //this constructor is used for controller rumble
   public IntakeTransitionCommand(IntakeTransState initialState,
                                  boolean pullToTransition,
+                                 boolean retractInTakeFlag,
                                  IntakeSubsystem intakeSubsystem,
                                  TransitionSubsystem transitionSubsystem,
                                  Limelight limelight,
@@ -66,6 +72,7 @@ public class IntakeTransitionCommand extends Command {
                                  ) {
     this(initialState,
         pullToTransition,
+        retractInTakeFlag,
         intakeSubsystem,
         transitionSubsystem,
         limelight);
@@ -124,6 +131,7 @@ public class IntakeTransitionCommand extends Command {
 
 
       case RETRACTING:
+      if (m_retractIntakeFlag) {
       m_Limelight.setLimelightLEDsOn(true);
         m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
         m_intakeSubsystem.setRollerMotor(0);
@@ -145,7 +153,12 @@ public class IntakeTransitionCommand extends Command {
 
           }
         }
+      }
+      else {
+        m_state = IntakeTransState.DONE;
+      }
         break;
+      
       
       case TRANSITION:
         m_Limelight.setLimelightLEDsOn(false);
@@ -189,6 +202,6 @@ public class IntakeTransitionCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_state == IntakeTransState.DONE;
+    return (m_state == IntakeTransState.DONE);
   }
 }

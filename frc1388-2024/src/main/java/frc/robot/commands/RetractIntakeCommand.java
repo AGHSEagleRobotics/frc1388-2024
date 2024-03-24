@@ -13,13 +13,15 @@ import frc.robot.subsystems.TransitionSubsystem;
 public class RetractIntakeCommand extends Command {
   private final IntakeSubsystem m_intakeSubsystem;
   private final TransitionSubsystem m_transitionSubsystem;
+  private final boolean m_endRetractFlag;
 
   private double m_intakeSpeed = IntakeConstants.LIFTER_MOTOR_SPEED_UP;
 
-  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem) {
+  public RetractIntakeCommand(IntakeSubsystem intakeSubsystem, TransitionSubsystem transitionSubsystem, boolean endRectractFlag) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intakeSubsystem = intakeSubsystem;
     m_transitionSubsystem = transitionSubsystem;
+    m_endRetractFlag = endRectractFlag;
 
     addRequirements(m_intakeSubsystem, m_transitionSubsystem);
   }
@@ -53,6 +55,9 @@ public class RetractIntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (m_intakeSubsystem.atUpperLimit() && (m_endRetractFlag)) {
+      return true;
+    }
     return false;
   }
 }

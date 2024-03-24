@@ -305,7 +305,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // if ((aprilTagsSeen > 2) ||
     //     ((aprilTagsSeen == 2) && ((averageTargetArea > 0.04) && (averageTargetArea ))) ||
     //     ((aprilTagsSeen == 1) && (averageTargetArea < 0.6) && (averageTargetArea > 0))) 
-    if (averageTargetArea > 0.045)
+    if (averageTargetArea > 0.1)
     {
       limelightResetPose();
     }

@@ -30,6 +30,7 @@ import frc.robot.commands.AutoFeedShooter;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoShooterAngle;
 import frc.robot.commands.AutoShooterCommand;
+import frc.robot.commands.AutoTracking;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.FeedShooter;
@@ -37,6 +38,7 @@ import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.LineUpWithAprilTag;
+import frc.robot.commands.PullToTransition;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
@@ -58,6 +60,10 @@ public class AutoMethod {
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
   private final Limelight m_limelight;
 
+  private final Command m_fourNote;
+  private final Command m_threeNote;
+
+
  
   public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition, ShooterAngleSubsystem shooterAngle, Limelight limelight) {
     m_driveTrainSubsystem = driveTrainSubsystem;
@@ -67,6 +73,9 @@ public class AutoMethod {
     m_transitionSubsystem = transition;
     m_limelight = limelight;
     m_shooterAngleSubsystem = shooterAngle;
+
+    m_fourNote = FourNote();
+    m_threeNote = ThreeFarNote();
   }
 
   public Command SitStillLookPretty(){
@@ -78,11 +87,12 @@ public class AutoMethod {
   }
 
   public Command Start123Shoot(){
-    return new SequentialCommandGroup(
-      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    .alongWith(
+      new SequentialCommandGroup(
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-    );
+    ));
   }
   public Command ShootAndLeave(){
     return new SequentialCommandGroup(
@@ -101,21 +111,22 @@ public class AutoMethod {
   }
 
   public Command FourNote() {
-    return new SequentialCommandGroup(
-      Start123Shoot(),
-      
-      new AutoShooterAngle(0.212, m_shooterAngleSubsystem)
-        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    .alongWith(
+      new SequentialCommandGroup(
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+
+         new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
           .deadlineWith(new WaitCommand(0.25)
-            .andThen(makeSwerveAutoCommand("4_note.1")))), 
+            .andThen(makeSwerveAutoCommand("4_note.1"))), 
 
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
 
-      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem)
-        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
           .deadlineWith(new WaitCommand(0.25)
-            .andThen(makeSwerveAutoCommand("4_note.2")))), 
+            .andThen(makeSwerveAutoCommand("4_note.2"))), 
       
       makeSwerveAutoCommand("4_note.3"),
 
@@ -123,7 +134,7 @@ public class AutoMethod {
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
 
       
-      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
           .deadlineWith(new WaitCommand(0.25)
             .andThen(makeSwerveAutoCommand("4_note.4"))),
       
@@ -133,34 +144,47 @@ public class AutoMethod {
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
 
       
-    );
+    ));
   }
 
   public Command ThreeFarNote() {
     return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
-    // .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
+    .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
     .alongWith(new SequentialCommandGroup(
-      // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+      new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
       
-      makeSwerveAutoCommand("3_note.1"),
-        // .alongWith(
-        //   new WaitCommand(1.5)
-        //   .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
-        //   .deadlineWith(new WaitCommand(0.25))),
+      makeSwerveAutoCommand("3_note.1")
+        .alongWith(
+          new WaitCommand(1.5)
+          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)))),
       
-      makeSwerveAutoCommand("3_note.2"),
+      makeSwerveAutoCommand("3_note.2")
+      .alongWith(
+        new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+        .andThen(
+        new PullToTransition(m_transitionSubsystem, m_intakeSubsystem)
+      )),
 
-      // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+      new AutoTracking(m_driveTrainSubsystem, m_limelight),
 
-      makeSwerveAutoCommand("3_note.3"),
-      // .alongWith(
-      //     new WaitCommand(1.5)
-      //     .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
-      //     .deadlineWith(new WaitCommand(0.25))),
+      new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+
+      makeSwerveAutoCommand("3_note.3")
+      .alongWith(
+          new WaitCommand(1.5)
+          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+          .deadlineWith(new WaitCommand(0.25)))),
       
       makeSwerveAutoCommand("3_note.4")
+      .alongWith(
+        new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
+        .andThen(
+        new PullToTransition(m_transitionSubsystem, m_intakeSubsystem)
+      )),
+            new AutoTracking(m_driveTrainSubsystem, m_limelight),
 
-            // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
+            new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
       
     ));
   }
@@ -191,7 +215,7 @@ public class AutoMethod {
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
       new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionNoteB, m_shooterAngleSubsystem)
-        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+        .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
           .deadlineWith(new WaitCommand(0.25)
             .andThen(new AutoDrive(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)))), 
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
@@ -217,7 +241,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false)  // FIXME: use IntakeTransitionCommand
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -250,7 +274,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false)  // FIXME: use IntakeTransitionCommand
     )
     .andThen(
       new AutoGoToPoint(1.75, 0, 180, m_driveTrainSubsystem)    
@@ -271,7 +295,7 @@ public class AutoMethod {
 
   public Command testCoordinate(){
      return new SequentialCommandGroup(
-      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
           .deadlineWith(new WaitCommand(0.25),
           new GoToNote(m_driveTrainSubsystem, m_limelight, m_intakeSubsystem)));
   }
@@ -294,7 +318,7 @@ public class AutoMethod {
       new WaitCommand(1.0)
     )
     .andThen(
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem)  // FIXME: use IntakeTransitionCommand
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false)  // FIXME: use IntakeTransitionCommand
     )
     .alongWith(
       new AutoDrive(-AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)
@@ -353,10 +377,10 @@ public class AutoMethod {
             return ShootAndLeaveFromSideWithLonger();
 
           case FourNote:
-            return FourNote();
+            return m_fourNote;
         
           case ThreeNote:
-            return ThreeFarNote();
+            return m_threeNote;
 
           case testCoordinate:
             return testCoordinate();
@@ -377,7 +401,7 @@ public class AutoMethod {
         return Choreo.choreoSwerveCommand(
             path,
             () -> m_driveTrainSubsystem.getPose(),
-            new PIDController(1.0, 0, 0),
+            new PIDController(0.9, 0, 0),
             new PIDController(0.9, 0, 0),
             new PIDController(1.1, 0, 0),
             (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),

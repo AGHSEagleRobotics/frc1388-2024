@@ -131,15 +131,12 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
-      double tx;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-       tx = m_limelight.getTxOfTagID(4);
-    } else {
-       tx = m_limelight.getTxOfTagID(7);
-    }
-      double speed = m_limelightPIDController.calculate(tx);
+      double[] botPose = m_limelight.getBotPose();
+      double rz = m_limelight.getBotPoseValue(botPose, 5);
+    rz = rz < 0 ? rz+360 : rz;
+      double speed = -m_limelightPIDController.calculate(m_limelight.getAbsoluteAngleFromSpeaker() - rz);
       omega = speed;
-      }
+    }
 
     // SmartDashboard.putBoolean("DriveCommand/going to angle", m_goingToAngle);
 

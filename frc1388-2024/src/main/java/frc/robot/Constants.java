@@ -104,7 +104,7 @@ public final class Constants {
     public static final double kShooterPositionDrewSaucyShot = 0.33; 
     public static final double kShooterPositionPodium = 0.173; 
     public static final double kShooterPositionStartLine = 0.277;
-    public static final double kShooterPositionNoteB = 0.25; // previously 0.266 for practice matches
+    public static final double kShooterPositionNoteB = 0.225; // previously 0.266 for practice matches
     public static final double kShooterPositionMax = 0.4; // observed max is roughly
     public static final double kShooterPositionMin = 0; //  observed min without hitting transition 
 
@@ -149,7 +149,10 @@ public final class Constants {
     public static final double TURN_P_VALUE_AUTO_TRACKING = 0.036;
     public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000012;
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000012;
-    public static final double TX_OFFSET = 6.47;
+    // public static final double TURN_P_VALUE_AUTO_TRACKING = 0.044;
+    // public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000024;
+    // public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000024;
+    public static final double TX_OFFSET = 0;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
     public static final double DISTANCE_FROM_APRILTAG_AUTOSHOOTER = 4;
     public static final double DISTANCE_FROM_APRILTAG_SUBWOOFER = 1.35;
@@ -224,9 +227,9 @@ public final class Constants {
   }
 
   public static class AutoConstants {
-    public static final double TURN_P_VALUE = 0.036;
+    public static final double TURN_P_VALUE = 0.04;
 
-    public static final double TURN_P_TOLERANCE = 0.25;
+    public static final double TURN_P_TOLERANCE = 2.5;
     public static final double TURN_I_VALUE = 0.003;
     public static final double TURN_D_VALUE = 0.004;
 

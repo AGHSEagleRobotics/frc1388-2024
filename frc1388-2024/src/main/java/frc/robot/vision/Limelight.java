@@ -215,6 +215,15 @@ public class Limelight extends SubsystemBase {
     return getAprilTagTx();
   }
 
+  public double getAbsoluteAngleFromSpeaker() {
+    double[] botPose = getBotPose();
+    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+      return Math.toDegrees(Math.atan2(getBotPoseValue(botPose, 1) - 5.547, getBotPoseValue(botPose, 0) + 0.381)) + 180;
+    } else {
+      return Math.toDegrees(Math.atan2(getBotPoseValue(botPose, 1) - 5.547, getBotPoseValue(botPose, 0) - 16.579)) + 180;
+    }
+  }
+
   public void setLimelightLEDsOn(Boolean on) {
     if (on) {
       m_shooterTable.getEntry("ledMode").setNumber(LimelightConstants.LED_FORCE_BLINK);
@@ -242,7 +251,7 @@ public class Limelight extends SubsystemBase {
     //   setShooterPipeline(1);
     // }
     setShooterPipeline(0);
-    setPriorityID(4);
+    setPriorityID(7);
     double[] botPose = getBotPose();
     
 
@@ -261,6 +270,10 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight/DISTANCE VALUE", getDistanceOfTagId(4));
       SmartDashboard.putNumber("Limelight/TX VALUE", getTxOfTagID(4));
       SmartDashboard.putNumber("Limelight/Priority ID", getPriorityID());
+
+
+      SmartDashboard.putNumber("Limelight/ABSOLUTE VALUE OF TX", getAbsoluteAngleFromSpeaker());
+      SmartDashboard.putNumber("ROBOT RZ", (getBotPoseValue(botPose, 5) < 0 ? getBotPoseValue(botPose, 5)+360 : getBotPoseValue(botPose, 5)));
       
   }
 }

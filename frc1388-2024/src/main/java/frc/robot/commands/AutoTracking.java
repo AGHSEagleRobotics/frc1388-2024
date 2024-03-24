@@ -35,13 +35,15 @@ public class AutoTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double tx;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-       tx = m_limelight.getTxOfTagID(4);
-    } else {
-       tx = m_limelight.getTxOfTagID(7);
-    }
-      double speed = m_rotationPIDController.calculate(tx);
+      double[] botPose = m_limelight.getBotPose();
+    //   if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+    //    tx = m_limelight.getTxOfTagID(4);
+    // } else {
+    //    tx = m_limelight.getTxOfTagID(7);
+    // }
+    double rz = m_limelight.getBotPoseValue(botPose, 5);
+    rz = rz < 0 ? rz+360 : rz;
+      double speed = -m_rotationPIDController.calculate(m_limelight.getAbsoluteAngleFromSpeaker() - rz);
       m_driveTrain.drive(0, 0, speed);
   }
 
@@ -54,6 +56,6 @@ public class AutoTracking extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_rotationPIDController.atSetpoint();
   }
 }

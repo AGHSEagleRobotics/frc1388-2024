@@ -68,7 +68,7 @@ public class DeployIntakeCommand extends Command {
     m_intakeSubsystem.setBrakeMode(true);
     
     if (!interrupted && m_intakeSubsystem.isNoteDetected()) {
-      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem).schedule();
+      new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false).schedule();
     }
   }
 

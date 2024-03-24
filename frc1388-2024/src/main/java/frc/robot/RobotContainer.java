@@ -202,7 +202,7 @@ public class RobotContainer {
         
     m_driveTrain.setDefaultCommand(m_driveCommand);
         
-    m_intakeSubsystem.setDefaultCommand(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
+    m_intakeSubsystem.setDefaultCommand(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
 
     // Configure the trigger bindings
     configureBindings();
@@ -243,7 +243,7 @@ public class RobotContainer {
     m_driverController.leftBumper().onTrue(new IntakeTransitionCommand
       (IntakeTransState.DEPLOYING,
       true,
-      m_intakeSubsystem,
+      true, m_intakeSubsystem,
       m_transitionSubsystem,
       m_limelight,
       m_operatorController,
@@ -252,6 +252,7 @@ public class RobotContainer {
     m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand
       (IntakeTransState.RETRACTING,
       false, 
+      true,
       m_intakeSubsystem, 
       m_transitionSubsystem, 
       m_limelight));
@@ -259,7 +260,7 @@ public class RobotContainer {
     // SHOOT SPEAKER COMMAND SEQUENCE
     if (option8) {
     m_driverController.rightTrigger(0.9).whileTrue(
-      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
       .andThen(
         new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
         .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
@@ -270,7 +271,7 @@ public class RobotContainer {
     if (option8) {
 
     m_driverController.rightBumper().whileTrue(
-          new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, m_intakeSubsystem, m_transitionSubsystem,
+          new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, true, m_intakeSubsystem, m_transitionSubsystem,
               m_limelight)
       .andThen(
         new ShooterCommand(ShooterConstants.AMP_SHOT_RPM, m_shooterSubsystem) // amp shot rmp
@@ -288,6 +289,7 @@ public class RobotContainer {
     m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand
       (IntakeTransState.DEPLOYING,
       true,
+      true,
       m_intakeSubsystem,
       m_transitionSubsystem,
       m_limelight,
@@ -297,6 +299,7 @@ public class RobotContainer {
     m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand
       (IntakeTransState.RETRACTING,
       false,
+      true,
       m_intakeSubsystem,
       m_transitionSubsystem, 
       m_limelight));
