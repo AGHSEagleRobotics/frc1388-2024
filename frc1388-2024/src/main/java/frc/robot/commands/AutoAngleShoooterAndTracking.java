@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
@@ -43,24 +44,33 @@ public class AutoAngleShoooterAndTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      double omega = m_rotationPIDController.calculate(m_limelight.getAngleFromSpeaker(), 0);
+    double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
+    double distance;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        distance = m_limelight.getDistanceOfTagId(4);
+      } else {
+        distance = m_limelight.getDistanceOfTagId(7);
+      }
 
-      double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-;
-      double distance = m_limelight.getDistance();
       double distance2 = distance * distance;
 
+      
       // mycurvefit numbers for quadratic interpolation
-      if ((distance > 0) && (distance < 4)) {
+      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
       goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
                   (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
       }
-
-    if (m_limelight.getAprilTagID() == 4 || m_limelight.getAprilTagID() == 7) {
-    m_shooterAngleSubsystem.setPosition(goToAngle);
-    m_driveTrain.drive(0, 0, omega);
+      double tx;
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+       tx = m_limelight.getTxOfTagID(4);
+    } else {
+       tx = m_limelight.getTxOfTagID(7);
     }
+      double speed = m_rotationPIDController.calculate(tx);
+
+      m_driveTrain.drive(0, 0, speed);
+      m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
   // Called once the command ends or is interrupted.
