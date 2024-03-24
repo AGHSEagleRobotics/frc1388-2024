@@ -71,8 +71,8 @@ public class AutoGoToPoint extends Command {
       ySpeed = m_yAccLimiter.calculate(ySpeed);
     }
 
-    SmartDashboard.putNumber("rot pid in", m_driveTrain.getAngle());
-    SmartDashboard.putBoolean("is at rot sp", m_rotationController.atSetpoint());
+    SmartDashboard.putNumber("AutoGoToPoint/rot pid in", m_driveTrain.getAngle());
+    SmartDashboard.putBoolean("AutoGoToPoint/is at rot sp", m_rotationController.atSetpoint());
     m_driveTrain.drive(xSpeed, ySpeed, m_rotationController.calculate(m_driveTrain.getAngle(), ROTATION_SETPOINT));
     m_lastXSpeed = xSpeed;
     m_lastYSpeed = ySpeed;

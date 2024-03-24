@@ -131,7 +131,7 @@ public class DriveCommand extends Command {
       }
     }
 
-    SmartDashboard.putBoolean("going to angle", m_goingToAngle);
+    // SmartDashboard.putBoolean("DriveCommand/going to angle", m_goingToAngle);
 
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
   }

@@ -81,7 +81,7 @@ public class ShooterAngleCommand extends Command {
       //   goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionWing, ShooterAngleSubsystemConstants.kShooterPositionDown);
       // }
    
-    SmartDashboard.putNumber("/Auto Tracking Shooter Angle", goToAngle); 
+    SmartDashboard.putNumber("Shooter/Auto Tracking Shooter Angle", goToAngle); 
 
     boolean startButton = m_start.get();
     if (startButton) {

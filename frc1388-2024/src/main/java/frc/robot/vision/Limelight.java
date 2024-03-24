@@ -197,18 +197,18 @@ public class Limelight extends SubsystemBase {
     // }
     setShooterPipeline(0);
 
-      SmartDashboard.putNumber("Distance to April Tag", getDistance()); // it calculates in meters
-      SmartDashboard.putBoolean("Is the target found", getApriltagTargetFound());
-      SmartDashboard.putNumber("Get April Tag Tx", getAprilTagTx());
-      SmartDashboard.putNumber("Get Note Tx", getNoteTx());
-      SmartDashboard.putNumber("Get April Tag Ty", getAprilTagTy());
-      SmartDashboard.putNumber("Get Note Ty", getNoteTx());
-      SmartDashboard.putNumber("Get Skew Degree", getSkew_Rotation());
-      SmartDashboard.putBoolean("April Tag Found", getApriltagTargetFound());
+      SmartDashboard.putNumber("Limelight/Distance to April Tag", getDistance()); // it calculates in meters
+      SmartDashboard.putBoolean("Limelight/Is the target found", getApriltagTargetFound());
+      SmartDashboard.putNumber("Limelight/Get April Tag Tx", getAprilTagTx());
+      SmartDashboard.putNumber("Limelight/Get Note Tx", getNoteTx());
+      SmartDashboard.putNumber("Limelight/Get April Tag Ty", getAprilTagTy());
+      SmartDashboard.putNumber("Limelight/Get Note Ty", getNoteTx());
+      SmartDashboard.putNumber("Limelight/Get Skew Degree", getSkew_Rotation());
+      SmartDashboard.putBoolean("Limelight/April Tag Found", getApriltagTargetFound());
 
-      SmartDashboard.putNumber("Get Vertical Degree", getAprilTagTx());
+      SmartDashboard.putNumber("Limelight/Get Vertical Degree", getAprilTagTx());
 
-      SmartDashboard.putNumber("April Tag IDS", getAprilTagID());
+      SmartDashboard.putNumber("Limelight/April Tag IDS", getAprilTagID());
       
 
   }
