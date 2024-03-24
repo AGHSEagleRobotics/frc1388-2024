@@ -30,6 +30,7 @@ public class Limelight extends SubsystemBase {
   public Limelight(String shooterName, String intakeName) {
     m_shooterTable = NetworkTableInstance.getDefault().getTable(shooterName);
     m_intakeTable = NetworkTableInstance.getDefault().getTable(intakeName);
+    setShooterPipeline(0);
   }
 
   public void setShooterPipeline(double pipelineNumber) {
@@ -250,8 +251,7 @@ public class Limelight extends SubsystemBase {
     // else {
     //   setShooterPipeline(1);
     // }
-    setShooterPipeline(0);
-    setPriorityID(7);
+    
     double[] botPose = getBotPose();
     
 

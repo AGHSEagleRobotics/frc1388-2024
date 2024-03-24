@@ -280,7 +280,7 @@ public class RobotContainer {
 
     // RESET GYRO CONTROL
 
-    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetGyroHeading(getGyroResetAngle())));
+    m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.limelightResetGyro()));
     // TODO decide if reset pose is needed
     //m_driverController.start().onTrue(new InstantCommand(() -> m_driveTrain.resetPose(new Pose2d())));
 
@@ -343,6 +343,12 @@ public class RobotContainer {
   public void resetPose() {
     m_driveTrain.resetPose(new Pose2d());
     new Pose2d(0, 0, m_driveTrain.getGyroHeading());
+  }
+
+   public void limelightResetGyro() {
+    if (m_limelight.getApriltagTargetFound()) {
+    m_driveTrain.limelightResetGyro();
+    }
   }
     
   public void resetGyro() {

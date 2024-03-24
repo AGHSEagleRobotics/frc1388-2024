@@ -182,11 +182,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
         },
         pose);
   }
-  
+
+  public void limelightResetGyro() {
+    double[] botPose = m_limelight.getBotPose();
+    m_gyroOffset = botPose[5] - getRawGyroAngle();
+  }
 
   public void limelightResetPose() {
     double[] botPose = m_limelight.getBotPose();
-    m_gyroOffset = botPose[5] - getRawGyroAngle();
     Pose2d pose2d = new Pose2d(botPose[0], botPose[1], getGyroHeading());
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
         m_frontRight.getPosition(),
@@ -197,7 +200,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
     if (m_odometry != null) {
       m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, pose2d);
     }
+  }
 
+  public void limelightResetPoseAndGyro() {
+    limelightResetGyro();
+    limelightResetPose();
   }
 
   public Pose2d getPose() {
