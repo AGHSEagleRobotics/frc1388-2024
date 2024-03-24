@@ -243,6 +243,7 @@ public final class Constants {
         Shoot123 ("1 Shoot"),
         ShootAndLeaveFromSideWithLonger("2 and leave"),
         FourNote ("4 note auto "),
+        ThreeNote ("3 note auto "),
         testCoordinate("TEST DELETE ME");
 //        Shoot3Leave ("3 Leave"); // needs testing
 //        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),

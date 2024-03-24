@@ -299,10 +299,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.periodic();
     
     double[] botPose = m_limelight.getBotPose();
-    double ambiguity = (m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_AMBIGUITY));
+    double averageTargetArea = (m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_AVERAGE_TAG_AREA));
     double aprilTagsSeen = m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_TOTAL_APRILTAGS_SEEN);
     // reset pose based on if we have an apriltag in view
-    if ((aprilTagsSeen > 1) || ((ambiguity < 0.9) && (ambiguity > 0))) {
+    // if ((aprilTagsSeen > 2) ||
+    //     ((aprilTagsSeen == 2) && ((averageTargetArea > 0.04) && (averageTargetArea ))) ||
+    //     ((aprilTagsSeen == 1) && (averageTargetArea < 0.6) && (averageTargetArea > 0))) 
+    if (averageTargetArea > 0.045)
+    {
       limelightResetPose();
     }
     // odometry updating

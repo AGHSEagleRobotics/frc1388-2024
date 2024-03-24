@@ -26,6 +26,7 @@ import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShooterAngleLimelight;
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoFeedShooter;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoShooterAngle;
 import frc.robot.commands.AutoShooterCommand;
@@ -103,7 +104,7 @@ public class AutoMethod {
     return new SequentialCommandGroup(
       Start123Shoot(),
       
-      new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionNoteB, m_shooterAngleSubsystem)
+      new AutoShooterAngle(0.212, m_shooterAngleSubsystem)
         .alongWith( new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
           .deadlineWith(new WaitCommand(0.25)
             .andThen(makeSwerveAutoCommand("4_note.1")))), 
@@ -133,6 +134,35 @@ public class AutoMethod {
 
       
     );
+  }
+
+  public Command ThreeFarNote() {
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    // .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
+    .alongWith(new SequentialCommandGroup(
+      // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+      
+      makeSwerveAutoCommand("3_note.1"),
+        // .alongWith(
+        //   new WaitCommand(1.5)
+        //   .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+        //   .deadlineWith(new WaitCommand(0.25))),
+      
+      makeSwerveAutoCommand("3_note.2"),
+
+      // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+
+      makeSwerveAutoCommand("3_note.3"),
+      // .alongWith(
+      //     new WaitCommand(1.5)
+      //     .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+      //     .deadlineWith(new WaitCommand(0.25))),
+      
+      makeSwerveAutoCommand("3_note.4")
+
+            // new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
+      
+    ));
   }
 
   // needs testing
@@ -324,6 +354,9 @@ public class AutoMethod {
 
           case FourNote:
             return FourNote();
+        
+          case ThreeNote:
+            return ThreeFarNote();
 
           case testCoordinate:
             return testCoordinate();
@@ -345,8 +378,8 @@ public class AutoMethod {
             path,
             () -> m_driveTrainSubsystem.getPose(),
             new PIDController(1.0, 0, 0),
-            new PIDController(1.0, 0, 0),
-            new PIDController(10, 0, 0),
+            new PIDController(0.9, 0, 0),
+            new PIDController(1.1, 0, 0),
             (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),
             () -> {
               if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
