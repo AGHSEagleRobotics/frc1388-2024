@@ -11,23 +11,14 @@ import com.choreo.lib.*;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
-import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoGoToPoint;
-import frc.robot.commands.ShooterAngleLimelight;
-import frc.robot.commands.AutoTracking;
-import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
-import frc.robot.commands.GoToNote;
 import frc.robot.commands.IntakeTransitionCommand;
-import frc.robot.commands.LineUpWithAprilTag;
 import frc.robot.commands.RetractIntakeCommand;
-import frc.robot.commands.RumbleIntakeTransitionCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.SwerveAutoTesting;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
@@ -245,15 +236,24 @@ public class RobotContainer {
     // m_limelight.goToCenterOfSpeaker()));
 
     // DRIVER CONTROLS
-    // m_driverController.leftBumper().onTrue(new DeployIntakeCommand(m_intakeSubsystem, m_transitionSubsystem));
-    
-    // m_driverController.leftTrigger().onTrue(new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, false));
-    if (option8) {
 
-      m_driverController.leftBumper().onTrue(new RumbleIntakeTransitionCommand(m_driverController,
-          IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
-      m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false,
-          m_intakeSubsystem, m_transitionSubsystem, m_limelight));
+    
+    if (option8) {
+      m_driverController.leftBumper().onTrue(new IntakeTransitionCommand
+        (IntakeTransState.DEPLOYING,
+        true,
+        m_intakeSubsystem,
+        m_transitionSubsystem,
+        m_limelight,
+        m_operatorController,
+        m_driverController));
+
+    m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand
+      (IntakeTransState.RETRACTING,
+      false, 
+      m_intakeSubsystem, 
+      m_transitionSubsystem, 
+      m_limelight));
     }    
     // SHOOT SPEAKER COMMAND SEQUENCE
     if (option8) {
@@ -265,7 +265,6 @@ public class RobotContainer {
       )
     );
     }
-
     // SHOOT AMP COMMAND SEQUENCE
     if (option8) {
 
@@ -285,14 +284,31 @@ public class RobotContainer {
 
     // OPERATOR CONTROLS
     if (option8) {
-      m_operatorController.leftBumper().onTrue(new RumbleIntakeTransitionCommand(m_driverController,
-          IntakeTransState.DEPLOYING, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight));
-      m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING, false,
-          m_intakeSubsystem, m_transitionSubsystem, m_limelight));
-      m_operatorController.rightBumper().whileTrue(new Eject(m_intakeSubsystem, m_transitionSubsystem));
-      m_operatorController.rightTrigger()
-          .onTrue(new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem));
+      m_operatorController.leftBumper().onTrue(new IntakeTransitionCommand
+        (IntakeTransState.DEPLOYING,
+        true,
+        m_intakeSubsystem,
+        m_transitionSubsystem,
+        m_limelight,
+        m_operatorController, 
+        m_driverController));
+  
+      m_operatorController.leftTrigger().onTrue(new IntakeTransitionCommand
+        (IntakeTransState.RETRACTING,
+        false,
+        m_intakeSubsystem,
+        m_transitionSubsystem, 
+        m_limelight));
+  
+      m_operatorController.rightBumper().whileTrue(new Eject
+        (m_intakeSubsystem, 
+        m_transitionSubsystem));
+  
+      m_operatorController.rightTrigger().onTrue(new ShooterCommand
+        (ShooterConstants.SPEAKER_SHOT_RPM, 
+        m_shooterSubsystem));
     }
+    
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     // m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
     // m_operatorController.b().whileTrue(new LineUpWithAprilTag(m_driveTrain, m_limelight, 0, 0));
