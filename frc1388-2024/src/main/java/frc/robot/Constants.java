@@ -25,7 +25,7 @@ public final class Constants {
   public static class SwerveModuleConstants {
     public static final double DIST_PER_TICK = (1.0 / 6.75) * (0.3192); // ask calvin about the math
 
-    public static final double DIST_PER_MOTOR_ROTATION  = 5.65 / 131.14;
+    public static final double DIST_PER_MOTOR_ROTATION  = 5.65 / 131.14; // calvins magic numbers
 
     public static final double DRIVE_MOTOR_P = 0.001;
     public static final double DRIVE_MOTOR_I = 0;
@@ -124,6 +124,10 @@ public final class Constants {
     public static final double ROLLER_MOTOR_SPEED_IN_TRANSITION = 0.4;
     public static final double ROLLER_MOTOR_SPEED_OUT = -0.7;
 
+    public static final double LIFTER_MOTOR_TIME_DOWN = 0.6;
+    public static final double LIFTER_MOTOR_TIME_OFF = LIFTER_MOTOR_TIME_DOWN + 0.1;
+    public static final double LIFTER_MOTOR_TIME_COAST = LIFTER_MOTOR_TIME_DOWN + 0.8;
+
     public static final double LIFTER_MOTOR_SPEED_DOWN = -0.4;
     public static final double LIFTER_MOTOR_SPEED_UP = 0.5;
     public static final double LIFTER_MOTOR_SPEED_UP_HOLD = 0.2;
@@ -210,7 +214,8 @@ public final class Constants {
         LEAVEANDSHOOT ("1, Shoot, Leave"),
         Shoot1IntakeBSpeakerB ("1, B"),
         Shoot123 ("1 Shoot"),
-        ShootAndLeaveFromSideWithLonger("2 and leave");
+        ShootAndLeaveFromSideWithLonger("2 and leave"),
+        testCoordinate("TEST DELETE ME");
 //        Shoot3Leave ("3 Leave"); // needs testing
 //        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
 //        testCoordinate ("testcoordinate");

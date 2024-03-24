@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     if (getBlueButton()) {
       m_robotContainer.resetGyro();
+      m_robotContainer.resetPose();
       RobotController.setRadioLEDState(RadioLEDState.kGreen);
     } else {
       RobotController.setRadioLEDState(RadioLEDState.kOff);
@@ -134,12 +135,14 @@ public class Robot extends TimedRobot {
     m_robotContainer.setBrakeMode(true);
     DataLogManager.log("done setting neutral mode");
 
-   
+    m_robotContainer.autonomousInit();
+
     // schedule the autonomous command
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
       System.out.println("starting auto command");
     }
+
 
     // Get match info from FMS
     if (DriverStation.isFMSAttached()) {
@@ -169,8 +172,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     DataLogManager.log("####### Teleop Init");
-    m_robotContainer.setBrakeMode(true);
+   
+     m_robotContainer.setBrakeMode(true); 
 
+    m_robotContainer.teleopInit();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

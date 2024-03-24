@@ -2,6 +2,9 @@ package frc.robot.vision;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -17,12 +20,13 @@ public class Limelight extends SubsystemBase {
 
   private static NetworkTable m_shooterTable;
   private static NetworkTable m_intakeTable;
+  private DriverStation.Alliance m_allianceColor;
+  private static double[] botPose0 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
   /** Creates a new Limelight. */
   public Limelight(String shooterName, String intakeName) {
     m_shooterTable = NetworkTableInstance.getDefault().getTable(shooterName);
     m_intakeTable = NetworkTableInstance.getDefault().getTable(intakeName);
-    
   }
 
   public void setShooterPipeline(double pipelineNumber) {
@@ -135,6 +139,24 @@ public class Limelight extends SubsystemBase {
     m_shooterTable.getEntry("tl").setValue(0.0);
   }
 
+  public void setAllianceColor(DriverStation.Alliance color) {
+    m_allianceColor = color;
+  }
+
+  public double[] getBotPose() {
+    double[] botPose;
+    if (m_allianceColor == DriverStation.Alliance.Blue) {
+      botPose = m_shooterTable.getEntry("botpose_wpiblue").getDoubleArray(new double[] {});
+    }
+    else {
+      botPose = m_shooterTable.getEntry("botpose_wpired").getDoubleArray(new double[] {});
+    }
+        if (botPose.length >= 11) {
+        return botPose;
+        }
+        return botPose0;
+  }
+
   public double getDistance() {
     double[] targetSpace = m_shooterTable.getEntry("targetpose_cameraspace")
         .getDoubleArray(new double[] {});
@@ -167,12 +189,14 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      setShooterPipeline(0);
-    }
-    else {
-      setShooterPipeline(1);
-    }
+    // if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+    //   setShooterPipeline(0);
+    // }
+    // else {
+    //   setShooterPipeline(1);
+    // }
+    setShooterPipeline(0);
+
       SmartDashboard.putNumber("Distance to April Tag", getDistance()); // it calculates in meters
       SmartDashboard.putBoolean("Is the target found", getApriltagTargetFound());
       SmartDashboard.putNumber("Get April Tag Tx", getAprilTagTx());
@@ -180,6 +204,7 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Get April Tag Ty", getAprilTagTy());
       SmartDashboard.putNumber("Get Note Ty", getNoteTx());
       SmartDashboard.putNumber("Get Skew Degree", getSkew_Rotation());
+      SmartDashboard.putBoolean("April Tag Found", getApriltagTargetFound());
 
       SmartDashboard.putNumber("Get Vertical Degree", getAprilTagTx());
 
