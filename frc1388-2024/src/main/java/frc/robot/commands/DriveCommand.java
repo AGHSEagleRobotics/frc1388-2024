@@ -75,6 +75,7 @@ public class DriveCommand extends Command {
     double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    boolean onRed = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       leftX = -leftX;
@@ -103,27 +104,23 @@ public class DriveCommand extends Command {
     } else if (m_y.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
-      m_angleSetPoint = 180;
+      m_angleSetPoint = onRed ? 0 : 180;
     } else if (m_b.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
-      m_angleSetPoint = 240;
+      m_angleSetPoint = onRed ? 300 : 120;
     } else if (m_x.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
-      m_angleSetPoint = 120;
+      m_angleSetPoint = onRed ? 60 : 240;
     } else if (m_a.get()) {
       m_autoTracking = false;
       m_goingToAngle = true;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        m_angleSetPoint = 90;
-      } else {
-        m_angleSetPoint = 270;
-      }
+      m_angleSetPoint = 90;
     }
 
     if (m_goingToAngle) {// a/b/x/y rotation setpoints
-      omega = m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_angleSetPoint);
+      omega = m_rotationController.calculate(m_driveTrain.getAngle() - m_angleSetPoint);
 
       if (Math.abs(m_driveTrain.getAngle() - 360 + m_angleSetPoint) < 5) {
         m_goingToAngle = false;
@@ -141,6 +138,10 @@ public class DriveCommand extends Command {
     // SmartDashboard.putBoolean("DriveCommand/going to angle", m_goingToAngle);
 
     m_driveTrain.drive(xVelocity, yVelocity, omega); // max speed: 3 m/s transitional, pi rad/s (0.5 rotation/s) rotational (for now)
+
+    SmartDashboard.putNumber("m_driveTrain.getAngle()", m_driveTrain.getAngle());
+    SmartDashboard.putNumber("m_angleSetPoint", m_angleSetPoint);
+
   }
 
   /** This method uses the tangent function to scale the input
