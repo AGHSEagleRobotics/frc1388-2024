@@ -87,7 +87,7 @@ public class AutoMethod {
   }
 
   public Command Start123Shoot(){
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_driveTrainSubsystem)
     .alongWith(
       new SequentialCommandGroup(
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
@@ -111,7 +111,7 @@ public class AutoMethod {
   }
 
   public Command FourNote() {
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_driveTrainSubsystem)
     .alongWith(
       new SequentialCommandGroup(
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
@@ -148,7 +148,7 @@ public class AutoMethod {
   }
 
   public Command ThreeFarNote() {
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_driveTrainSubsystem)
     .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
     .alongWith(new SequentialCommandGroup(
       new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
@@ -335,7 +335,7 @@ public class AutoMethod {
   }
   
   public Command LimelightShoot1IntakeBSpeakerB() {
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_driveTrainSubsystem)
         .alongWith(
           new SequentialCommandGroup(
             new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)

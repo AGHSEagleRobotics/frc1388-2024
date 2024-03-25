@@ -16,7 +16,7 @@ public class AutoTracking extends Command {
   private final DriveTrainSubsystem m_driveTrain;
   private final Limelight m_limelight;
 
-  private final PIDController m_rotationPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
+  private final PIDController m_turnPidController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
   /** Creates a new AutoTracking. */
   public AutoTracking(DriveTrainSubsystem driveTrain, Limelight limelight) {
     m_driveTrain = driveTrain;
@@ -28,23 +28,15 @@ public class AutoTracking extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_rotationPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
-    m_rotationPIDController.enableContinuousInput(0, 360);
+    m_turnPidController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
+    m_turnPidController.enableContinuousInput(0, 360);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      double[] botPose = m_limelight.getBotPose();
-    //   if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-    //    tx = m_limelight.getTxOfTagID(4);
-    // } else {
-    //    tx = m_limelight.getTxOfTagID(7);
-    // }
-    double rz = m_limelight.getBotPoseValue(botPose, 5);
-    rz = rz < 0 ? rz+360 : rz;
-      double speed = -m_rotationPIDController.calculate(m_limelight.getAbsoluteAngleFromSpeaker() - rz);
-      m_driveTrain.drive(0, 0, speed);
+
+      m_driveTrain.drive(0, 0, m_driveTrain.getTurnToSpeakerSpeed(m_turnPidController));
   }
 
   // Called once the command ends or is interrupted.
@@ -56,6 +48,6 @@ public class AutoTracking extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_rotationPIDController.atSetpoint();
+    return m_turnPidController.atSetpoint();
   }
 }
