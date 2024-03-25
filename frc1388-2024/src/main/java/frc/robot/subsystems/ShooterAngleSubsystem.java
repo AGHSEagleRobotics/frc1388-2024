@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 
 
@@ -20,11 +21,13 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   private final CANSparkMax m_angleMotor;
   private final AnalogPotentiometer m_potentiometer;
   private double m_targetPosition;
+  private final DriveTrainSubsystem m_driveTrain;
 
   /** Creates a new ShooterAngleSubsystem. */
-  public ShooterAngleSubsystem(CANSparkMax angleMotor, AnalogPotentiometer potentiometer) {
+  public ShooterAngleSubsystem(CANSparkMax angleMotor, AnalogPotentiometer potentiometer, DriveTrainSubsystem driveTrain) {
     m_angleMotor = angleMotor;
     m_potentiometer = potentiometer;
+    m_driveTrain = driveTrain;
     m_targetPosition = getCurrentPosition();
   }
 
@@ -34,6 +37,28 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
   public void setPosition(double position) {
     m_targetPosition = position;
+  }
+
+  public double getAbsouluteDistanceFromSpeaker() {
+    return m_driveTrain.getAbsouluteDistanceFromSpeaker();
+  }
+
+  public double getAutoCurveFitAngle() {
+    double goToAngle;
+    double distance = getAbsouluteDistanceFromSpeaker();
+    double distance2 = Math.pow(distance, 2);
+    double distance3 = Math.pow(distance, 3);
+    double distance4 = Math.pow(distance, 4);
+    if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
+      goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2) +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_D * distance3) +
+                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_E * distance4);
+      } else {
+        goToAngle = getCurrentPosition();
+      }
+      return goToAngle;
   }
 
   @Override

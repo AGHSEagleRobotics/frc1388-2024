@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 
@@ -115,7 +116,7 @@ public class DriveCommand extends Command {
     } else if (m_a.get()) {
       m_autoTracking = false;
       m_goingToAngle = true;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      if (Robot.getAllianceColor() == Alliance.Red) {
         m_angleSetPoint = 90;
       } else {
         m_angleSetPoint = 270;

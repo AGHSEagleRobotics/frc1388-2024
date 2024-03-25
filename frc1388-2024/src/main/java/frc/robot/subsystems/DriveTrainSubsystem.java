@@ -22,6 +22,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -181,7 +182,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     double rX = getPose().getX();
     double tX;
     double tAngle = getAbsoluteAngleFromSpeaker();
-     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+     if (Robot.getAllianceColor() == Alliance.Blue) {
       tX = LimelightConstants.ID_7_LOCATION_X_BLUE;
      } else {
       tX = LimelightConstants.ID_4_LOCATION_X_RED;

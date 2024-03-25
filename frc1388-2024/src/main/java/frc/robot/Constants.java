@@ -103,6 +103,7 @@ public final class Constants {
     public static final double kShooterPositionSpeaker = 0.35; // previously 0.37 for competition matches
     public static final double kShooterPositionDrewSaucyShot = 0.33; 
     public static final double kShooterPositionPodium = 0.173; 
+    public static final double kShooterLowClamp = 0.168;
     public static final double kShooterPositionStartLine = 0.277;
     public static final double kShooterPositionNoteB = 0.225; // previously 0.266 for practice matches
     public static final double kShooterPositionMax = 0.4; // observed max is roughly
@@ -154,7 +155,7 @@ public final class Constants {
     // public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000024;
     public static final double TX_OFFSET = 0;
     public static final double DISTANCE_FROM_APRILTAG_PODIUM = 2.95;
-    public static final double DISTANCE_FROM_APRILTAG_AUTOSHOOTER = 4;
+    public static final double DISTANCE_FROM_APRILTAG_AUTOSHOOTER = 3.2;
     public static final double DISTANCE_FROM_APRILTAG_SUBWOOFER = 1.35;
     public static final double DISTANCE_FROM_APRILTAG_POSITIONB = 2.54;
     public static final double DISTANCE_FROM_APRILTAG_STARTLINE = 2.40;
@@ -217,9 +218,18 @@ public final class Constants {
     // 2.81 .177
     // 2.96 .173
 
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.5362329; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -0.186216; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 0.02114048;
+    // new values based on bose estimation with trig
+    // 1.38 0.325
+    // 1.80 0.27
+    // 2.25 0.232
+    // 2.52 0.21
+    // 2.88 0.177
+    // 3.01 0.173
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 1.811224; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = -2.63704; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = 1.736999;
+    public static final double QUADRATIC_AUTO_SHOOTER_D = -0.5185361;
+    public static final double QUADRATIC_AUTO_SHOOTER_E = 0.05728454;
   }
 
   public static class LEDConstants {

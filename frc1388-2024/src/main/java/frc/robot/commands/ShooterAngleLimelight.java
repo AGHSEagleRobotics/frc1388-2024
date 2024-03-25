@@ -11,12 +11,10 @@ import frc.robot.subsystems.ShooterAngleSubsystem;
 
 public class ShooterAngleLimelight extends Command {
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
-  private final DriveTrainSubsystem m_driveTrainSubsystem;
   
   /** Creates a new AutoAngleShooter. */
-  public ShooterAngleLimelight(ShooterAngleSubsystem shooterAngleSubsystem, DriveTrainSubsystem driveTrainSubsystem) {
+  public ShooterAngleLimelight(ShooterAngleSubsystem shooterAngleSubsystem) {
     m_shooterAngleSubsystem = shooterAngleSubsystem;
-    m_driveTrainSubsystem = driveTrainSubsystem;
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooterAngleSubsystem);
@@ -31,18 +29,7 @@ public class ShooterAngleLimelight extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-
-    double distance = m_driveTrainSubsystem.getAbsouluteDistanceFromSpeaker();
-
-    double distance2 = distance * distance;
-
-    // mycurvefit numbers for quadratic interpolation
-    if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
-      goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
-          (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
-          (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
-    }
+    double goToAngle = m_shooterAngleSubsystem.getAutoCurveFitAngle();
     m_shooterAngleSubsystem.setPosition(goToAngle);
   }
 
