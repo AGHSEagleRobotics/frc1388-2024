@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.RobotCentric;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldConstants;
@@ -185,7 +187,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
       tX = LimelightConstants.ID_4_LOCATION_X_RED;
      }
      double adjacent = rX - tX;
-     double distanceFromSpeaker = adjacent / Math.cos(tAngle);
+     double distanceFromSpeaker = - (adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent / cos(angle)
+
      return distanceFromSpeaker;
   }
 
@@ -196,7 +199,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     double rX = getPose().getX();
     double rY = getPose().getY();
 
-    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+
+    if (Robot.getAllianceColor() == DriverStation.Alliance.Blue) {
       return Math.toDegrees(Math.atan2(rY - LimelightConstants.ID_7_AND_4_LOCATION_Y, rX - LimelightConstants.ID_7_LOCATION_X_BLUE)) + 180;
     } else {
       return Math.toDegrees(Math.atan2(rY - LimelightConstants.ID_7_AND_4_LOCATION_Y, rX - LimelightConstants.ID_4_LOCATION_X_RED)) + 180;
@@ -376,7 +380,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // System.out.println("is odo null?" + (m_odometry == null));
 
     SmartDashboard.putNumber("drivetrain/gyro angle", getAngle());
-    SmartDashboard.putNumber("drivetrain/Distance To Spaeker", getAbsouluteDistanceFromSpeaker());
+    SmartDashboard.putNumber("drivetrain/Angle To Speaker", getAbsoluteAngleFromSpeaker());
+    SmartDashboard.putNumber("drivetrain/Distance To Speaker", getAbsouluteDistanceFromSpeaker());
 
     publisher.set(getPose());
 
