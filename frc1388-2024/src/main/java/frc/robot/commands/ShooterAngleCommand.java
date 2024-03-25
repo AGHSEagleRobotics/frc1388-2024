@@ -29,6 +29,7 @@ public class ShooterAngleCommand extends Command {
   private final Limelight m_limelight;
   private boolean m_manualMode;
   private boolean m_autoMode;
+  private boolean m_lastStartButtonPressed = false;
 
   /** Creates a new ShooterAngleCommand. */
   public ShooterAngleCommand(Supplier<Boolean> xButton, Supplier<Boolean> yButton, Supplier<Boolean> aButton, Supplier<Boolean> bButton,
@@ -65,12 +66,13 @@ public class ShooterAngleCommand extends Command {
     SmartDashboard.putNumber("Shooter/Auto Tracking Shooter Angle", goToAngle); 
 
     boolean startButton = m_start.get();
-    if (startButton) {
+    if (startButton && !m_lastStartButtonPressed) {
       m_autoMode = !m_autoMode;
       if (m_autoMode) {
         m_manualMode = false;
       }
     }
+    m_lastStartButtonPressed = startButton;
 
     if (m_yButton.get()) {
       m_manualMode = false;
@@ -99,7 +101,6 @@ public class ShooterAngleCommand extends Command {
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     } else if (m_autoMode == true) {
-      
         m_shooterAngleSubsystem.setPosition(goToAngle);
       }
     }
