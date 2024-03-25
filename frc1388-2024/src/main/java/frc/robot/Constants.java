@@ -146,7 +146,7 @@ public final class Constants {
     public static final double MAX_TY_VALUE = 8.5;
     public static final double SLOW_DOWN = 0.5;
     public static final double METERS_PER_SECOND = 0.2;
-    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.036;
+    public static final double TURN_P_VALUE_AUTO_TRACKING = 0.14;
     public static final double TURN_I_VALUE_AUTO_TRACKING = 0.000012;
     public static final double TURN_D_VALUE_AUTO_TRACKING = 0.000012;
     // public static final double TURN_P_VALUE_AUTO_TRACKING = 0.044;
@@ -193,6 +193,10 @@ public final class Constants {
     public static final int BOTPOSE_RELATIVE_AMBIGUITY = 6;
 
     public static final double DISTANCE_OFFSET_CAMERA = 0.15;
+
+    public static final double ID_7_AND_4_LOCATION_Y = 5.547;
+    public static final double ID_7_LOCATION_X_BLUE = -0.381;
+    public static final double ID_4_LOCATION_X_RED = 16.579;
 
     // public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
     // ShooterAngleSubsystemConstants.kShooterPositionSpeaker) / (DISTANCE_FROM_APRILTAG_POSITIONB - DISTANCE_FROM_APRILTAG_SUBWOOFER);

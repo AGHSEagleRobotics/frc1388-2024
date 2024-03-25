@@ -33,7 +33,7 @@ public class DriveCommand extends Command {
   private final Supplier<Boolean> m_rightStick;
   
 
-  private final PIDController m_limelightPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, LimelightConstants.TURN_I_VALUE_AUTO_TRACKING, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
+  private final PIDController m_turnPidController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, LimelightConstants.TURN_I_VALUE_AUTO_TRACKING, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
 
   private boolean m_goingToAngle;
   private double m_angleSetPoint;
@@ -62,8 +62,8 @@ public class DriveCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_limelightPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
-    m_limelightPIDController.enableContinuousInput(0, 360);
+    m_turnPidController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
+    m_turnPidController.enableContinuousInput(0, 360);
 
     m_rotationController.enableContinuousInput(0, 360);
   }
@@ -131,11 +131,7 @@ public class DriveCommand extends Command {
     }
 
     else if (m_autoTracking) {
-      double[] botPose = m_limelight.getBotPose();
-      double rz = m_limelight.getBotPoseValue(botPose, 5);
-    rz = rz < 0 ? rz+360 : rz;
-      double speed = -m_limelightPIDController.calculate(m_limelight.getAbsoluteAngleFromSpeaker() - rz);
-      omega = speed;
+      omega = m_driveTrain.getTurnToSpeakerSpeed(m_turnPidController);
     }
 
     // SmartDashboard.putBoolean("DriveCommand/going to angle", m_goingToAngle);
