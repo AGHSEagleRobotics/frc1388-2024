@@ -273,7 +273,7 @@ public class Limelight extends SubsystemBase {
 
 
       SmartDashboard.putNumber("Limelight/ABSOLUTE VALUE OF TX", getAbsoluteAngleFromSpeaker());
-      SmartDashboard.putNumber("ROBOT RZ", (getBotPoseValue(botPose, 5) < 0 ? getBotPoseValue(botPose, 5)+360 : getBotPoseValue(botPose, 5)));
+      SmartDashboard.putNumber("Limelight/ROBOT RZ", (getBotPoseValue(botPose, 5) < 0 ? getBotPoseValue(botPose, 5)+360 : getBotPoseValue(botPose, 5)));
       
   }
 }

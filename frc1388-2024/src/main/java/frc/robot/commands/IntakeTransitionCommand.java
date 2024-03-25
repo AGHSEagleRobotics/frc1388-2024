@@ -94,18 +94,15 @@ public class IntakeTransitionCommand extends Command {
     switch (m_state) {
 
       case DEPLOYING:
-      if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN) {
-        m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
-      } 
-      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_OFF) {
-        m_intakeSubsystem.setLifterMotor(0); 
-      }
-      else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_COAST) {
-        m_intakeSubsystem.setBrakeMode(false); 
-      }
-      else {
-        m_intakeSubsystem.setBrakeMode(true); 
-      } 
+        if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_DOWN) {
+          m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_DOWN);
+        } else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_OFF) {
+          m_intakeSubsystem.setLifterMotor(0);
+        } else if (m_deployIntakeTimer.get() < IntakeConstants.LIFTER_MOTOR_TIME_COAST) {
+          m_intakeSubsystem.setBrakeMode(false);
+        } else {
+          m_intakeSubsystem.setBrakeMode(true);
+        }
 
         if (m_intakeSubsystem.isNoteDetected()) {
           m_ticksNoteIsDetectedInIntake++;
@@ -114,68 +111,62 @@ public class IntakeTransitionCommand extends Command {
           m_ticksNoteIsDetectedInIntake = 0;
           m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_INTAKING);
         }
-        
+
         if (m_ticksNoteIsDetectedInIntake > IntakeConstants.TICKS_BEFORE_RETRACTING_INTAKE) {
           m_state = IntakeTransState.RETRACTING;
-              System.out.println(m_state.name());
+          System.out.println(m_state.name());
 
-              if(m_driverController != null) {
-                m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1);
-              }
+          if (m_driverController != null) {
+            m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1);
+          }
 
-              if(m_operatorController != null) {
-                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 1);
-              }
-        }
-        break;
-
-
-      case RETRACTING:
-      if (m_retractIntakeFlag) {
-      m_Limelight.setLimelightLEDsOn(true);
-        m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
-        m_intakeSubsystem.setRollerMotor(0);
-        if (m_intakeSubsystem.atUpperLimit()) {
-          if (m_pullToTransition) {
-            m_state = IntakeTransState.TRANSITION;
-                System.out.println(m_state.name());
-                if(m_driverController != null) {
-                  m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0);
-                }
-                if(m_operatorController != null) {
-                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0);
-              }
-      
-
-          } else {
-            m_state = IntakeTransState.DONE;
-                System.out.println(m_state.name());
-
+          if (m_operatorController != null) {
+            m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 1);
           }
         }
-      }
-      else {
-        m_state = IntakeTransState.DONE;
-      }
         break;
-      
+
+      case RETRACTING:
+        if (m_retractIntakeFlag) {
+          m_Limelight.setLimelightLEDsOn(true);
+          m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
+          m_intakeSubsystem.setRollerMotor(0);
+          if (m_intakeSubsystem.atUpperLimit()) {
+            if (m_pullToTransition) {
+              m_state = IntakeTransState.TRANSITION;
+              System.out.println(m_state.name());
+              if (m_driverController != null) {
+                m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0);
+              }
+              if (m_operatorController != null) {
+                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0);
+              }
+
+            } else {
+              m_state = IntakeTransState.DONE;
+              System.out.println(m_state.name());
+
+            }
+          }
+        } else {
+          m_state = IntakeTransState.DONE;
+        }
+        break;
       
       case TRANSITION:
         m_Limelight.setLimelightLEDsOn(false);
         m_transitionSubsystem.set(TransitionConstants.TRANSITION_MOTOR_POWER_IN);
         m_intakeSubsystem.setRollerMotor(IntakeConstants.ROLLER_MOTOR_SPEED_IN_TRANSITION);
+        m_intakeSubsystem.setLifterMotor(IntakeConstants.LIFTER_MOTOR_SPEED_UP);
         if (m_transitionSubsystem.isNoteDetected()) {
           m_state = IntakeTransState.DONE;
-              System.out.println(m_state.name());
-
+          System.out.println(m_state.name());
         }
         break;
 
-
       default:
         m_state = IntakeTransState.DONE;
-            System.out.println(m_state.name());
-
+        System.out.println(m_state.name());
         break;
     }
     SmartDashboard.putString("intake transition state", m_state.name());
