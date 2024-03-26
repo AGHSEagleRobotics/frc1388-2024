@@ -149,10 +149,13 @@ public class AutoMethod {
 
   public Command ThreeFarNote() {
     return new ShooterAngleLimelight(m_shooterAngleSubsystem)
-    .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
+    // .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
     .alongWith(new SequentialCommandGroup(
       new WaitCommand(0.5),
-      new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+
+      
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
       
       makeSwerveAutoCommand("3_note.1")
         .alongWith(
@@ -170,7 +173,9 @@ public class AutoMethod {
           new WaitCommand(0.5)
         ),
 
-      new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+      
 
       makeSwerveAutoCommand("3_note.3")
         .alongWith(
@@ -188,7 +193,8 @@ public class AutoMethod {
           new WaitCommand(0.5)
         ),
 
-        new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
+      new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
     ));
   }
 
