@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
@@ -15,6 +16,7 @@ import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
+import frc.robot.Robot;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.vision.Limelight;
@@ -23,7 +25,7 @@ public class AutoAngleShoooterAndTracking extends Command {
   private final DriveTrainSubsystem m_driveTrain;
   private final ShooterAngleSubsystem m_shooterAngleSubsystem;
   private final Limelight m_limelight;
-  private final PIDController m_rotationPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
+  private final PIDController m_turnPidController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
   /** Creates a new AutoTracking. */
   /** Creates a new AutoAngleShooter. */
   public AutoAngleShoooterAndTracking(ShooterAngleSubsystem shooterAngleSubsystem, Limelight limelight, DriveTrainSubsystem driveTrain) {
@@ -37,38 +39,15 @@ public class AutoAngleShoooterAndTracking extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_rotationPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
-    m_rotationPIDController.enableContinuousInput(0, 360);
+    m_turnPidController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
+    m_turnPidController.enableContinuousInput(0, 360);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-    double distance;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        distance = m_limelight.getDistanceOfTagId(4);
-      } else {
-        distance = m_limelight.getDistanceOfTagId(7);
-      }
-
-      double distance2 = distance * distance;
-
-      
-      // mycurvefit numbers for quadratic interpolation
-      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
-      goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
-                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
-                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
-      }
-      double tx;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-       tx = m_limelight.getTxOfTagID(4);
-    } else {
-       tx = m_limelight.getTxOfTagID(7);
-    }
-      double speed = m_rotationPIDController.calculate(tx);
-
+      double goToAngle = m_shooterAngleSubsystem.getAutoCurveFitAngle();
+      double speed = m_driveTrain.getTurnToSpeakerSpeed(m_turnPidController);
       m_driveTrain.drive(0, 0, speed);
       m_shooterAngleSubsystem.setPosition(goToAngle);
   }

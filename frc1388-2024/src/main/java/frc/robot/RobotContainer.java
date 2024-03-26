@@ -153,7 +153,7 @@ public class RobotContainer {
 
       m_shooterAngleSubsystem = new ShooterAngleSubsystem(
           new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
-          new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN));
+          new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN), m_driveTrain);
 
       m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem,
           m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
@@ -366,7 +366,7 @@ public class RobotContainer {
   }
 
   private double getGyroResetAngle() {
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+    if (Robot.getAllianceColor() == Alliance.Blue) {
       return 180;
     } else {
       return 0;

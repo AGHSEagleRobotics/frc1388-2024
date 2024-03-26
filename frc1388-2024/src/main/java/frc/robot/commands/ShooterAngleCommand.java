@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
+import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.vision.Limelight;
 
@@ -28,6 +29,7 @@ public class ShooterAngleCommand extends Command {
   private final Limelight m_limelight;
   private boolean m_manualMode;
   private boolean m_autoMode;
+  private boolean m_lastStartButtonPressed = false;
 
   /** Creates a new ShooterAngleCommand. */
   public ShooterAngleCommand(Supplier<Boolean> xButton, Supplier<Boolean> yButton, Supplier<Boolean> aButton, Supplier<Boolean> bButton,
@@ -59,47 +61,18 @@ public class ShooterAngleCommand extends Command {
   public void execute() {
     double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.MANUAL_CONTROL_ANGLE_DEADBAND);
 
-      double goToAngle = m_shooterAngleSubsystem.getCurrentPosition();
-
-      double distance;
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        distance = m_limelight.getDistanceOfTagId(4);
-      } else {
-        distance = m_limelight.getDistanceOfTagId(7);
-      }
-
-      double distance2 = distance * distance;
-
-      
-      // mycurvefit numbers for quadratic interpolation
-      if ((distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_AUTOSHOOTER)) {
-      goToAngle = LimelightConstants.QUADRATIC_AUTO_SHOOTER_A +
-                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_B * distance) +
-                  (LimelightConstants.QUADRATIC_AUTO_SHOOTER_C * distance2);
-      }
-
-      // if ( (distance > 0) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_POSITIONB)) {
-      // goToAngle = (LimelightConstants.SLOPE_MATH_SUBLIFER_TO_POSITIONB * distance) + LimelightConstants.SHOOTER_OFFSET_SUBTOB;
-      //  goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionNoteB, ShooterAngleSubsystemConstants.kShooterPositionUp);
-      // }
-      // else if ((distance > LimelightConstants.DISTANCE_FROM_APRILTAG_POSITIONB) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM)) {
-      //   goToAngle = (LimelightConstants.SLOPE_MATH_POSITIONB_TO_PODIUM * distance) + LimelightConstants.SHOOTER_OFFSET_B_TO_POD;
-      //   goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionDown, ShooterAngleSubsystemConstants.kShooterPositionNoteB);
-      // }
-      // else if ((distance > LimelightConstants.DISTANCE_FROM_APRILTAG_PODIUM) && (distance < LimelightConstants.DISTANCE_FROM_APRILTAG_WING)) {
-      //   goToAngle = (LimelightConstants.SLOPE_MATH_PODIUM_TO_WING * distance) + LimelightConstants.SHOOTER_OFFSET_WING;
-      //   goToAngle = MathUtil.clamp(goToAngle, ShooterAngleSubsystemConstants.kShooterPositionWing, ShooterAngleSubsystemConstants.kShooterPositionDown);
-      // }
+    double goToAngle = m_shooterAngleSubsystem.getAutoCurveFitAngle();
    
     SmartDashboard.putNumber("Shooter/Auto Tracking Shooter Angle", goToAngle); 
 
     boolean startButton = m_start.get();
-    if (startButton) {
+    if (startButton && !m_lastStartButtonPressed) {
       m_autoMode = !m_autoMode;
       if (m_autoMode) {
         m_manualMode = false;
       }
     }
+    m_lastStartButtonPressed = startButton;
 
     if (m_yButton.get()) {
       m_manualMode = false;
@@ -128,7 +101,6 @@ public class ShooterAngleCommand extends Command {
     } else if (m_manualMode == true) {
       m_shooterAngleSubsystem.setPosition(m_shooterAngleSubsystem.getCurrentPosition());
     } else if (m_autoMode == true) {
-      
         m_shooterAngleSubsystem.setPosition(goToAngle);
       }
     }
