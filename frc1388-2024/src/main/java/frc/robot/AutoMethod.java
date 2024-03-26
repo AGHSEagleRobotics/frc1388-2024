@@ -151,41 +151,44 @@ public class AutoMethod {
     return new ShooterAngleLimelight(m_shooterAngleSubsystem)
     .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
     .alongWith(new SequentialCommandGroup(
+      new WaitCommand(0.5),
       new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
       
       makeSwerveAutoCommand("3_note.1")
         .alongWith(
           new WaitCommand(1.5)
-          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
-          .deadlineWith(new WaitCommand(0.25)))),
+          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
+          ),
       
       makeSwerveAutoCommand("3_note.2")
-      .alongWith(
-        new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
-        .andThen(
-        new PullToTransition(m_transitionSubsystem, m_intakeSubsystem)
-      )),
+        .alongWith(
+          new IntakeTransitionCommand(IntakeTransState.RETRACTING, true, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+        ),
 
-      new AutoTracking(m_driveTrainSubsystem, m_limelight),
+      new AutoTracking(m_driveTrainSubsystem, m_limelight)
+        .raceWith(
+          new WaitCommand(0.5)
+        ),
 
       new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
 
       makeSwerveAutoCommand("3_note.3")
-      .alongWith(
-          new WaitCommand(1.5)
-          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
-          .deadlineWith(new WaitCommand(0.25)))),
+        .alongWith(
+        new WaitCommand(1.5)
+          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
+          ),
       
       makeSwerveAutoCommand("3_note.4")
-      .alongWith(
-        new RetractIntakeCommand(m_intakeSubsystem, m_transitionSubsystem, true)
-        .andThen(
-        new PullToTransition(m_transitionSubsystem, m_intakeSubsystem)
-      )),
-            new AutoTracking(m_driveTrainSubsystem, m_limelight),
+        .alongWith(
+          new IntakeTransitionCommand(IntakeTransState.RETRACTING, true, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+        ),
 
-            new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
-      
+      new AutoTracking(m_driveTrainSubsystem, m_limelight)
+        .raceWith(
+          new WaitCommand(0.5)
+        ),
+
+        new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem)
     ));
   }
 
