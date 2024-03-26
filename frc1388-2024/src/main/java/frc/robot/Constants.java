@@ -100,8 +100,8 @@ public final class Constants {
     public static final double kShooterAngleFF = 0;
     public static final int kPotentiometerAnalogIN = 3;
 
-    public static final double kShooterPositionSpeaker = 0.35; // previously 0.37 for competition matches
-    public static final double kShooterPositionDrewSaucyShot = 0.28; 
+    public static final double kShooterPositionSpeaker = 0.325; // previously 0.37 for competition matches
+    public static final double kShooterPositionDrewSaucyShot = 0.30; 
     public static final double kShooterPositionPodium = 0.173; 
     public static final double kShooterLowClamp = 0.168;
     public static final double kShooterPositionStartLine = 0.277;
