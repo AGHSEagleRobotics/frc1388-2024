@@ -87,7 +87,7 @@ public class AutoMethod {
   }
 
   public Command Start123Shoot(){
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem)
     .alongWith(
       new SequentialCommandGroup(
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
@@ -111,7 +111,7 @@ public class AutoMethod {
   }
 
   public Command FourNote() {
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem)
     .alongWith(
       new SequentialCommandGroup(
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
@@ -148,7 +148,7 @@ public class AutoMethod {
   }
 
   public Command ThreeFarNote() {
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem)
     .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
     .alongWith(new SequentialCommandGroup(
       new AutoFeedShooter(m_transitionSubsystem, m_intakeSubsystem),
@@ -335,7 +335,7 @@ public class AutoMethod {
   }
   
   public Command LimelightShoot1IntakeBSpeakerB() {
-    return new ShooterAngleLimelight(m_shooterAngleSubsystem, m_limelight)
+    return new ShooterAngleLimelight(m_shooterAngleSubsystem)
         .alongWith(
           new SequentialCommandGroup(
             new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter).withTimeout(2.0)
@@ -406,7 +406,7 @@ public class AutoMethod {
             new PIDController(1.1, 0, 0),
             (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),
             () -> {
-              if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+              if (Robot.getAllianceColor() == Alliance.Red) {
                 return true;
               } else {
                 return false;
@@ -424,7 +424,7 @@ public class AutoMethod {
           initRotation -= 2 * Math.PI;
         }
 
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+        if (Robot.getAllianceColor() == Alliance.Red) {
           m_driveTrainSubsystem.swerveOnlyResetPose(new Pose2d(
               new Translation2d(path.flipped().getInitialPose().getX(), path.flipped().getInitialPose().getY()),
               // new Translation2d(15.78, 2.341),
@@ -438,7 +438,7 @@ public class AutoMethod {
       }
 
       private double getGyroResetAngle() {
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+        if (Robot.getAllianceColor() == Alliance.Blue) {
           return 0;
         } else {
           return 180;

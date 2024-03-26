@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.RobotController.RadioLEDState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 
 
@@ -216,5 +217,14 @@ public class Robot extends TimedRobot {
 
   private boolean getBlueButton() {
     return !m_blueButton.get();
+  }
+
+  
+  public static Alliance getAllianceColor() {
+    if (DriverStation.getAlliance().isPresent()){
+      return DriverStation.getAlliance().get();
+    } else {
+      return Alliance.Blue;
+    }
   }
 }
