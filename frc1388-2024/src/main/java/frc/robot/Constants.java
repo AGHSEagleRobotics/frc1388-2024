@@ -78,7 +78,7 @@ public final class Constants {
     public static final double SHOOTER_MOTOR_FF = 0;
 
     public static final double SPEAKER_SHOT_RPM = 4000;
-    public static final double AMP_SHOT_RPM = 500;
+    public static final double AMP_SHOT_RPM = 450;
     public static final double SHOOTER_TIMER = 10;
     public static final int kShooterMotor1CANID = 0;
     public static final int kShooterMotor2CANID = 0;
@@ -219,17 +219,18 @@ public final class Constants {
     // 2.96 .173
 
     // new values based on bose estimation with trig
-    // 1.38 0.325
-    // 1.80 0.27
-    // 2.25 0.232
-    // 2.52 0.21
-    // 2.88 0.177
-    // 3.01 0.173
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 1.811224; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = -2.63704; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = 1.736999;
-    public static final double QUADRATIC_AUTO_SHOOTER_D = -0.5185361;
-    public static final double QUADRATIC_AUTO_SHOOTER_E = 0.05728454;
+    // 1(limelight distance to speaker) 2(potentiomator position) 3(measured distance to speaker)
+    // 1.38 0.325, 1.32
+    // 1.80 0.27, 1.74
+    // 2.26 0.22, 2.175
+    // 2.52 0.200, 2.44
+    // 2.90 0.178, 2.81
+    // 3.02 0.169, 2.93
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.02183032; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = 0.8960651; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = -0.7906843;
+    public static final double QUADRATIC_AUTO_SHOOTER_D = 0.2589128;
+    public static final double QUADRATIC_AUTO_SHOOTER_E = -0.02980003;
   }
 
   public static class LEDConstants {
