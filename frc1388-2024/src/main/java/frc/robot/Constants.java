@@ -196,7 +196,7 @@ public final class Constants {
     public static final double DISTANCE_OFFSET_CAMERA = 0.15;
 
     public static final double ID_7_AND_4_LOCATION_Y = 5.547;
-    public static final double ID_7_LOCATION_X_BLUE = -0.381;
+    public static final double ID_7_LOCATION_X_BLUE = -0.0381;
     public static final double ID_4_LOCATION_X_RED = 16.579;
 
     // public static final double SLOPE_MATH_SUBLIFER_TO_POSITIONB = (ShooterAngleSubsystemConstants.kShooterPositionNoteB - 
@@ -220,17 +220,17 @@ public final class Constants {
 
     // new values based on bose estimation with trig
     // 1(limelight distance to speaker) 2(potentiomator position) 3(measured distance to speaker)
-    // 1.38 0.325, 1.32
-    // 1.80 0.27, 1.74
-    // 2.26 0.22, 2.175
-    // 2.52 0.200, 2.44
-    // 2.90 0.178, 2.81
-    // 3.02 0.169, 2.93
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.02183032; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = 0.8960651; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = -0.7906843;
-    public static final double QUADRATIC_AUTO_SHOOTER_D = 0.2589128;
-    public static final double QUADRATIC_AUTO_SHOOTER_E = -0.02980003;
+    // 1.41 0.325, 1.32
+    // 1.73 0.27, 1.74
+    // 2.16 0.22, 2.175
+    // 2.43 0.200, 2.44
+    // 2.79 0.178, 2.81
+    // 2.91 0.169, 2.93
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.565951; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = 0.01572077; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = -0.286937;
+    public static final double QUADRATIC_AUTO_SHOOTER_D = 0.1368955;
+    public static final double QUADRATIC_AUTO_SHOOTER_E = -0.01933188;
   }
 
   public static class LEDConstants {
