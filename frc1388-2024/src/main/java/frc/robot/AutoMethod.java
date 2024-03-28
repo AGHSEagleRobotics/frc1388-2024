@@ -151,7 +151,7 @@ public class AutoMethod {
     return new ShooterAngleLimelight(m_shooterAngleSubsystem)
     // .alongWith(new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem))
     .alongWith(new SequentialCommandGroup(
-      new WaitCommand(0.5),
+      new WaitCommand(0.75),
 
       
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
@@ -159,7 +159,7 @@ public class AutoMethod {
       
       makeSwerveAutoCommand("3_note.1")
         .alongWith(
-          new WaitCommand(1.5)
+          new WaitCommand(1.25)
           .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
           ),
       
@@ -168,14 +168,13 @@ public class AutoMethod {
           new IntakeTransitionCommand(IntakeTransState.RETRACTING, true, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
         ),
 
-      new AutoTracking(m_driveTrainSubsystem, m_limelight)
-        .raceWith(
-          new WaitCommand(0.5)
-        ),
-
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-      
+      .deadlineWith(
+        new WaitCommand(0.1)
+        .andThen(new AutoTracking(m_driveTrainSubsystem, m_limelight)
+                 .raceWith(new WaitCommand(0.5)))
+        .andThen(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+        ),
 
       makeSwerveAutoCommand("3_note.3")
         .alongWith(
@@ -188,13 +187,13 @@ public class AutoMethod {
           new IntakeTransitionCommand(IntakeTransState.RETRACTING, true, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
         ),
 
-      new AutoTracking(m_driveTrainSubsystem, m_limelight)
-        .raceWith(
-          new WaitCommand(0.5)
-        ),
-
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+      .deadlineWith(
+        new WaitCommand(0.1)
+        .andThen(new AutoTracking(m_driveTrainSubsystem, m_limelight)
+                 .raceWith(new WaitCommand(0.5)))
+        .andThen(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
+        )
     ));
   }
 

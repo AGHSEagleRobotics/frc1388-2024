@@ -218,7 +218,7 @@ public final class Constants {
     // 2.81 .177
     // 2.96 .173
 
-    // new values based on bose estimation with trig
+    // old values based on bose estimation with trig actual field
     // 1(limelight distance to speaker) 2(potentiomator position) 3(measured distance to speaker)
     // 1.41 0.325, 1.32
     // 1.73 0.27, 1.74
@@ -226,11 +226,25 @@ public final class Constants {
     // 2.43 0.200, 2.44
     // 2.79 0.178, 2.81
     // 2.91 0.169, 2.93
-    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.565951; 
-    public static final double QUADRATIC_AUTO_SHOOTER_B = 0.01572077; 
-    public static final double QUADRATIC_AUTO_SHOOTER_C = -0.286937;
-    public static final double QUADRATIC_AUTO_SHOOTER_D = 0.1368955;
-    public static final double QUADRATIC_AUTO_SHOOTER_E = -0.01933188;
+    // public static final double QUADRATIC_AUTO_SHOOTER_A = 0.565951; 
+    // public static final double QUADRATIC_AUTO_SHOOTER_B = 0.01572077; 
+    // public static final double QUADRATIC_AUTO_SHOOTER_C = -0.286937;
+    // public static final double QUADRATIC_AUTO_SHOOTER_D = 0.1368955;
+    // public static final double QUADRATIC_AUTO_SHOOTER_E = -0.01933188;
+
+    // new values based on bose estimation with trig
+    // 1(limelight distance to speaker) 2(potentiomator position) 3(measured distance to speaker)
+    // 1.38 0.325, 1.32
+    // 1.80 0.27, 1.74
+    // 2.26 0.22, 2.175
+    // 2.52 0.200, 2.44
+    // 2.90 0.178, 2.81
+    // 3.02 0.169, 2.93
+    public static final double QUADRATIC_AUTO_SHOOTER_A = 0.02183032; 
+    public static final double QUADRATIC_AUTO_SHOOTER_B = 0.8960651; 
+    public static final double QUADRATIC_AUTO_SHOOTER_C = -0.7906843;
+    public static final double QUADRATIC_AUTO_SHOOTER_D = 0.2589128;
+    public static final double QUADRATIC_AUTO_SHOOTER_E = -0.02980003;
   }
 
   public static class LEDConstants {
@@ -244,7 +258,7 @@ public final class Constants {
   public static class AutoConstants {
     public static final double TURN_P_VALUE = 0.04;
 
-    public static final double TURN_P_TOLERANCE = 2.5;
+    public static final double TURN_P_TOLERANCE = 1;
     public static final double TURN_I_VALUE = 0.003;
     public static final double TURN_D_VALUE = 0.004;
 
