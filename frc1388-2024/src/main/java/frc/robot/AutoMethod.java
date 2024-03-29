@@ -159,9 +159,9 @@ public class AutoMethod {
       
       makeSwerveAutoCommand("3_note.1")
         .alongWith(
-          new WaitCommand(1.25)
+          new WaitCommand(0.75)
           .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
-          ),
+          ).withTimeout(2.25),
       
       makeSwerveAutoCommand("3_note.2")
         .alongWith(
@@ -174,13 +174,13 @@ public class AutoMethod {
         .andThen(new AutoTracking(m_driveTrainSubsystem, m_limelight)
                  .raceWith(new WaitCommand(0.5)))
         .andThen(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-        ),
+        ).withTimeout(1),
 
       makeSwerveAutoCommand("3_note.3")
         .alongWith(
-        new WaitCommand(1.5)
+        new WaitCommand(0.75)
           .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
-          ),
+          ).withTimeout(2.25),
       
       makeSwerveAutoCommand("3_note.4")
         .alongWith(
