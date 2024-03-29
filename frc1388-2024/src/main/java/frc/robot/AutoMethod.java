@@ -153,40 +153,49 @@ public class AutoMethod {
     .alongWith(new SequentialCommandGroup(
       new WaitCommand(0.75),
 
-      
+      // shoot preload
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
         .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-      
+
+      // picking up first note
       makeSwerveAutoCommand("3_note.1")
         .alongWith(
           new WaitCommand(0.75)
-          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
-          ).withTimeout(2.25),
-      
+          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+            .withTimeout(2.25))
+          ),
+
+      // going back to shoot
       makeSwerveAutoCommand("3_note.2")
         .alongWith(
           new IntakeTransitionCommand(IntakeTransState.RETRACTING, true, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+            .withTimeout(1)
         ),
 
+      // shooting
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
+      .withTimeout(1.5)
       .deadlineWith(
         new WaitCommand(0.1)
         .andThen(new AutoTracking(m_driveTrainSubsystem, m_limelight)
                  .raceWith(new WaitCommand(0.5)))
         .andThen(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-        ).withTimeout(1),
-
+        ),
+        
+      // going to pick up second note
       makeSwerveAutoCommand("3_note.3")
         .alongWith(
         new WaitCommand(0.75)
-          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight))
-          ).withTimeout(2.25),
-      
+          .andThen(new IntakeTransitionCommand(IntakeTransState.DEPLOYING, false, false, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+            .withTimeout(2.25))
+          ),
+      //going back to shoot
       makeSwerveAutoCommand("3_note.4")
         .alongWith(
           new IntakeTransitionCommand(IntakeTransState.RETRACTING, true, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
+            .withTimeout(1)
         ),
-
+      // shooting
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
       .deadlineWith(
         new WaitCommand(0.1)
