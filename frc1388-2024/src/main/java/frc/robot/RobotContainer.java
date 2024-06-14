@@ -155,13 +155,12 @@ public class RobotContainer {
           new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
           new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN), m_driveTrain);
 
-      m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem,
-          m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
+      m_autoMethod = new AutoMethod(m_driveTrain);
 
     } else {
       m_shooterSubsystem = null;
       m_shooterAngleSubsystem = null;
-      m_autoMethod = null;
+      m_autoMethod = new AutoMethod(m_driveTrain);
     }
 
 

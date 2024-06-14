@@ -13,7 +13,7 @@ public class AutoTurn extends Command {
 
   private final double m_turnAngled;
   private final DriveTrainSubsystem m_driveTrain;
-  private PIDController m_rotationController = new PIDController(0.003, 0, 0);
+  private PIDController m_rotationController = new PIDController(0.03, 0, 0);
 
 
   /** Creates a new AutoTurbn. */

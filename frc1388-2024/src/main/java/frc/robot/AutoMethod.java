@@ -65,22 +65,21 @@ public class AutoMethod {
 
 
  
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition, ShooterAngleSubsystem shooterAngle, Limelight limelight) {
+  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem) {
     m_driveTrainSubsystem = driveTrainSubsystem;
-    m_dashboard = dashboard;
-    m_shooter = shooter;
-    m_intakeSubsystem = intake;
-    m_transitionSubsystem = transition;
-    m_limelight = limelight;
-    m_shooterAngleSubsystem = shooterAngle;
+    m_dashboard = null;
+    m_shooter = null;
+    m_intakeSubsystem = null;
+    m_transitionSubsystem = null;
+    m_limelight = null;
+    m_shooterAngleSubsystem = null;
 
-    m_fourNote = FourNote();
-    m_threeNote = ThreeFarNote();
+    m_fourNote = null;
+    m_threeNote = null;
   }
 
   public Command LearningCommands() {
-    return new DriveStraight(3, m_driveTrainSubsystem).andThen(
-    new AutoTurn(180, m_driveTrainSubsystem));
+    return new DriveStraight(0, m_driveTrainSubsystem);
   }
 
   public Command ShootAndLeave(){
@@ -179,16 +178,7 @@ public class AutoMethod {
   }
 
   public Command getAutonomousCommand() {
-        AutoConstants.Objective objective = m_dashboard.getObjective();
-        DataLogManager.log("####### objective:" + objective);
-        if(objective == null) {
-          return null;
-        }
-        switch (objective) {
-          case LEARNINGCOMMANDS:
-            return LearningCommands();
-        }
-        return null;
+        return LearningCommands();
       }
 
       public Command makeSwerveAutoCommand(String pathString) {
