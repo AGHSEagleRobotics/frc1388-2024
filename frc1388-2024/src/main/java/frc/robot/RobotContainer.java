@@ -77,7 +77,7 @@ public class RobotContainer {
 
   Field2d m_Field2d = new Field2d();
 
-  private final boolean option8 = true;
+  private final boolean option8 = false;
   private final Dashboard m_dashboard = new Dashboard();
     
   public final ShooterSubsystem m_shooterSubsystem;
