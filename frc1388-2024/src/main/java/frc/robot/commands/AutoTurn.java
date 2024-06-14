@@ -11,14 +11,14 @@ import frc.robot.subsystems.DriveTrainSubsystem;
 
 public class AutoTurn extends Command {
 
-  private final double m_setpoint;
+  private final double m_turnAngled;
   private final DriveTrainSubsystem m_driveTrain;
   private PIDController m_rotationController = new PIDController(0.003, 0, 0);
 
 
   /** Creates a new AutoTurbn. */
-  public AutoTurn(double setpoint, DriveTrainSubsystem driveTrainSubsystem) {
-    m_setpoint = setpoint;
+  public AutoTurn(double turnAngle, DriveTrainSubsystem driveTrainSubsystem) {
+    m_turnAngled = turnAngle;
     m_driveTrain = driveTrainSubsystem;
     addRequirements(m_driveTrain);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -31,7 +31,7 @@ public class AutoTurn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_driveTrain.drive(0, 0, m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_setpoint));
+    m_driveTrain.drive(0, 0, m_rotationController.calculate(m_driveTrain.getAngle() - 360 + m_turnAngled));
     // m_driveTrain.drive(0, 0, 0.1);
   }
 
@@ -44,6 +44,6 @@ public class AutoTurn extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(m_driveTrain.getAngle() - 360 + m_setpoint) < 5;
+    return Math.abs(m_driveTrain.getAngle() - 360 + m_turnAngled) < 5;
   }
 }
