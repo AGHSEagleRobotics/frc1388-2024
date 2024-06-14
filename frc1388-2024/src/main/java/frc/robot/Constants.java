@@ -276,20 +276,12 @@ public final class Constants {
     public static final double LEAVE_FROM_SIDE_LONG = -4.5;
 
     public enum Objective{
-        SITSTILL ("LookPretty"),
-        START1LEAVE ("1, Leave"),
-        LEAVEANDSHOOT ("1, Shoot, Leave"),
-        Shoot1IntakeBSpeakerB ("1, B"),
-        Shoot123 ("1 Shoot"),
-        ShootAndLeaveFromSideWithLonger("2 and leave"),
-        FourNote ("4 note auto "),
-        ThreeNote ("3 note auto "),
-        testCoordinate("TEST DELETE ME");
+        LEARNINGCOMMANDS ("Auto!");
 //        Shoot3Leave ("3 Leave"); // needs testing
 //        Shoot1IntakeBSpeakerBIntakeASpeakerA ("1, B, C"),
 //        testCoordinate ("testcoordinate");
 
-      public static final Objective Default = SITSTILL;
+      public static final Objective Default = LEARNINGCOMMANDS;
 
       private String m_dashboardDescript; // This is what will show on dashboard
 

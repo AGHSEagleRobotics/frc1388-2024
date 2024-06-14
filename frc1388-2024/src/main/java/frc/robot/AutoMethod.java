@@ -79,7 +79,8 @@ public class AutoMethod {
   }
 
   public Command LearningCommands() {
-    return new DriveStraight(0, m_driveTrainSubsystem);
+    return new DriveStraight(3, m_driveTrainSubsystem).andThen(
+    new AutoTurn(180, m_driveTrainSubsystem));
   }
 
   public Command ShootAndLeave(){
@@ -180,8 +181,14 @@ public class AutoMethod {
   public Command getAutonomousCommand() {
         AutoConstants.Objective objective = m_dashboard.getObjective();
         DataLogManager.log("####### objective:" + objective);
-    
-        return LearningCommands();
+        if(objective == null) {
+          return null;
+        }
+        switch (objective) {
+          case LEARNINGCOMMANDS:
+            return LearningCommands();
+        }
+        return null;
       }
 
       public Command makeSwerveAutoCommand(String pathString) {
