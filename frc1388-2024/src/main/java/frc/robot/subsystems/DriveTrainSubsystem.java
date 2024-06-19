@@ -119,8 +119,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
     return m_kinematics;
   }
 
-  /** the drive method takes in an x and y velocity in meters / second, and a rotation rate in radians / second */
+  /** the drive method takes in an x and y velocity in meters / second, and a rotation rate in radians / second 
+   * 
+   *     Then, the method tells each swerve module what to do with the `.setSwerveModuleState()`
+  */
   public void drive(double xVelocity, double yVelocity, double omega) {
+    // Converts a user provided field-relative set of speeds into a robot-relative ChassisSpeeds object.
     ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(robotRelativeSpeeds);
 
@@ -130,10 +134,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_frontLeft.setSwerveModuleStates(states[1]);
     m_backLeft.setSwerveModuleStates(states[2]);
     m_backRight.setSwerveModuleStates(states[3]);
-    // do the divide by 3 speed here 
-
-   
-        }
+  }
     /**
      * Applies offset to ALL swerve modules.
      * <p>
@@ -298,6 +299,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     return m_frontRight.getPosition().distanceMeters;
   }
 
+  /** returns angle [0, 360] */
   public double getAngle() {
     if (!m_navxGyro.isCalibrating()) {
       double angle = (getRawGyroAngle() + m_gyroOffset) % 360;
@@ -356,6 +358,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // if ((aprilTagsSeen > 2) ||
     //     ((aprilTagsSeen == 2) && ((averageTargetArea > 0.04) && (averageTargetArea ))) ||
     //     ((aprilTagsSeen == 1) && (averageTargetArea < 0.6) && (averageTargetArea > 0))) 
+
+    // if the limelight can see an april tag well enough, it updates the pose based on the april tags, else it uses odometry as the position.
     if (averageTargetArea > 0.1)
     {
       limelightResetPose();

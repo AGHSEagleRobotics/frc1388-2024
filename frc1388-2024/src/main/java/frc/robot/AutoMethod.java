@@ -190,7 +190,7 @@ public class AutoMethod {
         return Choreo.choreoSwerveCommand(
             path,
             () -> m_driveTrainSubsystem.getPose(),
-            new PIDController(0.9, 0, 0),
+            new PIDController(0.9, 0, 0), // magic number pid values
             new PIDController(0.9, 0, 0),
             new PIDController(1.1, 0, 0),
             (ChassisSpeeds speeds) -> m_driveTrainSubsystem.driveRobotRelative(speeds),
