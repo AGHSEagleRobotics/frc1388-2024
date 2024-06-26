@@ -20,6 +20,8 @@ public final class Constants {
   public static class ControllerConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int OPERATOR_CONTROLLER_PORT = 1;
+    public static final int GUEST_CONTROLLER_PORT = 2;
+
   }
 
   public static class SwerveModuleConstants {
@@ -301,5 +303,10 @@ public final class Constants {
         return m_dashboardDescript;
       }
     }
+  }
+
+  public final class GuestModeConstants {
+    public static final double GUEST_MODE_MAX_SPEED = 0.8;
+    public static final double GUEST_MODE_MINIMUM_SPEED = 0.5; 
   }
 }

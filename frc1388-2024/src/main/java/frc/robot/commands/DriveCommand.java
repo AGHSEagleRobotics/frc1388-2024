@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.RobotContainer.GuestMode;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 
@@ -32,6 +33,10 @@ public class DriveCommand extends Command {
   private final Supplier<Boolean> m_y;
   private final Supplier<Boolean> m_rightStick;
   
+  private final Supplier<Double> m_guestLeftY;
+  private final Supplier<Double> m_guestLeftX;
+  private final Supplier<Double> m_guestRightX;
+  private final GuestMode m_guestMode;
 
   private final PIDController m_turnPidController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, LimelightConstants.TURN_I_VALUE_AUTO_TRACKING, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
 
@@ -42,7 +47,7 @@ public class DriveCommand extends Command {
   private boolean m_lastAutoTrackButtonPressed = false; // used for edge detection 
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> rightStick) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> rightStick, Supplier<Double> guestLeftY, Supplier<Double> guestLeftX, Supplier<Double> guestRightX, GuestMode guestMode) {
     m_driveTrain = driveTrain;
     m_limelight = limelight;
 
@@ -54,6 +59,11 @@ public class DriveCommand extends Command {
     m_x = x;
     m_y = y;
     m_rightStick = rightStick;
+
+    m_guestLeftX = guestLeftX;
+    m_guestLeftY = guestLeftY;
+    m_guestRightX = guestRightX;
+    m_guestMode = guestMode;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveTrain);
@@ -72,9 +82,24 @@ public class DriveCommand extends Command {
   @Override
   public void execute() {
     // controller inputs
-    double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
-    double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
-    double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    double leftX;
+    double leftY;
+    double rightX;
+
+    if (m_guestMode.isEnabled()) {
+      leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+      leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+      rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    } else {
+      leftX = MathUtil.applyDeadband(m_guestLeftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+      leftY = MathUtil.applyDeadband(m_guestLeftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+      rightX = -MathUtil.applyDeadband(m_guestRightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    }
+
+    // old code
+    // double leftX = MathUtil.applyDeadband(m_leftX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    // double leftY = MathUtil.applyDeadband(m_leftY.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
+    // double rightX = -MathUtil.applyDeadband(m_rightX.get(), DriveTrainConstants.CONTROLLER_DEADBAND);
     boolean onRed = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {

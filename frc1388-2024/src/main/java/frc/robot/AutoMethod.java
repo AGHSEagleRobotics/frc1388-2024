@@ -25,7 +25,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShooterAngleLimelight;
-import frc.robot.commands.DriveStraight;
+// import frc.robot.commands.DriveStraight; // XXX fixing drive strait issues
 import frc.robot.commands.AutoFeedShooter;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoShooterAngle;
@@ -79,15 +79,17 @@ public class AutoMethod {
   }
 
   public Command LearningCommands() {
-    return new DriveStraight(0, m_driveTrainSubsystem);
+    // return new DriveStraight(0, m_driveTrainSubsystem);
+    return null; // XXX if broken, it's this  <----
   }
 
   public Command ShootAndLeave(){
     return new SequentialCommandGroup(
       new AutoShooterAngle(ShooterAngleSubsystemConstants.kShooterPositionSpeaker, m_shooterAngleSubsystem),
       new AutoShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooter, m_transitionSubsystem)
-        .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
-        new DriveStraight(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem));
+        // .deadlineWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem)),
+        // // new DriveStraight(AutoConstants.LEAVE_ZONE_FROM_SUB_DIST, m_driveTrainSubsystem)); //XXX also removed for broken drive strait command
+    );
   }
 
   public Command FourNote() {

@@ -96,6 +96,10 @@ public class Robot extends TimedRobot {
         RobotController.setRadioLEDState(RadioLEDState.kOff);
       }
     }
+
+    if (m_robotContainer.isDriverJoysticksMoved()) {
+      m_robotContainer.m_guestMode.setGuestMode(false);
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

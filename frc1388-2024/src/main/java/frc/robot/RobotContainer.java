@@ -27,6 +27,7 @@ import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.GuestModeConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 
@@ -40,6 +41,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -47,6 +49,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
@@ -59,6 +62,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -129,9 +133,11 @@ public class RobotContainer {
 
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
-  
+  // guest mode stuff
+  private final CommandXboxController m_guestController = new CommandXboxController(ControllerConstants.GUEST_CONTROLLER_PORT);
+  public GuestMode m_guestMode = new GuestMode();
 
-    private final AutoMethod m_autoMethod;
+  private final AutoMethod m_autoMethod;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -167,16 +173,20 @@ public class RobotContainer {
 
 
     DriveCommand m_driveCommand = new DriveCommand(
-        m_driveTrain,
-        m_limelight,
-        () -> m_driverController.getLeftY(),
-        () -> m_driverController.getLeftX(),
+      m_driveTrain,
+      m_limelight,
+      () -> m_driverController.getLeftY(),
+      () -> m_driverController.getLeftX(),
       () -> m_driverController.getRightX(),
-            () -> m_driverController.getHID().getAButton(),
+      () -> m_driverController.getHID().getAButton(),
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
-      () -> m_driverController.getHID().getRightStickButton()
+      () -> m_driverController.getHID().getRightStickButton(),
+      () -> m_guestController.getLeftY(),
+      () -> m_guestController.getLeftX(),
+      () -> m_guestController.getRightX(),
+      m_guestMode
     );
       
     m_driveTrain.setDefaultCommand(m_driveCommand);
@@ -238,34 +248,64 @@ public class RobotContainer {
 
     // DRIVER CONTROLS
 
-    
-    if (option8) {
-    m_driverController.leftBumper().onTrue(new IntakeTransitionCommand
-      (IntakeTransState.DEPLOYING,
-      true,
-      true, m_intakeSubsystem,
-      m_transitionSubsystem,
-      m_limelight,
-      m_operatorController,
-      m_driverController));
+    m_driverController.a().onTrue(new InstantCommand(()-> m_guestMode.setGuestMode(true)));
+    m_driverController.b().onTrue(new InstantCommand(()-> m_guestMode.setGuestMode(false)));
 
-    m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand
-      (IntakeTransState.RETRACTING,
-      false, 
-      true,
-      m_intakeSubsystem, 
-      m_transitionSubsystem, 
-      m_limelight));
+
+    if (option8) {
+      if (!m_guestMode.isEnabled()) {
+        m_driverController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING,
+            true,
+            true, m_intakeSubsystem,
+            m_transitionSubsystem,
+            m_limelight,
+            m_operatorController,
+            m_driverController));
+
+        m_driverController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING,
+            false,
+            true,
+            m_intakeSubsystem,
+            m_transitionSubsystem,
+            m_limelight));
+      } else {
+        m_guestController.leftBumper().onTrue(new IntakeTransitionCommand(IntakeTransState.DEPLOYING,
+            true,
+            true, m_intakeSubsystem,
+            m_transitionSubsystem,
+            m_limelight,
+            m_operatorController,
+            m_guestController));
+
+        m_guestController.leftTrigger().onTrue(new IntakeTransitionCommand(IntakeTransState.RETRACTING,
+            false,
+            true,
+            m_intakeSubsystem,
+            m_transitionSubsystem,
+            m_limelight));
+      }
+    
     }    
     // SHOOT SPEAKER COMMAND SEQUENCE
     if (option8) {
-    m_driverController.rightTrigger(0.9).whileTrue(
-      new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, true, m_intakeSubsystem, m_transitionSubsystem, m_limelight)
-      .andThen(
-        new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
-        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))
-      )
-    );
+      if (m_guestMode.isEnabled()) {
+        m_driverController.rightTrigger(0.9).whileTrue(
+            new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, true, m_intakeSubsystem,
+                m_transitionSubsystem, m_limelight)
+                .andThen(
+                    new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
+                        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+      } else {
+        if (m_guestMode.isEnabled()) {
+        m_operatorController.rightTrigger(0.9).whileTrue(
+            new IntakeTransitionCommand(IntakeTransState.RETRACTING, false, true, m_intakeSubsystem,
+                m_transitionSubsystem, m_limelight)
+                .andThen(
+                    new ShooterCommand(ShooterConstants.SPEAKER_SHOT_RPM, m_shooterSubsystem) // speaker shot rmp
+                        .alongWith(new FeedShooter(m_transitionSubsystem, m_intakeSubsystem))));
+        }
+      }
+
     }
     // SHOOT AMP COMMAND SEQUENCE
     if (option8) {
@@ -371,6 +411,55 @@ public class RobotContainer {
     } else {
       return 0;
     }
+  }
+
+  public static class GuestMode {
+    private static boolean m_isGuestModeEnabled = false;
+    private static double guestModeSpeed = GuestModeConstants.GUEST_MODE_MINIMUM_SPEED;
+
+    public double getSpeed () {
+      return guestModeSpeed;
+    }
+
+    public static void setSpeed(double speed){
+      guestModeSpeed = MathUtil.clamp(speed, GuestModeConstants.GUEST_MODE_MINIMUM_SPEED, GuestModeConstants.GUEST_MODE_MAX_SPEED);
+    
+    }
+    public static void increasespeed(){
+      guestModeSpeed += (GuestModeConstants.GUEST_MODE_MAX_SPEED-GuestModeConstants.GUEST_MODE_MINIMUM_SPEED) / 4.0;
+      guestModeSpeed = MathUtil.clamp(guestModeSpeed,GuestModeConstants.GUEST_MODE_MINIMUM_SPEED, GuestModeConstants.GUEST_MODE_MAX_SPEED);
+    }
+
+    public boolean isEnabled () {
+      return m_isGuestModeEnabled;
+    }
+
+    public void setGuestMode(boolean enabled){
+      if (isEnabled()){
+        increasespeed();
+      } else {
+        guestModeSpeed = GuestModeConstants.GUEST_MODE_MINIMUM_SPEED;
+      }
+      m_isGuestModeEnabled = enabled;
+    }
+  }
+
+  // guest mode method
+  public boolean isDriverJoysticksMoved(){
+    // boolean isGuestJoysticksMoved = (m_driveController.getLeftX()!= 0) || (m_driveController.getLeftY()!= 0) || (m_driveController.getRightX()!= 0) || (m_driveController.getRightY()!= 0);
+    boolean isDriverJoysticksMoved = 
+      (!isClosetoZero(m_driverController.getLeftX())) 
+      || (!isClosetoZero(m_driverController.getLeftY())) 
+      || (!isClosetoZero(m_driverController.getRightX())) 
+      || (!isClosetoZero(m_driverController.getRightY()));
+    return isDriverJoysticksMoved; 
+  }
+  
+  // guest mode method
+  public boolean isClosetoZero(double number){
+    boolean isClosetoZero = (number < DriveTrainConstants.CONTROLLER_DEADBAND && number > -DriveTrainConstants.CONTROLLER_DEADBAND);
+    // System.out.println(number + " is close to 0? " + isClosetoZero);
+    return isClosetoZero;
   }
 
 }
