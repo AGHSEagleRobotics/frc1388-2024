@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -33,6 +34,7 @@ import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.vision.Limelight;
+import frc.robot.vision.VisionAcceptor;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
@@ -40,6 +42,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
+
+  private VisionAcceptor visionAcceptor = new VisionAcceptor();
+  
+  private ChassisSpeeds robotRelativeSpeeds;
 
   /** the SwerveModule objects we created for this class */
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
@@ -121,7 +127,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   /** the drive method takes in an x and y velocity in meters / second, and a rotation rate in radians / second */
   public void drive(double xVelocity, double yVelocity, double omega) {
-    ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
+    robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(robotRelativeSpeeds);
 
     // optimises wheel heading direction changes.
@@ -172,7 +178,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
   public void resetPose(Pose2d pose) {
     if (m_limelight.getApriltagTargetFound()) {
-      limelightResetPose();
+      limelightResetPoseCam1();
     } else {
       swerveOnlyResetPose(pose);
     }
@@ -232,7 +238,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_gyroOffset = botPose[5] - getRawGyroAngle();
   }
 
-  public void limelightResetPose() {
+  public void limelightResetPoseCam1() {
     double[] botPose = m_limelight.getBotPose();
     Pose2d pose2d = new Pose2d(botPose[0], botPose[1], getGyroHeading());
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
@@ -246,9 +252,43 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
   }
 
+  public void limelightResetPoseCam2() {
+    double[] botPose2 = m_limelight.getBotPose2();
+    Pose2d pose2d = new Pose2d(botPose2[0], botPose2[1], getGyroHeading());
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
+        m_frontRight.getPosition(),
+        m_frontLeft.getPosition(),
+        m_backLeft.getPosition(),
+        m_backRight.getPosition()
+    };
+    if (m_odometry != null) {
+      m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, pose2d);
+    }
+  }
+
+  public void limelightResetPoseAverage() {
+    double[] botPose = m_limelight.getBotPose();
+    Pose2d position1 = new Pose2d(botPose[0], botPose[1], getGyroHeading());
+    double[] botPose2 = m_limelight.getBotPose2();
+    Pose2d position2 = new Pose2d(botPose2[0], botPose2[1], getGyroHeading());
+    Pose2d addedPositions = new Pose2d(position1.getX() + position2.getX(), position2.getY() + position2.getY(), getGyroHeading());
+    Pose2d averageOfPositions = new Pose2d(addedPositions.getX() / 2, addedPositions.getY() / 2, getGyroHeading());
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
+        m_frontRight.getPosition(),
+        m_frontLeft.getPosition(),
+        m_backLeft.getPosition(),
+        m_backRight.getPosition()
+    };
+    if (m_odometry != null) {
+      m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, averageOfPositions);
+    }
+  }
+
+  
+
   public void limelightResetPoseAndGyro() {
     limelightResetGyro();
-    limelightResetPose();
+    limelightResetPoseCam1();
   }
 
   public Pose2d getPose() {
@@ -263,7 +303,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   // XXX test me (while testing other method with this note)
   // temporarily made public
   public ChassisSpeeds getRobotRelativeSpeeds() {
-    return chassisSpeeds;
+    return robotRelativeSpeeds;
   }
 
   // // XXX test me (while testing other method with this note)
@@ -350,15 +390,28 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.periodic();
     
     double[] botPose = m_limelight.getBotPose();
+    double[] botPose2 = m_limelight.getBotPose2();
+    
+    Pose2d position1 = new Pose2d(botPose[0], botPose[1], getGyroHeading());
+    Pose2d position2 = new Pose2d(botPose2[0], botPose2[1], getGyroHeading());
+
     double averageTargetArea = (m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_AVERAGE_TAG_AREA));
     double aprilTagsSeen = m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_TOTAL_APRILTAGS_SEEN);
     // reset pose based on if we have an apriltag in view
     // if ((aprilTagsSeen > 2) ||
     //     ((aprilTagsSeen == 2) && ((averageTargetArea > 0.04) && (averageTargetArea ))) ||
     //     ((aprilTagsSeen == 1) && (averageTargetArea < 0.6) && (averageTargetArea > 0))) 
-    if (averageTargetArea > 0.1)
+    Twist2d robotSpeeds =
+    
+    if (visionAcceptor.shouldAccept(position1, new Twist2d
+    (getRobotRelativeSpeeds().vxMetersPerSecond,
+    getRobotRelativeSpeeds().vyMetersPerSecond,
+    getRobotRelativeSpeeds().omegaRadiansPerSecond) && visionAcceptor.shouldAccept()position2, new Twist2d
+    (getRobotRelativeSpeeds().vxMetersPerSecond,
+    getRobotRelativeSpeeds().vyMetersPerSecond,
+    getRobotRelativeSpeeds().omegaRadiansPerSecond))
     {
-      limelightResetPose();
+      limelightResetPoseCam1();
     }
     // odometry updating
     else if (m_odometry != null) {
