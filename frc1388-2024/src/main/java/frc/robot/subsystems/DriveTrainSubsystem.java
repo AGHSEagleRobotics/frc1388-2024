@@ -388,6 +388,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_frontLeft.periodic();
     m_backLeft.periodic();
     m_backRight.periodic();
+
+    boolean acceptPose = false;
     
     double[] botPose = m_limelight.getBotPose();
     double[] botPose2 = m_limelight.getBotPose2();
@@ -401,18 +403,25 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // if ((aprilTagsSeen > 2) ||
     //     ((aprilTagsSeen == 2) && ((averageTargetArea > 0.04) && (averageTargetArea ))) ||
     //     ((aprilTagsSeen == 1) && (averageTargetArea < 0.6) && (averageTargetArea > 0))) 
-    Twist2d robotSpeeds =
-    
-    if (visionAcceptor.shouldAccept(position1, new Twist2d
-    (getRobotRelativeSpeeds().vxMetersPerSecond,
-    getRobotRelativeSpeeds().vyMetersPerSecond,
-    getRobotRelativeSpeeds().omegaRadiansPerSecond) && visionAcceptor.shouldAccept()position2, new Twist2d
-    (getRobotRelativeSpeeds().vxMetersPerSecond,
-    getRobotRelativeSpeeds().vyMetersPerSecond,
-    getRobotRelativeSpeeds().omegaRadiansPerSecond))
-    {
+    if (getRobotRelativeSpeeds() != null) {
+      Twist2d robotSpeeds = new Twist2d(getRobotRelativeSpeeds().vxMetersPerSecond,
+          getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
+      acceptPose = visionAcceptor.shouldAccept(position1, m_odometry.getPoseMeters(), robotSpeeds);
+    }
+    if (acceptPose) {
       limelightResetPoseCam1();
     }
+    // this is if we have 2 limelights updating pose
+    // if (visionAcceptor.shouldAccept(position1,
+    // robotSpeeds) && visionAcceptor.shouldAccept(position2, robotSpeeds)) {
+    //   limelightResetPoseAverage();
+    // }
+    // else if(visionAcceptor.shouldAccept(position1, robotSpeeds)) {
+    //   limelightResetPoseCam1();
+    // }
+    // else if(visionAcceptor.shouldAccept(position2, robotSpeeds)) {
+    //   limelightResetPoseCam2();
+    // }
     // odometry updating
     else if (m_odometry != null) {
       m_odometry.update(
@@ -428,8 +437,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
     
     SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
     SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
-
+    if (getRobotRelativeSpeeds() != null) {
     SmartDashboard.putString("drivetrain/robot relative speeds", getRobotRelativeSpeeds().toString());
+    }
 
     // System.out.println("is odo null?" + (m_odometry == null));
 

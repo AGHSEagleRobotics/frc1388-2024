@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -245,6 +247,11 @@ public final class Constants {
     public static final double QUADRATIC_AUTO_SHOOTER_C = -0.7906843;
     public static final double QUADRATIC_AUTO_SHOOTER_D = 0.2589128;
     public static final double QUADRATIC_AUTO_SHOOTER_E = -0.02980003;
+  }
+
+  public static class FieldLayout {
+    public static double FIELD_LENGTH = Units.inchesToMeters(651.223);
+    public static double FIELD_WIDTH = Units.inchesToMeters(323.277);
   }
 
   public static class LEDConstants {

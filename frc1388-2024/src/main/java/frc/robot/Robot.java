@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     m_robotContainer.limelightResetGyro();
+    m_robotContainer.resetPose();
     if (getBlueButton()) {
       m_robotContainer.resetGyro();
       m_robotContainer.resetPose();

@@ -171,6 +171,17 @@ public class Limelight extends SubsystemBase {
         return botPose0;
   }
 
+  //test code for now
+  public double[] getBotPose2() {
+    double[] botPose;
+      botPose = m_intakeTable.getEntry("botpose_wpiblue").getDoubleArray(new double[] {});
+
+        if (botPose.length >= 18) {
+        return botPose;
+        }
+        return botPose0;
+  }
+
   public double getTxOfTagID(int tagID) {
     return getValueOfTagID(tagID, LimelightConstants.BOTPOSE_RELATIVE_TX_RAW_TARGET_ANGLE);
   }
