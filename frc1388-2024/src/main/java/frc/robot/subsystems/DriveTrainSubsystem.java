@@ -45,7 +45,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   private VisionAcceptor visionAcceptor = new VisionAcceptor();
   
-  private ChassisSpeeds robotRelativeSpeeds;
+  private ChassisSpeeds m_robotRelativeSpeeds = new ChassisSpeeds();
 
   /** the SwerveModule objects we created for this class */
   private final SwerveModule m_frontRight, m_frontLeft, m_backLeft, m_backRight;
@@ -127,8 +127,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   /** the drive method takes in an x and y velocity in meters / second, and a rotation rate in radians / second */
   public void drive(double xVelocity, double yVelocity, double omega) {
-    robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(robotRelativeSpeeds);
+    m_robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getGyroHeading());
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_robotRelativeSpeeds);
 
     // optimises wheel heading direction changes.
     SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveTrainConstants.ROBOT_MAX_SPEED);
@@ -303,7 +303,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   // XXX test me (while testing other method with this note)
   // temporarily made public
   public ChassisSpeeds getRobotRelativeSpeeds() {
-    return robotRelativeSpeeds;
+    return m_robotRelativeSpeeds;
   }
 
   // // XXX test me (while testing other method with this note)
@@ -390,6 +390,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.periodic();
 
     boolean acceptPose = false;
+    boolean acceptGyro = false;
     
     double[] botPose = m_limelight.getBotPose();
     double[] botPose2 = m_limelight.getBotPose2();
@@ -403,14 +404,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // if ((aprilTagsSeen > 2) ||
     //     ((aprilTagsSeen == 2) && ((averageTargetArea > 0.04) && (averageTargetArea ))) ||
     //     ((aprilTagsSeen == 1) && (averageTargetArea < 0.6) && (averageTargetArea > 0))) 
-    if (getRobotRelativeSpeeds() != null) {
       Twist2d robotSpeeds = new Twist2d(getRobotRelativeSpeeds().vxMetersPerSecond,
           getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
-      acceptPose = visionAcceptor.shouldAccept(position1, m_odometry.getPoseMeters(), robotSpeeds);
-    }
-    if (acceptPose) {
-      limelightResetPoseCam1();
-    }
+
+      acceptPose = visionAcceptor.shouldAccept(position1, robotSpeeds);
+      acceptGyro = visionAcceptor.shouldResetGyro(robotSpeeds);
+
+      if (acceptPose) {
+        limelightResetPoseCam1();
+        if (acceptGyro) {
+          limelightResetGyro();
+        }
+      }
     // this is if we have 2 limelights updating pose
     // if (visionAcceptor.shouldAccept(position1,
     // robotSpeeds) && visionAcceptor.shouldAccept(position2, robotSpeeds)) {
@@ -434,7 +439,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         }
       );
     }
-    
+
     SmartDashboard.putNumber("drivetrain/odo x", getPose().getX());
     SmartDashboard.putNumber("drivetrain/odo y", getPose().getY());
     if (getRobotRelativeSpeeds() != null) {
@@ -446,6 +451,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("drivetrain/gyro angle", getAngle());
     SmartDashboard.putNumber("drivetrain/Angle To Speaker", getAbsoluteAngleFromSpeaker());
     SmartDashboard.putNumber("drivetrain/Distance To Speaker", getAbsouluteDistanceFromSpeaker());
+    SmartDashboard.putBoolean("is Accepting Pose", acceptPose);
 
     publisher.set(getPose());
 

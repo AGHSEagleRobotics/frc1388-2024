@@ -272,6 +272,7 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight/DISTANCE VALUE", getDistanceOfTagId(4));
       SmartDashboard.putNumber("Limelight/TX VALUE", getTxOfTagID(4));
       SmartDashboard.putNumber("Limelight/Priority ID", getPriorityID());
+      SmartDashboard.putNumberArray("Limelight/Bot Pose", getBotPose());
 
 
       // SmartDashboard.putNumber("Limelight/ABSOLUTE VALUE OF TX", getAbsoluteAngleFromSpeaker());

@@ -4,8 +4,12 @@
 
 package frc.robot.vision;
 
+import java.util.random.RandomGenerator.JumpableGenerator;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 /** Add your docs here. */
@@ -13,34 +17,83 @@ public class VisionAcceptor {
     public static final double robotMargin = 0.5;
     
     Twist2d m_robotVelocity;
+    Pose2d m_lastPosition;
+    int m_jumpCount = 0;
+    int m_jumpCountMax = 0;
 
-    public boolean shouldAccept(Pose2d currentPosition, Pose2d lastPosition, Twist2d robotVelocity) {
-        
-        m_robotVelocity = robotVelocity;
+    public boolean shouldAccept(Pose2d currentPosition, Twist2d robotVelocity) {
+         m_robotVelocity = robotVelocity;
 
-        //first check of position
-        if(lastPosition == null || (lastPosition.getX() == 0.0 && lastPosition.getY() == 0.0)) {
+        if(robotVelocity == null || currentPosition == null) {
+            return false;
+        }
+
+        // if this is the first ever check, then initialize class variable and trust the position
+        if(m_lastPosition == null) {
+            m_lastPosition = currentPosition;
             return true;
+        }
+
+        if(currentPosition.getX() == 0.0 && currentPosition.getY() == 0.0) {
+            return false;
+        }
+
+        SmartDashboard.putNumber("difference of x", Math.abs(currentPosition.getX() - m_lastPosition.getX()));
+        SmartDashboard.putNumber("difference of y", Math.abs(currentPosition.getY() - m_lastPosition.getY()));
+
+        double velocityPerTick =  norm() / 50;
+
+        double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.03, velocityPerTick);
+
+        SmartDashboard.putNumber("normalizedVelocity", norm());
+        SmartDashboard.putNumber("velocityPerTick", velocityPerTick);
+        SmartDashboard.putNumber("velocityPerTickClamped", velocityPerTickClamped);
+
+        // check if the current position compared to the last position is greater than the velocity per tick of the robot
+        if(Math.abs(currentPosition.getX() - m_lastPosition.getX()) > velocityPerTickClamped
+        || Math.abs(currentPosition.getY() - m_lastPosition.getY()) > velocityPerTickClamped) {
+            m_jumpCount++;
+            if(m_jumpCount > m_jumpCountMax) {
+                m_jumpCountMax = m_jumpCount;
+            }
+            System.out.println("robot position jumped count = " + m_jumpCount + " max = " + m_jumpCountMax);
+            m_lastPosition = currentPosition;
+            return false;
+        }
+        else {
+            m_jumpCount = 0;
         }
 
         //checks if robot is outside of field
         if(currentPosition.getX() < -robotMargin 
           || currentPosition.getX() > Constants.FieldLayout.FIELD_LENGTH + robotMargin
           || currentPosition.getY() < -robotMargin
-          || currentPosition.getY() > Constants.FieldLayout.FIELD_WIDTH + robotMargin) 
-            return false;
-        
-        //checks if robot is moving too fast for camera to update
-        if(norm() > 4.0) {
+          || currentPosition.getY() > Constants.FieldLayout.FIELD_WIDTH + robotMargin) {
+            m_lastPosition = currentPosition;
             return false;
         }
 
-        // check if the current position compared to the last position is greater than the max velocity of the robot
-        if(Math.abs(currentPosition.getX() - lastPosition.getX()) > 0.2
-        || Math.abs(currentPosition.getY() - lastPosition.getY()) > 0.2) 
+        // checks if robot is moving too fast for camera to update
+        if (norm() > 4.0) {
+            m_lastPosition = currentPosition;
             return false;
+        }
 
+        if (m_robotVelocity.dtheta > 1.2) {
+            m_lastPosition = currentPosition;
+            return false;
+        }
+
+        m_lastPosition = currentPosition;
+        
+        return true;      
+    }
+
+    public boolean shouldResetGyro(Twist2d robotVelocity) {
+        if(norm() == 0.0) {
         return true;
+        }
+    return false;
     }
 
     public double norm() {
