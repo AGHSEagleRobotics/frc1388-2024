@@ -43,21 +43,26 @@ public class VisionAcceptor {
 
         double velocityPerTick =  norm() / 50;
 
-        double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.03, velocityPerTick);
+        double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.005, velocityPerTick);
+
+        double velocityTimesJumpCount = velocityPerTickClamped * (m_jumpCount + 1);
 
         SmartDashboard.putNumber("normalizedVelocity", norm());
         SmartDashboard.putNumber("velocityPerTick", velocityPerTick);
         SmartDashboard.putNumber("velocityPerTickClamped", velocityPerTickClamped);
+        SmartDashboard.putNumber("jumpCountVelocity", velocityTimesJumpCount);
 
         // check if the current position compared to the last position is greater than the velocity per tick of the robot
-        if(Math.abs(currentPosition.getX() - m_lastPosition.getX()) > velocityPerTickClamped
-        || Math.abs(currentPosition.getY() - m_lastPosition.getY()) > velocityPerTickClamped) {
+        if(Math.abs(currentPosition.getX() - m_lastPosition.getX()) > velocityTimesJumpCount
+        || Math.abs(currentPosition.getY() - m_lastPosition.getY()) > velocityTimesJumpCount) {
             m_jumpCount++;
             if(m_jumpCount > m_jumpCountMax) {
                 m_jumpCountMax = m_jumpCount;
             }
             System.out.println("robot position jumped count = " + m_jumpCount + " max = " + m_jumpCountMax);
-            m_lastPosition = currentPosition;
+            if(m_jumpCount > 4) {
+                m_lastPosition = currentPosition;
+            }
             return false;
         }
         else {
@@ -69,18 +74,41 @@ public class VisionAcceptor {
           || currentPosition.getX() > Constants.FieldLayout.FIELD_LENGTH + robotMargin
           || currentPosition.getY() < -robotMargin
           || currentPosition.getY() > Constants.FieldLayout.FIELD_WIDTH + robotMargin) {
-            m_lastPosition = currentPosition;
+            // m_lastPosition = currentPosition;
             return false;
         }
+        if (norm() > 0) {
+            double differenceOfPositionX = currentPosition.getX() - m_lastPosition.getX();
+            double differenceOfPositionY = currentPosition.getY() - m_lastPosition.getY();
 
+            double predictedX = differenceOfPositionX / norm();
+            double predictedY = differenceOfPositionY / norm();
+
+            double velocityX = m_robotVelocity.dx / norm();
+            double velocityY = m_robotVelocity.dy / norm();
+
+            double predictedVelocityCheck = (predictedX * velocityX) + (predictedY * velocityY);
+
+            SmartDashboard.putNumber("directionX", predictedX);
+            SmartDashboard.putNumber("directionY", predictedY);
+
+            SmartDashboard.putNumber("velocityX", velocityX);
+            SmartDashboard.putNumber("velocityY", velocityY);
+
+            SmartDashboard.putNumber("velocityWithPosition", predictedVelocityCheck);
+
+            if (predictedVelocityCheck < 0) {
+                return false;
+            }
+    }
         // checks if robot is moving too fast for camera to update
         if (norm() > 4.0) {
-            m_lastPosition = currentPosition;
+            // m_lastPosition = currentPosition;
             return false;
         }
 
         if (m_robotVelocity.dtheta > 1.2) {
-            m_lastPosition = currentPosition;
+            // m_lastPosition = currentPosition;
             return false;
         }
 
