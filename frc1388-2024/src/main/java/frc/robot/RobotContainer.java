@@ -341,12 +341,13 @@ public class RobotContainer {
   // }
 
   public void resetPose() {
-    m_driveTrain.resetPose(new Pose2d());
-    new Pose2d(0, 0, m_driveTrain.getGyroHeading());
+    if (m_limelight.getApriltagTargetFound() && m_driveTrain.shouldResetPoseMegaTag2()) {
+      m_driveTrain.limelightResetMegaTag2();
+    }
   }
 
    public void limelightResetGyro() {
-    if (m_limelight.getApriltagTargetFound()) {
+    if (m_limelight.getApriltagTargetFound() && m_driveTrain.shouldResetGyro()) {
     m_driveTrain.limelightResetGyro();
     }
   }

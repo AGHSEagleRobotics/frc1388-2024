@@ -34,6 +34,7 @@ import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.vision.Limelight;
+import frc.robot.vision.LimelightHelpers;
 import frc.robot.vision.VisionAcceptor;
 
 public class DriveTrainSubsystem extends SubsystemBase {
@@ -178,7 +179,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   
   public void resetPose(Pose2d pose) {
     if (m_limelight.getApriltagTargetFound()) {
-      limelightResetPoseCam1();
+      limelightResetMegaTag2();
     } else {
       swerveOnlyResetPose(pose);
     }
@@ -236,6 +237,20 @@ public class DriveTrainSubsystem extends SubsystemBase {
   public void limelightResetGyro() {
     double[] botPose = m_limelight.getBotPose();
     m_gyroOffset = botPose[5] - getRawGyroAngle();
+  }
+
+  public void limelightResetMegaTag2() {
+    double[] botPose = m_limelight.getMegaTag2();
+    Pose2d pose2d = new Pose2d(botPose[0], botPose[1], getGyroHeading());
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[] {
+        m_frontRight.getPosition(),
+        m_frontLeft.getPosition(),
+        m_backLeft.getPosition(),
+        m_backRight.getPosition()
+    };
+    if (m_odometry != null) {
+      m_odometry.resetPosition(getGyroHeading(), swerveModulePositions, pose2d);
+    }
   }
 
   public void limelightResetPoseCam1() {
@@ -381,6 +396,31 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backLeft.setBrakeMode(brakeMode);
     m_backRight.setBrakeMode(brakeMode);
   }
+
+  public boolean shouldResetPoseMegaTag2() {
+    boolean acceptMegaTag2 = false;
+    double[] odomTag2 = m_limelight.getMegaTag2();
+    Twist2d robotSpeeds = new Twist2d(getRobotRelativeSpeeds().vxMetersPerSecond,
+        getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
+    Pose2d megaTag2 = new Pose2d(odomTag2[0], odomTag2[1], getGyroHeading());
+    if (m_limelight.getApriltagTargetFound()) {
+      acceptMegaTag2 = visionAcceptor.shouldAccept(megaTag2, robotSpeeds);
+    }
+    return acceptMegaTag2;
+  }
+
+  public boolean shouldResetGyro() {
+    boolean acceptPose = false;
+    double[] botPose = m_limelight.getBotPose();
+    Twist2d robotSpeeds = new Twist2d(getRobotRelativeSpeeds().vxMetersPerSecond,
+        getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
+    Pose2d megaTag1 = new Pose2d(botPose[0], botPose[1], getGyroHeading());
+    if (m_limelight.getApriltagTargetFound()) {
+      acceptPose = visionAcceptor.shouldAccept(megaTag1, robotSpeeds);
+    }
+    return acceptPose;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -390,13 +430,20 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRight.periodic();
 
     boolean acceptPose = false;
+    boolean acceptMegaTag2 = false;
     boolean acceptGyro = false;
     
     double[] botPose = m_limelight.getBotPose();
     double[] botPose2 = m_limelight.getBotPose2();
+
+    double[] odomTag2 = m_limelight.getMegaTag2();
     
     Pose2d position1 = new Pose2d(botPose[0], botPose[1], getGyroHeading());
     Pose2d position2 = new Pose2d(botPose2[0], botPose2[1], getGyroHeading());
+
+    Pose2d megaTag2 = new Pose2d(odomTag2[0], odomTag2[1], getGyroHeading());
+
+    LimelightHelpers.SetRobotOrientation("limelight-shooter", getGyroHeading().getDegrees(), 0, 0, 0, 0, 0);
 
     double averageTargetArea = (m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_AVERAGE_TAG_AREA));
     double aprilTagsSeen = m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_TOTAL_APRILTAGS_SEEN);
@@ -407,14 +454,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
       Twist2d robotSpeeds = new Twist2d(getRobotRelativeSpeeds().vxMetersPerSecond,
           getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
 
+      if(m_limelight.getApriltagTargetFound()) {
       acceptPose = visionAcceptor.shouldAccept(position1, robotSpeeds);
+      acceptMegaTag2 = visionAcceptor.shouldAccept(megaTag2, robotSpeeds);
       acceptGyro = visionAcceptor.shouldResetGyro(robotSpeeds);
+      }
 
-      if (acceptPose) {
-        limelightResetPoseCam1();
-        if (acceptGyro) {
-          limelightResetGyro();
+      if (acceptGyro && acceptPose) {
+          limelightResetGyro(); 
         }
+
+      if (acceptMegaTag2 && m_limelight.getApriltagTargetFound()) {
+        limelightResetMegaTag2();
       }
     // this is if we have 2 limelights updating pose
     // if (visionAcceptor.shouldAccept(position1,
@@ -451,7 +502,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("drivetrain/gyro angle", getAngle());
     SmartDashboard.putNumber("drivetrain/Angle To Speaker", getAbsoluteAngleFromSpeaker());
     SmartDashboard.putNumber("drivetrain/Distance To Speaker", getAbsouluteDistanceFromSpeaker());
-    SmartDashboard.putBoolean("is Accepting Pose", acceptPose);
+    SmartDashboard.putBoolean("VisionAcceptor/is Accepting Pose", acceptPose);
+    SmartDashboard.putBoolean("VissionAcceptor/is Accepting megatag2", acceptMegaTag2);
 
     publisher.set(getPose());
 

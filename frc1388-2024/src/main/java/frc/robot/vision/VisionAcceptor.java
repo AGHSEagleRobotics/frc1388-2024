@@ -8,6 +8,7 @@ import java.util.random.RandomGenerator.JumpableGenerator;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -20,22 +21,21 @@ public class VisionAcceptor {
     Pose2d m_lastPosition;
     int m_jumpCount = 0;
     int m_jumpCountMax = 0;
+    double m_angle = 0;
 
     public boolean shouldAccept(Pose2d currentPosition, Twist2d robotVelocity) {
          m_robotVelocity = robotVelocity;
 
         if(robotVelocity == null || currentPosition == null) {
+             System.out.println("null check");
             return false;
         }
 
         // if this is the first ever check, then initialize class variable and trust the position
         if(m_lastPosition == null) {
             m_lastPosition = currentPosition;
+            System.out.println("first check");
             return true;
-        }
-
-        if(currentPosition.getX() == 0.0 && currentPosition.getY() == 0.0) {
-            return false;
         }
 
         SmartDashboard.putNumber("difference of x", Math.abs(currentPosition.getX() - m_lastPosition.getX()));
@@ -43,9 +43,11 @@ public class VisionAcceptor {
 
         double velocityPerTick =  norm() / 50;
 
-        double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.005, velocityPerTick);
+        double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.05, velocityPerTick);
 
-        double velocityTimesJumpCount = velocityPerTickClamped * (m_jumpCount + 1);
+        double clamedJumpCount = MathUtil.clamp(m_jumpCount, 0, 1000);
+
+        double velocityTimesJumpCount = velocityPerTickClamped * (clamedJumpCount + 1);
 
         SmartDashboard.putNumber("normalizedVelocity", norm());
         SmartDashboard.putNumber("velocityPerTick", velocityPerTick);
@@ -59,10 +61,10 @@ public class VisionAcceptor {
             if(m_jumpCount > m_jumpCountMax) {
                 m_jumpCountMax = m_jumpCount;
             }
-            System.out.println("robot position jumped count = " + m_jumpCount + " max = " + m_jumpCountMax);
             if(m_jumpCount > 4) {
                 m_lastPosition = currentPosition;
             }
+            System.out.println("jumped position");
             return false;
         }
         else {
@@ -74,44 +76,38 @@ public class VisionAcceptor {
           || currentPosition.getX() > Constants.FieldLayout.FIELD_LENGTH + robotMargin
           || currentPosition.getY() < -robotMargin
           || currentPosition.getY() > Constants.FieldLayout.FIELD_WIDTH + robotMargin) {
-            // m_lastPosition = currentPosition;
             return false;
         }
         if (norm() > 0) {
             double differenceOfPositionX = currentPosition.getX() - m_lastPosition.getX();
             double differenceOfPositionY = currentPosition.getY() - m_lastPosition.getY();
+            
+            Translation2d positionChange = new Translation2d(differenceOfPositionX, differenceOfPositionY);
+            Translation2d robotDirection = new Translation2d(m_robotVelocity.dx, m_robotVelocity.dy);
 
-            double predictedX = differenceOfPositionX / norm();
-            double predictedY = differenceOfPositionY / norm();
+            Translation2d robotDirectionNormalized = robotDirection.div(robotDirection.getNorm());
+            Translation2d positionChangeNormalized = positionChange.div(positionChange.getNorm());
 
-            double velocityX = m_robotVelocity.dx / norm();
-            double velocityY = m_robotVelocity.dy / norm();
+            double thetaOfCos = (robotDirectionNormalized.getX() * positionChangeNormalized.getX()) + (robotDirectionNormalized.getY() * positionChangeNormalized.getY());
 
-            double predictedVelocityCheck = (predictedX * velocityX) + (predictedY * velocityY);
+            m_angle = Math.acos(thetaOfCos);
 
-            SmartDashboard.putNumber("directionX", predictedX);
-            SmartDashboard.putNumber("directionY", predictedY);
+            SmartDashboard.putNumber("VisionAcceptor/angleBetweenRobotAndCamera", Math.toDegrees(m_angle));
 
-            SmartDashboard.putNumber("velocityX", velocityX);
-            SmartDashboard.putNumber("velocityY", velocityY);
+            double allignmentThreshold = Math.toRadians(15);
 
-            SmartDashboard.putNumber("velocityWithPosition", predictedVelocityCheck);
-
-            if (predictedVelocityCheck < 0) {
+            if (m_angle < allignmentThreshold) {
                 return false;
             }
-    }
+        }
+        else {
+           m_angle = 0;
+        }
+
         // checks if robot is moving too fast for camera to update
-        if (norm() > 4.0) {
-            // m_lastPosition = currentPosition;
+        if (norm() > 3.5) {
             return false;
         }
-
-        if (m_robotVelocity.dtheta > 1.2) {
-            // m_lastPosition = currentPosition;
-            return false;
-        }
-
         m_lastPosition = currentPosition;
         
         return true;      
