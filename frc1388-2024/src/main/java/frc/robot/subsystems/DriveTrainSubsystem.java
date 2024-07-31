@@ -467,6 +467,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
       if (acceptMegaTag2 && m_limelight.getApriltagTargetFound()) {
         limelightResetMegaTag2();
       }
+
+      Translation2d robotPoseInTranslation = new Translation2d(getPose().getX(), getPose().getY());
+
+      Translation2d notePose = new Translation2d(0, 0);
+
+      if(m_limelight.getIsNoteFound()) {
+        notePose = m_limelight.getNotePose(robotPoseInTranslation, getGyroHeading().getDegrees());
+      }
     // this is if we have 2 limelights updating pose
     // if (visionAcceptor.shouldAccept(position1,
     // robotSpeeds) && visionAcceptor.shouldAccept(position2, robotSpeeds)) {
@@ -504,6 +512,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("drivetrain/Distance To Speaker", getAbsouluteDistanceFromSpeaker());
     SmartDashboard.putBoolean("VisionAcceptor/is Accepting Pose", acceptPose);
     SmartDashboard.putBoolean("VissionAcceptor/is Accepting megatag2", acceptMegaTag2);
+    
+    SmartDashboard.putNumber("GamePiece/notePoseX", notePose.getX());
+    SmartDashboard.putNumber("GamePiece/notePoseY", notePose.getY());
 
     publisher.set(getPose());
 

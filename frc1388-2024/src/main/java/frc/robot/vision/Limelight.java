@@ -217,6 +217,19 @@ public class Limelight extends SubsystemBase {
     return 0;
   }
 
+  public Translation2d getNotePose(Translation2d robotPose, double gyroHeading) {
+    // gamePieceHeight can be whatever game piece will change for next years game
+    double gamePieceHeight = 0.05;
+
+    double camToNoteDistance = (LimelightConstants.CAMERA_HEIGHT - gamePieceHeight) / (Math.tan(LimelightConstants.CAMERA_PITCH + getNoteTy()));
+
+    Translation2d camToGamePiece = new Translation2d(camToNoteDistance * (Math.cos(gyroHeading + LimelightConstants.CAMERA_YAW + getNoteTx())), 
+    camToNoteDistance * (Math.sin(gyroHeading + LimelightConstants.CAMERA_YAW + getNoteTx())));
+
+    Translation2d notePose = robotPose.plus(LimelightConstants.ROBOT_TO_CAM).plus(camToGamePiece);
+    return notePose;
+  }
+
   public double getDistance() {
     double[] targetSpace = m_shooterTable.getEntry("targetpose_robotspace")
         .getDoubleArray(new double[] {});

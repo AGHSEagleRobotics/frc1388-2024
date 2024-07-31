@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -146,6 +148,11 @@ public final class Constants {
   }
 
   public static class LimelightConstants {
+    public static final double CAMERA_YAW = 0;
+    public static final double CAMERA_PITCH = 17;
+    public static final double CAMERA_HEIGHT = 0.73;
+    public static final Translation2d ROBOT_TO_CAM = new Translation2d(-0.015, 0);
+    
     public static final double MAX_TY_VALUE = 8.5;
     public static final double SLOW_DOWN = 0.5;
     public static final double METERS_PER_SECOND = 0.2;
