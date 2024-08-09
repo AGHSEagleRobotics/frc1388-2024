@@ -9,6 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -40,6 +41,7 @@ import frc.robot.vision.VisionAcceptor;
 public class DriveTrainSubsystem extends SubsystemBase {
 
   StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish();
+  StructPublisher<Translation2d> notePose = NetworkTableInstance.getDefault().getStructTopic("Translation2d", Translation2d.struct).publish();
 
   /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
@@ -213,6 +215,31 @@ public class DriveTrainSubsystem extends SubsystemBase {
     } else {
       return Math.toDegrees(Math.atan2(rY - LimelightConstants.ID_7_AND_4_LOCATION_Y, rX - LimelightConstants.ID_4_LOCATION_X_RED)) + 180;
     }
+  }
+
+  public Translation2d getNotePose() {
+    Translation2d robotPoseInTranslation = new Translation2d(getPose().getX(), getPose().getY());
+
+      Translation2d notePose = new Translation2d(0, 0);
+
+      if(m_limelight.getIsNoteFound()) {
+        notePose = m_limelight.getNotePose(robotPoseInTranslation, getGyroHeading().getRadians());
+      }
+      return notePose;
+  }
+
+  public double getNoteAngleFromRobot() {
+    double rX = getPose().getX();
+    double rY = getPose().getY();
+     return Math.toDegrees(Math.atan2(rY - getNotePose().getY(), rX - getNotePose().getX()));
+  }
+
+  public double getTurnToNoteSpeed(PIDController turnPidController) {
+    double angleFromNote = getNoteAngleFromRobot();
+      double rz = getAngle();
+      rz = rz < 0 ? rz + 360 : rz;
+      double speed = (turnPidController.calculate(angleFromNote - rz));
+      return speed;
   }
 
   public double getTurnToSpeakerSpeed(PIDController turnPidController) {
@@ -473,7 +500,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
       Translation2d notePose = new Translation2d(0, 0);
 
       if(m_limelight.getIsNoteFound()) {
-        notePose = m_limelight.getNotePose(robotPoseInTranslation, getGyroHeading().getDegrees());
+        notePose = m_limelight.getNotePose(robotPoseInTranslation, getGyroHeading().getRadians());
       }
     // this is if we have 2 limelights updating pose
     // if (visionAcceptor.shouldAccept(position1,
@@ -515,8 +542,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     
     SmartDashboard.putNumber("GamePiece/notePoseX", notePose.getX());
     SmartDashboard.putNumber("GamePiece/notePoseY", notePose.getY());
+    SmartDashboard.putNumber("GamePiece/anglefromnote", getNoteAngleFromRobot());
 
     publisher.set(getPose());
-
   }
 }

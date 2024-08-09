@@ -221,12 +221,14 @@ public class Limelight extends SubsystemBase {
     // gamePieceHeight can be whatever game piece will change for next years game
     double gamePieceHeight = 0.05;
 
-    double camToNoteDistance = (LimelightConstants.CAMERA_HEIGHT - gamePieceHeight) / (Math.tan(LimelightConstants.CAMERA_PITCH + getNoteTy()));
+    double camToNoteDistance = (LimelightConstants.CAMERA_HEIGHT - gamePieceHeight) * 
+      (Math.tan(LimelightConstants.CAMERA_PITCH + Math.toRadians(getNoteTy())));
 
-    Translation2d camToGamePiece = new Translation2d(camToNoteDistance * (Math.cos(gyroHeading + LimelightConstants.CAMERA_YAW + getNoteTx())), 
-    camToNoteDistance * (Math.sin(gyroHeading + LimelightConstants.CAMERA_YAW + getNoteTx())));
+    Translation2d camToGamePiece = new Translation2d(camToNoteDistance * (Math.cos(gyroHeading + LimelightConstants.CAMERA_YAW + Math.toRadians(getNoteTx()))), 
+    camToNoteDistance * (Math.sin(gyroHeading + LimelightConstants.CAMERA_YAW + Math.toRadians(getNoteTx()))));
 
     Translation2d notePose = robotPose.plus(LimelightConstants.ROBOT_TO_CAM).plus(camToGamePiece);
+    SmartDashboard.putNumber("GamePiece/distance to note", camToNoteDistance);
     return notePose;
   }
 
@@ -285,7 +287,7 @@ public class Limelight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight/Get April Tag Tx", getAprilTagTx());
       SmartDashboard.putNumber("Limelight/Get Note Tx", getNoteTx());
       SmartDashboard.putNumber("Limelight/Get April Tag Ty", getAprilTagTy());
-      SmartDashboard.putNumber("Limelight/Get Note Ty", getNoteTx());
+      SmartDashboard.putNumber("Limelight/Get Note Ty", getNoteTy());
       SmartDashboard.putNumber("Limelight/Get Skew Degree", getSkew_Rotation());
       SmartDashboard.putBoolean("Limelight/April Tag Found", getApriltagTargetFound());
 

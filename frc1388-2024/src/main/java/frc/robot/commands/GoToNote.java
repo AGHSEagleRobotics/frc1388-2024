@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -25,8 +26,15 @@ public class GoToNote extends Command {
   private Pose2d m_initialPose;
   private Debouncer m_canSeePieceDebouncer;
 
-  private final PIDController m_rotationPIDController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING,
-      0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
+  private final PIDController m_xController = new PIDController(1.8, 0, 0);
+  private double m_lastXSpeed = 0;
+  private final SlewRateLimiter m_xAccLimiter = new SlewRateLimiter(0.2);
+
+  private final PIDController m_yController = new PIDController(1.8, 0, 0);
+  private double m_lastYSpeed = 0;
+  private final SlewRateLimiter m_yAccLimiter = new SlewRateLimiter(0.2);
+
+  private final PIDController m_turnPidController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, 0, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);
 
   /** Creates a new GoToNote. */
   public GoToNote(DriveTrainSubsystem driveTrainSubsystem, Limelight limelight, IntakeSubsystem intakeSubsystem) {
@@ -40,45 +48,34 @@ public class GoToNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_rotationPIDController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
-    m_rotationPIDController.enableContinuousInput(0, 360);
-    m_canSeePieceDebouncer = new Debouncer(0.1, DebounceType.kFalling);
+    m_turnPidController.setTolerance(AutoConstants.TURN_P_TOLERANCE);
+    m_turnPidController.enableContinuousInput(0, 360);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean isNoteFound = m_canSeePieceDebouncer.calculate(m_limelight.getIsNoteFound());
     
     // if (!m_canSeePieceDebouncer.calculate(m_limelight.getIsNoteFound())) {
     //   m_driveTrain.drive(0, 0, 0);
     //   return;
     // }
     
-    double omega = m_rotationPIDController.calculate(m_limelight.getNoteTx());
-    double xVelocity = distanceTraveled() > LimelightConstants.SLOW_DOWN ? LimelightConstants.METERS_PER_SECOND / 2
-        : LimelightConstants.METERS_PER_SECOND;
-    if (isNoteFound) {
-      m_driveTrain.driveRobotRelative(ChassisSpeeds.fromRobotRelativeSpeeds(-xVelocity, 0, omega, new Rotation2d()));
+    double omega = m_driveTrain.getTurnToNoteSpeed(m_turnPidController);
+    double xSpeed = m_xController.calculate(m_driveTrain.getPose().getX(), m_driveTrain.getNotePose().getX());
+    double ySpeed = m_xController.calculate(m_driveTrain.getPose().getY(), m_driveTrain.getNotePose().getY());
+    if (m_limelight.getIsNoteFound()) {
+      m_driveTrain.drive(xSpeed, ySpeed, omega);
     } else {
       m_driveTrain.drive(0, 0, 0);
     }
-    SmartDashboard.putNumber("GoToNote/xVelocity", xVelocity);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_driveTrain.drive(0, 0, 0);
-    m_rotationPIDController.setTolerance(0);
-  }
-
-  private double distanceTraveled() {
-    return Math.abs(m_driveTrain.getPose().getTranslation().getDistance(m_initialPose.getTranslation()));
-  }
-
-  private boolean isDistanceTooFar() {
-    return Math.abs(distanceTraveled()) > 3;
+    m_turnPidController.setTolerance(0);
   }
 
   // Returns true when the command should end.

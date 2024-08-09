@@ -17,6 +17,7 @@ import frc.robot.Constants.TransitionConstants;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
+import frc.robot.commands.GoToNote;
 import frc.robot.commands.IntakeTransitionCommand;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
@@ -312,6 +313,8 @@ public class RobotContainer {
       (ShooterConstants.SPEAKER_SHOT_RPM, 
       m_shooterSubsystem));
     }
+
+    m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     // m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
@@ -341,7 +344,7 @@ public class RobotContainer {
   // }
 
   public void resetPose() {
-    if (m_limelight.getApriltagTargetFound() && m_driveTrain.shouldResetPoseMegaTag2()) {
+    if (m_limelight.getApriltagTargetFound()) {
       m_driveTrain.limelightResetMegaTag2();
     }
   }
