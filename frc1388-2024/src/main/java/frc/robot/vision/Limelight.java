@@ -221,8 +221,8 @@ public class Limelight extends SubsystemBase {
     // gamePieceHeight can be whatever game piece will change for next years game
     double gamePieceHeight = 0.05;
 
-    double camToNoteDistance = (LimelightConstants.CAMERA_HEIGHT - gamePieceHeight) * 
-      (Math.tan(LimelightConstants.CAMERA_PITCH + Math.toRadians(getNoteTy())));
+    double camToNoteDistance = (LimelightConstants.CAMERA_HEIGHT - gamePieceHeight) / 
+      (Math.tan(LimelightConstants.CAMERA_PITCH + -Math.toRadians(getNoteTy())));
 
     Translation2d camToGamePiece = new Translation2d(camToNoteDistance * (Math.cos(gyroHeading + LimelightConstants.CAMERA_YAW + Math.toRadians(getNoteTx()))), 
     camToNoteDistance * (Math.sin(gyroHeading + LimelightConstants.CAMERA_YAW + Math.toRadians(getNoteTx()))));

@@ -149,7 +149,7 @@ public final class Constants {
 
   public static class LimelightConstants {
     public static final double CAMERA_YAW = Math.toRadians(180);
-    public static final double CAMERA_PITCH = Math.toRadians(90 - 33);
+    public static final double CAMERA_PITCH = Math.toRadians(33);
     public static final double CAMERA_HEIGHT = 0.62;
     public static final Translation2d ROBOT_TO_CAM = new Translation2d(0.015, 0);
     

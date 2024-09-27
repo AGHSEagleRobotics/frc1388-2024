@@ -42,7 +42,7 @@ public class GoToNote extends Command {
     m_limelight = limelight;
     m_intakeSubsystem = intakeSubsystem;
     m_initialPose = m_driveTrain.getPose();
-    addRequirements(m_intakeSubsystem, m_driveTrain);
+    addRequirements(m_driveTrain);
   }
 
   // Called when the command is initially scheduled.
