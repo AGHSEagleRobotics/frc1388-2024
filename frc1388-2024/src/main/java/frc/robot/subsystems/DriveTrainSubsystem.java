@@ -7,7 +7,10 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.RobotCentric;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +21,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -26,6 +31,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,7 +52,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
   /** ChassisSpeeds object for the get robot relative speeds method */
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
 
-  private VisionAcceptor visionAcceptor = new VisionAcceptor();
+  private VisionAcceptor visionAcceptorGyro = new VisionAcceptor(false);
+  private VisionAcceptor visionAcceptor = new VisionAcceptor(true);
   
   private ChassisSpeeds m_robotRelativeSpeeds = new ChassisSpeeds();
 
@@ -74,10 +81,15 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRightTranslation
   };
 
+  private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+  
+  private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.6, 0.6, Units.degreesToRadians(10));
+
+
   /** The kinematics object does all the swerve math */
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_swerveTranslation2d);
   /** The odometry object keeps track of the robots position */
-  private SwerveDriveOdometry m_odometry;
+  private SwerveDrivePoseEstimator m_odometry;
   private Limelight m_limelight;
 
   /** gyro for detecting rotation angle */
@@ -99,7 +111,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
       try {
         Thread.sleep(1000);
         m_navxGyro.reset();
-        m_odometry = new SwerveDriveOdometry(
+        m_odometry = new SwerveDrivePoseEstimator(
             m_kinematics,
             getGyroHeading(),
             new SwerveModulePosition[] {
@@ -108,7 +120,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 m_backLeft.getPosition(),
                 m_backRight.getPosition()
             },
-            new Pose2d(0, 0, new Rotation2d()));
+            new Pose2d(0, 0, new Rotation2d()),
+            stateStdDevs, visionMeasurementStdDevs);
+
+    m_odometry.setVisionMeasurementStdDevs(visionMeasurementStdDevs);
       } catch (Exception e) {
         // e.printStackTrace();
         System.out.println(e.toString());
@@ -335,7 +350,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
   public Pose2d getPose() {
     if (m_odometry != null) {
-      return m_odometry.getPoseMeters();
+      return m_odometry.getEstimatedPosition();
     }
     // return new Pose2d(123, 432, m_lastRotation2D);
     return new Pose2d(0, 0, getGyroHeading());
@@ -471,6 +486,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     Pose2d megaTag2 = new Pose2d(odomTag2[0], odomTag2[1], getGyroHeading());
 
     LimelightHelpers.SetRobotOrientation("limelight-shooter", getGyroHeading().getDegrees(), 0, 0, 0, 0, 0);
+    
+    
 
     double averageTargetArea = (m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_AVERAGE_TAG_AREA));
     double aprilTagsSeen = m_limelight.getBotPoseValue(botPose, LimelightConstants.BOTPOSE_TOTAL_APRILTAGS_SEEN);
@@ -482,9 +499,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
           getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
 
       if(m_limelight.getApriltagTargetFound()) {
-      acceptPose = visionAcceptor.shouldAccept(position1, robotSpeeds);
+      acceptPose = visionAcceptorGyro.shouldAccept(position1, robotSpeeds);
       acceptMegaTag2 = visionAcceptor.shouldAccept(megaTag2, robotSpeeds);
-      acceptGyro = visionAcceptor.shouldResetGyro(robotSpeeds);
+      acceptGyro = visionAcceptorGyro.shouldResetGyro(robotSpeeds);
       }
 
       if (acceptGyro && acceptPose) {
@@ -492,7 +509,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         }
 
       if (acceptMegaTag2 && m_limelight.getApriltagTargetFound()) {
-        limelightResetMegaTag2();
+        m_odometry.addVisionMeasurement(megaTag2, Timer.getFPGATimestamp());
       }
 
       Translation2d robotPoseInTranslation = new Translation2d(getPose().getX(), getPose().getY());
@@ -515,7 +532,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // }
     // odometry updating
     else if (m_odometry != null) {
-      m_odometry.update(
+      m_odometry.updateWithTime(
+        Timer.getFPGATimestamp(),
         getGyroHeading(),
         new SwerveModulePosition[] {
             m_frontRight.getPosition(),

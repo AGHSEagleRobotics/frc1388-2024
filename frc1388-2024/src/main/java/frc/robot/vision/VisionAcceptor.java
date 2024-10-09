@@ -22,6 +22,12 @@ public class VisionAcceptor {
     int m_jumpCount = 0;
     int m_jumpCountMax = 0;
     double m_angle = 0;
+    boolean m_isMegaTag2;
+
+
+    public VisionAcceptor(boolean isMegaTag2) {
+        m_isMegaTag2 = isMegaTag2;
+    }
 
     public boolean shouldAccept(Pose2d currentPosition, Twist2d robotVelocity) {
          m_robotVelocity = robotVelocity;
@@ -55,6 +61,7 @@ public class VisionAcceptor {
         SmartDashboard.putNumber("jumpCountVelocity", velocityTimesJumpCount);
 
         // check if the current position compared to the last position is greater than the velocity per tick of the robot
+        
         if(Math.abs(currentPosition.getX() - m_lastPosition.getX()) > velocityTimesJumpCount
         || Math.abs(currentPosition.getY() - m_lastPosition.getY()) > velocityTimesJumpCount) {
             m_jumpCount++;
@@ -65,7 +72,9 @@ public class VisionAcceptor {
                 m_lastPosition = currentPosition;
             }
             System.out.println("jumped position");
+            if(!m_isMegaTag2) {
             return false;
+            }
         }
         else {
             m_jumpCount = 0;
