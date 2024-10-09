@@ -253,6 +253,7 @@ public final class Constants {
     public static final double BLUE_STROBE = -0.09;
     public static final double RED_SOLID = 0.61;
     public static final double BLUE_SOLID = 0.87;
+    public static final int CANDLE_CANID = 42;
   }
 
   public static class AutoConstants {

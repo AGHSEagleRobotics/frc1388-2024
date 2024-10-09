@@ -7,19 +7,38 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.LEDConstants;
+
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 public class LEDSubsystem extends SubsystemBase {
 
-  private final PWMSparkMax m_led;
+  private final CANdle m_candle; // CANdle canid is 42
   // private final boolean m_isOnRed;
 
-  /** Creates a new LEDSubsystem. */
-  public LEDSubsystem(PWMSparkMax led) {
-    m_led = led;
+  /** Creates a new LEDSubsystem. */  
+  public LEDSubsystem(CANdle candle) {
+    m_candle = candle;
     // m_isOnRed = (DriverStation.getAlliance().get() == Alliance.Red);
-  }
+      CANdleConfiguration config = new CANdleConfiguration();
+      config.stripType = LEDStripType.RGB;
+      config.brightnessScalar = 0.3; // dim the LEDs to half brightness
+      m_candle.configAllSettings(config);
+
+    candle.setLEDs(0, 0, 0);
+    candle.setLEDs(255, 0, 255, 0, 2, 1);
+    candle.setLEDs(0, 255, 255, 0, 5, 1);
+
+}
+
+
 
   @Override
   public void periodic() {

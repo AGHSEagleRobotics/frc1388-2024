@@ -11,6 +11,7 @@ import com.choreo.lib.*;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
@@ -30,6 +31,7 @@ import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 
+import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -123,7 +125,7 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-  // private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
+   private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new CANdle(42));
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
