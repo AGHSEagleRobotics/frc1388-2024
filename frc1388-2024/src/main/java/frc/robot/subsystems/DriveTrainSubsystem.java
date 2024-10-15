@@ -217,6 +217,28 @@ public class DriveTrainSubsystem extends SubsystemBase {
      return distanceFromSpeaker;
   }
 
+  public calculateAngle(Pose2d positionOfTarget) {
+    double rX = getPose().getX();
+    double rY = getPose().getY();
+
+    return Math.toDegrees(Math.atan2(rY - positionOfTarget.getY(), rX - positionOfTarget.getX())) + 180;
+  }
+
+  public calculateDistance(Pose2d distancePose) {
+    double rX = getPose().getX();
+    double tX;
+    double tAngle 
+
+  }
+
+  public double getClosestTargetPose() {
+    Pose2d robotPose = getPose();
+    Pose2d[] setpoints = FieldConstants.SETPOINTS;
+    for(int i = 0; i < setpoints.length; i++) {
+
+    }
+  }
+
   public double getAbsoluteAngleFromSpeaker() {
     // double[] botPose = getBotPose();
     // double rX = getBotPoseValue(botPose, 0);

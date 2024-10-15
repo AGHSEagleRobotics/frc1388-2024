@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -145,6 +147,12 @@ public final class Constants {
     public static final double ROBOT_WIDTH = 0.552; // in meters, with bumpers? find out
     public static final double ROBOT_LENGTH = 0.552; // in meters, with bumpers? find out
     public static final double SUBLIFER_LENGTH = 0.91;
+
+     Pose2d[] SETPOINTS;
+
+     SETPOINTS[0] = new Pose2d(0, 0, new Rotation2d(Math.toRadians(270)));
+
+
   }
 
   public static class LimelightConstants {
