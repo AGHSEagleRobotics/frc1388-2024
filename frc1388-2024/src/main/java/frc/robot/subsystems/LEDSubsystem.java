@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.Timer;
@@ -20,15 +21,18 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 public class LEDSubsystem extends SubsystemBase {
 
-  private final CANdle m_candle; // CANdle canid is 42
+  private final CANdle m_candle;
+  private final PowerDistribution m_PowerDistribution;
   // private final boolean m_isOnRed;
   private int m_loopCount = 0;
 
   private final int LOOPS_PER_SECOND = 50;
 
   /** Creates a new LEDSubsystem. */
-  public LEDSubsystem(CANdle candle) {
+  public LEDSubsystem(CANdle candle, PowerDistribution powerDistribution) {
     m_candle = candle;
+    m_PowerDistribution = powerDistribution;
+
     // m_isOnRed = (DriverStation.getAlliance().get() == Alliance.Red);
     CANdleConfiguration config = new CANdleConfiguration();
     config.stripType = LEDStripType.RGB;
@@ -76,32 +80,22 @@ public class LEDSubsystem extends SubsystemBase {
       final double VBAT_CRITICAL = 12.2;
       final double VBAT_LOW = 12.4;
       final double VBAT_OK = 12.6;
-      
-      // Set LEDs
-      double vBat = m_candle.getBusVoltage();
-      System.out.println(vBat);
-      if (vBat < VBAT_CRITICAL) {
-        m_candle.setLEDs(255, 0,   0, 0, 0, 1);
-        m_candle.setLEDs(0,   0,   0, 0, 1, 3);
-      }
-      else if (vBat < VBAT_LOW) {
-        m_candle.setLEDs(255, 255, 0, 0, 0, 2);
-        m_candle.setLEDs(0,   0,   0, 0, 2, 2);
-      }
-      else if (vBat < VBAT_OK) {
-        m_candle.setLEDs(0,   255, 0, 0, 0, 3);
-        m_candle.setLEDs(0,   0,   0, 0, 3, 1);
-      }
-      else if (vBat < VBAT_OK) {
-        m_candle.setLEDs(0,   255, 0, 0, 0, 4);
-      }
-      
-    }
 
-    // if (m_isOnRed) {
-    //   m_led.set(LEDConstants.RED_SOLID);
-    // } else {
-    //   m_led.set(LEDConstants.BLUE_SOLID);
-    // }
+      // Set LEDs
+      double vBat = m_PowerDistribution.getVoltage();
+
+      if (vBat < VBAT_CRITICAL) {
+        m_candle.setLEDs(255, 0, 0, 0, 0, 1);
+        m_candle.setLEDs(0, 0, 0, 0, 1, 3);
+      } else if (vBat < VBAT_LOW) {
+        m_candle.setLEDs(255, 255, 0, 0, 0, 2);
+        m_candle.setLEDs(0, 0, 0, 0, 2, 2);
+      } else if (vBat < VBAT_OK) {
+        m_candle.setLEDs(0, 255, 0, 0, 0, 3);
+        m_candle.setLEDs(0, 0, 0, 0, 3, 1);
+      } else if (vBat < VBAT_OK) {
+        m_candle.setLEDs(0, 255, 0, 0, 0, 4);
+      }
+    }
   }
 }

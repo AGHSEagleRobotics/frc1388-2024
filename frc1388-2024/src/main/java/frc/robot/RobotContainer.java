@@ -29,6 +29,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransitionSubsystem;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShooterAngleSubsystemConstants;
 
 import com.ctre.phoenix.led.CANdle;
@@ -47,6 +48,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -84,7 +86,7 @@ public class RobotContainer {
     
   public final ShooterSubsystem m_shooterSubsystem;
 
-
+  private final PowerDistribution m_powerDistribution = new PowerDistribution();
     
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
@@ -125,7 +127,7 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
-   private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new CANdle(42));
+  private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new CANdle(LEDConstants.CANDLE_CANID), m_powerDistribution);
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
