@@ -217,26 +217,40 @@ public class DriveTrainSubsystem extends SubsystemBase {
      return distanceFromSpeaker;
   }
 
-  public calculateAngle(Pose2d positionOfTarget) {
+  public double calculateAngle(Pose2d positionOfTarget) {
     double rX = getPose().getX();
     double rY = getPose().getY();
 
     return Math.toDegrees(Math.atan2(rY - positionOfTarget.getY(), rX - positionOfTarget.getX())) + 180;
   }
 
-  public calculateDistance(Pose2d distancePose) {
+  public double calculateDistancePose(Pose2d distancePose) {
     double rX = getPose().getX();
-    double tX;
-    double tAngle 
+    double tX = distancePose.getX();
+    double tAngle = calculateAngle(distancePose);
 
+    double adjacent = rX - tX;
+    double distanceFromPose = - (adjacent / Math.cos(Math.toRadians(tAngle)));
+    return distanceFromPose;
   }
 
-  public double getClosestTargetPose() {
+  public Pose2d getClosestTargetPose() {
     Pose2d robotPose = getPose();
+    double distance;
+    double futureDistance;
     Pose2d[] setpoints = FieldConstants.SETPOINTS;
-    for(int i = 0; i < setpoints.length; i++) {
-
+    Pose2d closestPose = setpoints[0];
+    for (int i = 0; i < setpoints.length - 1; i++) {
+      distance = calculateDistancePose(setpoints[i]);
+      futureDistance = calculateDistancePose(setpoints[i + 1]);
+      if (distance < futureDistance) {
+        closestPose = setpoints[i];
+      }
+      else {
+        closestPose = setpoints[i + 1];
+      }
     }
+    return closestPose;
   }
 
   public double getAbsoluteAngleFromSpeaker() {
