@@ -15,6 +15,7 @@ import frc.robot.Constants.LEDConstants;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
@@ -31,10 +32,13 @@ public class LEDSubsystem extends SubsystemBase {
       config.stripType = LEDStripType.RGB;
       config.brightnessScalar = 0.3; // dim the LEDs to half brightness
       m_candle.configAllSettings(config);
+     
+      m_candle.clearAnimation(0);
+      m_candle.clearAnimation(1);
+      m_candle.clearAnimation(2);
 
-    candle.setLEDs(0, 0, 0);
-    candle.setLEDs(255, 0, 255, 0, 2, 1);
-    candle.setLEDs(0, 255, 255, 0, 5, 1);
+    SingleFadeAnimation fades = new SingleFadeAnimation(247, 233, 0, 0, 0.2, 47, 0);
+    m_candle.animate(fades);
 
 }
 
