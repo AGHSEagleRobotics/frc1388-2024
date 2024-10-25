@@ -11,6 +11,7 @@ import com.choreo.lib.*;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.vision.Limelight;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LidarSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
@@ -77,12 +78,12 @@ public class RobotContainer {
 
   Field2d m_Field2d = new Field2d();
 
-  private final boolean option8 = true;
+  private final boolean option8 = false;
   private final Dashboard m_dashboard = new Dashboard();
     
   public final ShooterSubsystem m_shooterSubsystem;
 
-
+  private final LidarSubsystem m_lidarSubsystem = new LidarSubsystem();
     
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem(
       new SwerveModule(
