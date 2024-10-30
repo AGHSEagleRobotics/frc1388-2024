@@ -45,6 +45,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -116,6 +117,7 @@ public class RobotContainer {
       new CANSparkMax(IntakeConstants.LIFTER_MOTOR_CANID, MotorType.kBrushless),
       new DigitalInput(IntakeConstants.LOWER_LIMIT_DIO),
       new DigitalInput(IntakeConstants.UPPER_LIMIT_DIO),
+      new DutyCycleEncoder(6),
       new DigitalInput(IntakeConstants.BEAM_BREAK_DIO));
 
   private final TransitionSubsystem m_transitionSubsystem = new TransitionSubsystem(

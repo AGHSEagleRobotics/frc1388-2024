@@ -12,13 +12,15 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder; 
 
 public class IntakeSubsystem extends SubsystemBase {
-
+  
   private final CANSparkMax m_rollerMotor;
   private final CANSparkMax m_lifterMotor;
   private final DigitalInput m_lowerLimit;
   private final DigitalInput m_upperLimit;
+  private final DutyCycleEncoder m_absoluteEncoder;
   private final DigitalInput m_beamBreak;
 
   /** Creates a new IntakeSubsystem. */
@@ -27,12 +29,14 @@ public class IntakeSubsystem extends SubsystemBase {
       CANSparkMax lifterMotor,
       DigitalInput lowerLimit,
       DigitalInput upperLimit,
+      DutyCycleEncoder absoluteEncoder,
       DigitalInput beamBreak) {
 
     m_rollerMotor = rollerMotor;
     m_lifterMotor = lifterMotor;
     m_lowerLimit = lowerLimit;
     m_upperLimit = upperLimit;
+    m_absoluteEncoder = absoluteEncoder;
     m_beamBreak = beamBreak;
 
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
@@ -41,6 +45,9 @@ public class IntakeSubsystem extends SubsystemBase {
     m_lifterMotor.setIdleMode(IdleMode.kBrake);
     m_lifterMotor.setInverted(true);
     m_lifterMotor.setSmartCurrentLimit(20);
+
+    m_absoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
+    m_absoluteEncoder.setDistancePerRotation(360);
   }
   
   public void setBrakeMode(boolean brakeMode) {
@@ -92,6 +99,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   }
 
+  public double getAbsoluteEncoderPosition() {
+   return m_absoluteEncoder.getDistance();
+  }
+
   /**
    * 
    * @return true if lower limit switch is pressed
@@ -115,6 +126,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("intake/upper limit", atUpperLimit());
     SmartDashboard.putBoolean("intake/lower limit", atLowerLimit());
     SmartDashboard.putBoolean("intake/beam break", isNoteDetected());
+    SmartDashboard.putNumber("intake/rev through bore encoder position", getAbsoluteEncoderPosition());
   }
   
 }
