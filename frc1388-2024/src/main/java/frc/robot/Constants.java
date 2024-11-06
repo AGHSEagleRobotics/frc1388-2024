@@ -135,6 +135,13 @@ public final class Constants {
 
     /** The amount of consecutive tick the beambreak must be triggered for the intake to retract. */
     public static final int TICKS_BEFORE_RETRACTING_INTAKE = 4;
+
+    public static final double UPPER_INTAKE_POSITION_VALUE = 70;
+    public static final double LOWER_INTAKE_POSITION_VALUE = 160;
+
+    public static final double LOWER_PERCENTAGE_ABSOLUTE_ENCODER = 1.0/1024.0;
+    public static final double HIGHER_PERCENTAGE_ABSOLUTE_ENCODER =  1023.0/1024.0;
+    public static final double DEGREES_PER_ROTATION = 360;
   }
 
   public static class FieldConstants {

@@ -11,7 +11,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants.IntakeConstants;
 import edu.wpi.first.wpilibj.DutyCycleEncoder; 
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -46,8 +46,8 @@ public class IntakeSubsystem extends SubsystemBase {
     m_lifterMotor.setInverted(true);
     m_lifterMotor.setSmartCurrentLimit(20);
 
-    m_absoluteEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
-    m_absoluteEncoder.setDistancePerRotation(360);
+    m_absoluteEncoder.setDutyCycleRange(IntakeConstants.LOWER_PERCENTAGE_ABSOLUTE_ENCODER, IntakeConstants.HIGHER_PERCENTAGE_ABSOLUTE_ENCODER);
+    m_absoluteEncoder.setDistancePerRotation(IntakeConstants.DEGREES_PER_ROTATION);
   }
   
   public void setBrakeMode(boolean brakeMode) {
@@ -94,9 +94,15 @@ public class IntakeSubsystem extends SubsystemBase {
    * @return true if upper limit switch is pressed
    */
   public boolean atUpperLimit() {
+    boolean isAtUpper = false;
 
-    return m_upperLimit.get();
+    if (getAbsoluteEncoderPosition() < IntakeConstants.UPPER_INTAKE_POSITION_VALUE) {
+      isAtUpper = true;
+    } else {
+      isAtUpper = false;
+    }
 
+    return isAtUpper;
   }
 
   public double getAbsoluteEncoderPosition() {
@@ -108,9 +114,14 @@ public class IntakeSubsystem extends SubsystemBase {
    * @return true if lower limit switch is pressed
    */
   public boolean atLowerLimit() {
+    boolean isAtLower = false;
 
-    return m_lowerLimit.get();
-
+    if (getAbsoluteEncoderPosition() > IntakeConstants.LOWER_INTAKE_POSITION_VALUE) {
+      isAtLower = true;
+    } else {
+      isAtLower = false;
+    }
+    return isAtLower;
   }
 
   /** gets beam break */
