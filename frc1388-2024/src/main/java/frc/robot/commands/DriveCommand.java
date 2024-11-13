@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,7 +32,13 @@ public class DriveCommand extends Command {
   private final Supplier<Boolean> m_x;
   private final Supplier<Boolean> m_y;
   private final Supplier<Boolean> m_rightStick;
+  private final Supplier<Boolean> m_back;
   
+  private final PIDController m_xController = new PIDController(1.8, 0, 0);
+  private final SlewRateLimiter m_xAccLimiter = new SlewRateLimiter(0.2);
+
+  private final PIDController m_yController = new PIDController(1.8, 0, 0);
+  private final SlewRateLimiter m_yAccLimiter = new SlewRateLimiter(0.2);
 
   private final PIDController m_turnPidController = new PIDController(LimelightConstants.TURN_P_VALUE_AUTO_TRACKING, LimelightConstants.TURN_I_VALUE_AUTO_TRACKING, LimelightConstants.TURN_D_VALUE_AUTO_TRACKING);// PIDController(AutoConstants.TURN_P_VALUE, AutoConstants.TURN_I_VALUE, AutoConstants.TURN_D_VALUE);
 
@@ -39,10 +46,12 @@ public class DriveCommand extends Command {
   private double m_angleSetPoint;
   private PIDController m_rotationController = new PIDController(AutoConstants.TURN_P_VALUE, 0, 0);
   private boolean m_autoTracking = false;
+  private boolean m_lineUp = false;
   private boolean m_lastAutoTrackButtonPressed = false; // used for edge detection 
+  private boolean m_lastBackButtonPressed = false; // used for edge detection 
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> rightStick) {
+  public DriveCommand(DriveTrainSubsystem driveTrain, Limelight limelight, Supplier<Double> leftY, Supplier<Double> leftX, Supplier<Double> rightX, Supplier<Boolean> a, Supplier<Boolean> b, Supplier<Boolean> x, Supplier<Boolean> y, Supplier<Boolean> rightStick, Supplier<Boolean> back) {
     m_driveTrain = driveTrain;
     m_limelight = limelight;
 
@@ -54,6 +63,7 @@ public class DriveCommand extends Command {
     m_x = x;
     m_y = y;
     m_rightStick = rightStick;
+    m_back = back;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveTrain);
@@ -96,26 +106,38 @@ public class DriveCommand extends Command {
     }
     m_lastAutoTrackButtonPressed = rightStickButton;
 
+    boolean backButton = m_back.get();
+
+    if(backButton && !m_lastBackButtonPressed) {
+      m_lineUp = !m_lineUp;
+    }
+    m_lastBackButtonPressed = backButton;
+
     // setting omega value based on button bindings for rotation setpoints
     if (rightX != 0) { // default turning with stick
       omega = 2 * Math.PI * scale(rightX, 2.5);
       m_autoTracking = false;
       m_goingToAngle = false;
+      m_lineUp = false;
     } else if (m_y.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
+      m_lineUp = false;
       m_angleSetPoint = onRed ? 0 : 180;
     } else if (m_b.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
+      m_lineUp = false;
       m_angleSetPoint = onRed ? 300 : 120;
     } else if (m_x.get()) {
       m_goingToAngle = true;
       m_autoTracking = false;
+      m_lineUp = false;
       m_angleSetPoint = onRed ? 60 : 240;
     } else if (m_a.get()) {
       m_autoTracking = false;
       m_goingToAngle = true;
+      m_lineUp = false;
       m_angleSetPoint = 90;
     }
 
@@ -129,6 +151,11 @@ public class DriveCommand extends Command {
 
     else if (m_autoTracking) {
       omega = m_driveTrain.getTurnToSpeakerSpeed(m_turnPidController);
+    }
+    else if (m_lineUp) {
+      xVelocity = -m_driveTrain.getXVelocityAuto(m_driveTrain.getClosestTargetPose().getX(), m_xController, m_xAccLimiter) / 10;
+      yVelocity = -m_driveTrain.getYVelocityAuto(m_driveTrain.getClosestTargetPose().getY(), m_yController, m_yAccLimiter) / 10;
+      omega = m_driveTrain.getOmegaVelocityAuto(m_rotationController);
     }
 
     // SmartDashboard.putBoolean("DriveCommand/going to angle", m_goingToAngle);

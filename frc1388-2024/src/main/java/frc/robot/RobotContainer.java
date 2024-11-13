@@ -14,6 +14,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TransitionConstants;
+import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.Eject;
 import frc.robot.commands.FeedShooter;
@@ -177,7 +178,8 @@ public class RobotContainer {
       () -> m_driverController.getHID().getBButton(),
       () -> m_driverController.getHID().getXButton(),
       () -> m_driverController.getHID().getYButton(),
-      () -> m_driverController.getHID().getRightStickButton()
+      () -> m_driverController.getHID().getRightStickButton(),
+      () -> m_operatorController.getHID().getBackButton()
     );
       
     m_driveTrain.setDefaultCommand(m_driveCommand);
@@ -313,8 +315,6 @@ public class RobotContainer {
       (ShooterConstants.SPEAKER_SHOT_RPM, 
       m_shooterSubsystem));
     }
-
-    m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));
     
     // TODO test what these 2 will do and if it works, especially if we need to input values to linepuwithapriltag
     // m_operatorController.back().whileTrue(new GoToNote(m_driveTrain, m_limelight, m_intakeSubsystem));

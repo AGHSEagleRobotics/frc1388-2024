@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,7 +36,7 @@ public class AutoGoToPoint extends Command {
 
 
   /** Creates a new AutoMove. */
-  public AutoGoToPoint(double xSetpoint, double ySetpoint, double rotationSetpoint, DriveTrainSubsystem drivetrain) {
+   public AutoGoToPoint(double xSetpoint, double ySetpoint, double rotationSetpoint, DriveTrainSubsystem drivetrain) {
 
     m_driveTrain =  drivetrain;
 
@@ -70,6 +72,10 @@ public class AutoGoToPoint extends Command {
     if (ySpeed > m_lastYSpeed) {
       ySpeed = m_yAccLimiter.calculate(ySpeed);
     }
+
+    SmartDashboard.putNumber("AutoGoToPoint/x setpoint", X_SETPOINT);
+    SmartDashboard.putNumber("AutoGoToPoint/y setpoint", Y_SETPOINT);
+    SmartDashboard.putNumber("AutoGoToPoint/rotation setpoint", ROTATION_SETPOINT);
 
     SmartDashboard.putNumber("AutoGoToPoint/rot pid in", m_driveTrain.getAngle());
     SmartDashboard.putBoolean("AutoGoToPoint/is at rot sp", m_rotationController.atSetpoint());

@@ -11,6 +11,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -53,7 +54,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(); 
 
   private VisionAcceptor visionAcceptorGyro = new VisionAcceptor(false);
-  private VisionAcceptor visionAcceptor = new VisionAcceptor(true);
+  private VisionAcceptor visionAcceptor = new VisionAcceptor(false);
   
   private ChassisSpeeds m_robotRelativeSpeeds = new ChassisSpeeds();
 
@@ -81,9 +82,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_backRightTranslation
   };
 
-  private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+  private static final Vector<N3> stateStdDevs = VecBuilder.fill(Math.pow(0.05, 1), Math.pow(0.05, 1), Units.degreesToRadians(5));
   
-  private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.6, 0.6, Units.degreesToRadians(10));
+  private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(Math.pow(0.02, 1), Math.pow(0.02, 1), Units.degreesToRadians(10));
 
 
   /** The kinematics object does all the swerve math */
@@ -235,10 +236,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
   }
 
   public Pose2d getClosestTargetPose() {
+
+    Pose2d[] SETPOINTS = new Pose2d[2];
+
+    SETPOINTS[0] = new Pose2d(15.15, 5.55, new Rotation2d(0));
+    SETPOINTS[1] = new Pose2d(13.75, 7.25, new Rotation2d(0));
+    
     Pose2d robotPose = getPose();
     double distance;
     double futureDistance;
-    Pose2d[] setpoints = FieldConstants.SETPOINTS;
+    Pose2d[] setpoints = SETPOINTS;
     Pose2d closestPose = setpoints[0];
     for (int i = 0; i < setpoints.length - 1; i++) {
       distance = calculateDistancePose(setpoints[i]);
@@ -250,6 +257,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         closestPose = setpoints[i + 1];
       }
     }
+    SmartDashboard.putNumber("drivetrain/Closest Target Pose X", closestPose.getX());
+    SmartDashboard.putNumber("drivetrain/Closest Target Pose Y", closestPose.getY());
+    SmartDashboard.putNumber("drivetrain/Closest Target Pose Degrees", closestPose.getRotation().getDegrees());
     return closestPose;
   }
 
@@ -299,6 +309,33 @@ public class DriveTrainSubsystem extends SubsystemBase {
       rz = rz < 0 ? rz + 360 : rz;
       double speed = - (turnPidController.calculate(angleFromSpeaker - rz));
       return speed;
+  }
+
+  public double getXVelocityAuto(double xSetpoint, PIDController goToPointController, SlewRateLimiter xAccLimiter) {
+    double m_lastXSpeed = 0;
+    double xSpeed = goToPointController.calculate(getPose().getX(), xSetpoint);
+    if (xSpeed > m_lastXSpeed) {
+      xSpeed = xAccLimiter.calculate(xSpeed);
+    }
+    m_lastXSpeed = xSpeed;
+    return xSpeed;
+  }
+
+  public double getYVelocityAuto(double ySetpoint, PIDController goToPointController, SlewRateLimiter xAccLimiter) {
+    double m_lastYSpeed = 0;
+    double ySpeed = goToPointController.calculate(getPose().getX(), ySetpoint);
+    if (ySpeed > m_lastYSpeed) {
+      ySpeed = xAccLimiter.calculate(ySpeed);
+    }
+    m_lastYSpeed = ySpeed;
+    return ySpeed;
+  }
+
+  public double getOmegaVelocityAuto(PIDController turnPidController) {
+    double rz = getAngle();
+    rz = rz < 0 ? rz + 360 : rz;
+    double speed = - (turnPidController.calculate(rz));
+    return speed;
   }
 
   public void swerveOnlyResetPose(Pose2d pose) {
@@ -597,6 +634,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("GamePiece/notePoseX", notePose.getX());
     SmartDashboard.putNumber("GamePiece/notePoseY", notePose.getY());
     SmartDashboard.putNumber("GamePiece/anglefromnote", getNoteAngleFromRobot());
+
+    SmartDashboard.putNumber("drivetrain/closestPoseX", getClosestTargetPose().getX());
+    SmartDashboard.putNumber("drivetrain/closestPoseY", getClosestTargetPose().getY());
+    SmartDashboard.putNumber("drivetrain/closestPoseRotation", getClosestTargetPose().getRotation().getDegrees());
 
     publisher.set(getPose());
   }
