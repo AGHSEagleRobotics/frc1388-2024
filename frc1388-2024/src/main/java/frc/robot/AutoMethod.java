@@ -13,12 +13,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
@@ -26,19 +22,14 @@ import frc.robot.Constants.ShooterAngleSubsystemConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShooterAngleLimelight;
 import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoFeedShooter;
 import frc.robot.commands.AutoGoToPoint;
 import frc.robot.commands.AutoShooterAngle;
 import frc.robot.commands.AutoShooterCommand;
 import frc.robot.commands.AutoTracking;
-import frc.robot.commands.AutoTurn;
 import frc.robot.commands.DeployIntakeCommand;
 import frc.robot.commands.FeedShooter;
 import frc.robot.commands.IntakeTransitionCommand;
-import frc.robot.commands.FeedShooter;
 import frc.robot.commands.GoToNote;
-import frc.robot.commands.LineUpWithAprilTag;
-import frc.robot.commands.PullToTransition;
 import frc.robot.commands.RetractIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.IntakeTransitionCommand.IntakeTransState;
@@ -65,14 +56,14 @@ public class AutoMethod {
 
 
  
-  public AutoMethod(DriveTrainSubsystem driveTrainSubsystem, Dashboard dashboard, ShooterSubsystem shooter, IntakeSubsystem intake, TransitionSubsystem transition, ShooterAngleSubsystem shooterAngle, Limelight limelight) {
-    m_driveTrainSubsystem = driveTrainSubsystem;
+  public AutoMethod(RobotContainer.Subsystems subsystems, Dashboard dashboard, Limelight limelight) {
+    m_driveTrainSubsystem = subsystems.m_drivetrain;
+    m_shooter = subsystems.m_shooter;
+    m_intakeSubsystem = subsystems.m_intake;
+    m_transitionSubsystem = subsystems.m_transition;
+    m_shooterAngleSubsystem = subsystems.m_shooterAngle;
     m_dashboard = dashboard;
-    m_shooter = shooter;
-    m_intakeSubsystem = intake;
-    m_transitionSubsystem = transition;
     m_limelight = limelight;
-    m_shooterAngleSubsystem = shooterAngle;
 
     m_fourNote = FourNote();
     m_threeNote = ThreeFarNote();

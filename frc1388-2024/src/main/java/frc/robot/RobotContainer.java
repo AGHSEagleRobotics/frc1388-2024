@@ -72,6 +72,29 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
+  /// Container class for all subsystems
+  public class Subsystems {
+    public final DriveTrainSubsystem m_drivetrain;
+    public final IntakeSubsystem m_intake;
+    public final TransitionSubsystem m_transition;
+    public final ShooterSubsystem m_shooter;
+    public final ShooterAngleSubsystem m_shooterAngle;
+
+    public Subsystems(DriveTrainSubsystem drivetrain,
+                      IntakeSubsystem intake,
+                      TransitionSubsystem transition,
+                      ShooterSubsystem shooter,
+                      ShooterAngleSubsystem shooterAngle) {
+      m_drivetrain = drivetrain;
+      m_intake = intake;
+      m_transition = transition;
+      m_shooter = shooter;
+      m_shooterAngle = shooterAngle;
+    }
+  }
+
+  Subsystems m_subsystems;
+
   private final Limelight m_limelight = new Limelight("limelight-shooter", "limelight-intake");
 
 
@@ -123,51 +146,59 @@ public class RobotContainer {
     new DigitalInput(4)
   );
 
+    
   // private final LEDSubsystem m_ledSubsystem = new LEDSubsystem(new PWMSparkMax(0));
     
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVER_CONTROLLER_PORT);
 
   private final CommandXboxController m_operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
+  private final AutoMethod m_autoMethod;
   
-
-    private final AutoMethod m_autoMethod;
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
 
-    // ChoreoTrajectory path = Choreo.getTrajectory("path1");
+    ////  Subsystems
 
+    // ChoreoTrajectory path = Choreo.getTrajectory("path1");
+    
     // m_Field2d.getObject("path1").setPoses(path.getInitialPose(), path.getFinalPose());
     // m_Field2d.getObject("pathposes").setPoses(path.getPoses());
     // SmartDashboard.putData(m_Field2d);
-
+    
     if (option8) {
       m_shooterSubsystem = new ShooterSubsystem(
-          new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
-              MotorType.kBrushless),
-          new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
-              MotorType.kBrushless));
-
+        new CANSparkFlex(ShooterConstants.BOTTOM_SHOOTER_MOTOR_CANID,
+        MotorType.kBrushless),
+        new CANSparkFlex(ShooterConstants.TOP_SHOOTER_MOTOR_CANID,
+        MotorType.kBrushless));
+        
       m_shooterAngleSubsystem = new ShooterAngleSubsystem(
           new CANSparkMax(ShooterAngleSubsystemConstants.kShooterAngleMotorCANID, MotorType.kBrushed),
           new AnalogPotentiometer(ShooterAngleSubsystemConstants.kPotentiometerAnalogIN), m_driveTrain);
-
-      m_autoMethod = new AutoMethod(m_driveTrain, m_dashboard, m_shooterSubsystem, m_intakeSubsystem,
-          m_transitionSubsystem, m_shooterAngleSubsystem, m_limelight);
-
     } else {
       m_shooterSubsystem = null;
       m_shooterAngleSubsystem = null;
+    }
+    
+    m_subsystems = new Subsystems(m_driveTrain,
+                                      m_intakeSubsystem,
+                                      m_transitionSubsystem,
+                                      m_shooterSubsystem,
+                                      m_shooterAngleSubsystem);
+
+    //// Commands
+
+    if (option8) {
+      m_autoMethod = new AutoMethod(m_subsystems, m_dashboard, m_limelight);
+    } else {
       m_autoMethod = null;
     }
 
-
-
     DriveCommand m_driveCommand = new DriveCommand(
-        m_driveTrain,
+        m_subsystems,
         m_limelight,
         () -> m_driverController.getLeftY(),
         () -> m_driverController.getLeftX(),
