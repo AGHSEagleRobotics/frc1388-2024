@@ -36,11 +36,7 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    LaserCan.Measurement measurement = m_lasercan.getMeasurement();
 
-    if (LidarSubsystem().measurement >= 100) {
-      m_candle.animate(strobeAnim);
-    }
     // This method will be called once per scheduler run
     // if (m_isOnRed) {
     //   m_led.set(LEDConstants.RED_SOLID);

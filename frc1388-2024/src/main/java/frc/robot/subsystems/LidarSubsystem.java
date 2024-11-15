@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LidarSubsystem extends SubsystemBase {
   LaserCan m_lasercan = new LaserCan(29);
@@ -17,10 +18,13 @@ public class LidarSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    LaserCan.Measurement measurement = m_lasercan.getMeasurement();
-    if (measurement != null) {
-      System.out.println("The target is " + measurement.distance_mm + "mm away!");
+    SmartDashboard.putNumber("lasercan/getMeasurement()", m_lasercan.getMeasurement().distance_mm);
+    SmartDashboard.putBoolean("lasercan/validMeasurement", m_lasercan.getMeasurement().status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+    SmartDashboard.putBoolean("lasercan/outOfBounds", m_lasercan.getMeasurement().status == LaserCan.LASERCAN_STATUS_OUT_OF_BOUNDS);
     }
-  }
 
-}
+
+  }
+  
+
+
